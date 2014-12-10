@@ -1,0 +1,60 @@
+<div class="container">		
+        <div class="row main-content">
+			
+          <div class="col-lg-12 col-md-12">
+  			<form class="form-inline" role="form">
+  	  			<div class="form-group">
+  				    <label>Pick workbench
+  				    <input type="text" 
+  							class="form-control" 
+  							ng-model="selectedWorkbench" 
+  							ng-options="wb.Name for wb in workbenchtemplates" 
+  							placeholder="Search for workbench" 
+  							limit="20"
+  							bs-typeahead="workbenchtemplates">
+  				</div>
+  			</form>
+			  <h3 ng-show="selectedWorkbench">Showing data for workbench: {{ selectedWorkbench.Name }}</h3>
+			  <h3 ng-show="inprogress"><i class="fa fa-spinner fa-spin"></i> Fetching data...</h3>
+			  <form>
+			 <input  placeholder="search" ng-model="searchText" class="input-sm form-control" type="search"/>
+			 </form>
+		   <table ng-show="workbenchtemplatemappingitems"  st-table="mappedRows" class="table table-striped" >
+		   	<thead>
+				
+				<tr>
+				
+					<th ng-repeat="wtmi in workbenchtemplatemappingitems" >{{wtmi.FieldName}}</th></tr>
+		   	</thead>
+		   	<tbody>
+		        
+		   	<tr ng-repeat="row in mappedRows | filter: getFiltered" >
+
+		   		<td ng-repeat="wtmi in workbenchtemplatemappingitems" >
+
+						<a href="#" editable-text="row[wtmi.WorkbenchTemplateMappingItemID].CellData" onaftersave="row[wtmi.WorkbenchTemplateMappingItemID].$update()">
+					
+						{{ row[wtmi.WorkbenchTemplateMappingItemID].CellData}}</a>
+				
+				</td>
+
+		   	</tr>
+		   	</tbody>
+			<tfoot>
+						<tr>
+							<td colspan="3" class="text-center">
+								<div st-pagination="" st-items-by-page="itemsByPage" st-displayed-pages="7"></div>
+							</td>
+						</tr>
+					</tfoot>
+		   </table>
+			 		
+                
+            </div>
+         
+ 
+        </div>
+        <!-- /.row -->
+
+</div>
+
