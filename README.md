@@ -5,10 +5,12 @@
 ## Prerequisites
 
 ** Specify **
+
 * MySQL
 * Specify 6.5 (or at least a database the Specify 6.5 MySQL schema on your MySQL)
 
 ** SNM DataTool **
+
 *Node.js v0.10.x+
 *npm (which comes bundled with Node) v2.1.0+
 *git
@@ -18,7 +20,7 @@ The project has been boostrapped with the Yeoman scaffolding tool, using the [an
 
 Therefore it is recomended to follow 
 * [this setup guide](http://yeoman.io/codelab/setup.html) to setup yeoman
-* Install the the [angular-fullstack] (https://github.com/DaftMonk/generator-angular-fullstack) generator
+* Install the [angular-fullstack] (https://github.com/DaftMonk/generator-angular-fullstack) generator
 
 If you choose not to use Yeoman, you should still install the following 
 * grunt-cli
