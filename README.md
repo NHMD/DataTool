@@ -29,7 +29,7 @@ If you choose not to use Yeoman, you should still install the following
 
 ## Configuration
 
-Edit file and update it according to your database settings:
+Edit this file and update it according to your database settings:
 
     server/config/environment/development.js
 	
@@ -39,7 +39,9 @@ You may have noticed the flag ```seedDB``` in the file. When set to ```true``` t
 	
 will create some users on start up, and delete them on shut down. You should create your own users and associate them with their user roles, agent id´s etc form the Specify database.
 
-## Run the application in dev mode
+## Run the application
+
+To run the application in dev mode:
 
 ```bash
 grunt serve 
