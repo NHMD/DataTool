@@ -6,7 +6,9 @@ module.exports = function(sequelize, DataTypes) {
 	var Workbenchtemplatemappingitem = sequelize.define("workbenchtemplatemappingitem", {
 		"WorkbenchTemplateMappingItemID": {
 			type: DataTypes.INTEGER,
-			primaryKey: true
+			primaryKey: true,
+			autoIncrement:true, 
+			allowNull:false
 		},
 		"WorkbenchTemplateID": DataTypes.INTEGER,
 		"TimestampCreated": DataTypes.DATE,

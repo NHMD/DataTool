@@ -14,27 +14,25 @@
   							bs-typeahead="workbenchtemplates">
   				</div>
   			</form>
-			  <h3 ng-show="selectedWorkbench">Showing data for workbench: {{ selectedWorkbench.Name }}</h3>
-			  <h3 ng-show="inprogress"><i class="fa fa-spinner fa-spin"></i> Fetching data...</h3>
-			  <form>
-			 <input  placeholder="search" ng-model="searchText" class="input-sm form-control" type="search"/>
-			 </form>
-		   <table ng-show="workbenchtemplatemappingitems"  st-table="mappedRows" class="table table-striped" >
+			  <h3 ng-show="mappedRows.length">Showing data for workbench: {{ selectedWorkbench.Name }} ({{mappedRows.length}} rows)</h3>
+			  <h3 ng-show="selectedWorkbench && !mappedRows.length"><i class="fa fa-spinner fa-spin"></i> Fetching data...</h3>
+		   <table st-persist="tableStateWorkbenchTemplate_{{selectedWorkbench.WorkbenchTemplateID}}" ng-show="workbenchtemplatemappingitems"  st-table="rowCollection" st-safe-src="mappedRows" class="table table-striped" >
 		   	<thead>
-				
+				<tr><th colspan="3">
+							<input st-search="CellData" placeholder="global search" class="input-sm form-control" type="search"/>
+						</th></tr>
 				<tr>
 				
-					<th ng-repeat="wtmi in workbenchtemplatemappingitems" >{{wtmi.FieldName}}</th></tr>
+					<th lr-drag-src="headers" lr-drop-target="headers" st-sort="getters.{{wtmi.FieldName}}" ng-repeat="wtmi in workbenchtemplatemappingitems" >{{wtmi.FieldName}}</th></tr>
 		   	</thead>
 		   	<tbody>
 		        
-		   	<tr ng-repeat="row in mappedRows | filter: getFiltered" >
+		   	<tr ng-repeat="row in rowCollection" >	
+		   		<td ng-repeat="wtmi in workbenchtemplatemappingitems">
 
-		   		<td ng-repeat="wtmi in workbenchtemplatemappingitems" >
-
-						<a href="#" editable-text="row[wtmi.WorkbenchTemplateMappingItemID].CellData" onaftersave="row[wtmi.WorkbenchTemplateMappingItemID].$update()">
+						<a href="#" editable-text="row[wtmi.WorkbenchTemplateMappingItemID].CellData" onaftersave=" createOrUpdateWorkBenchDataItem(row, row[wtmi.WorkbenchTemplateMappingItemID], wtmi)">
 					
-						{{ row[wtmi.WorkbenchTemplateMappingItemID].CellData}}</a>
+						{{ row[wtmi.WorkbenchTemplateMappingItemID].CellData || ' + ' }}</a>
 				
 				</td>
 
@@ -43,7 +41,7 @@
 			<tfoot>
 						<tr>
 							<td colspan="3" class="text-center">
-								<div st-pagination="" st-items-by-page="itemsByPage" st-displayed-pages="7"></div>
+								<div st-pagination="" st-items-by-page="10" st-displayed-pages="7"></div>
 							</td>
 						</tr>
 					</tfoot>

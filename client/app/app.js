@@ -8,6 +8,7 @@ angular.module('specifyDataCleanerApp', [
   'btford.socket-io',
 	'mgcrea.ngStrap', 
 	 'smart-table',
+	'lrDragNDrop',
 	'xeditable'
 ])
   .config(function ($routeProvider, $locationProvider, $httpProvider) {

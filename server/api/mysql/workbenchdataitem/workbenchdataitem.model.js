@@ -4,7 +4,9 @@ module.exports = function(sequelize, DataTypes) {
 	var Workbenchdataitem = sequelize.define("workbenchdataitem", {
 		"WorkbenchDataItemID": {
 			type: DataTypes.INTEGER,
-			primaryKey: true
+			primaryKey: true, 
+			autoIncrement:true, 
+			allowNull:false
 		},
 		"CellData": DataTypes.STRING,
 		"RowNumber": DataTypes.INTEGER,

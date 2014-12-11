@@ -5,7 +5,9 @@ module.exports = function(sequelize, DataTypes) {
   var Workbenchtemplate = sequelize.define("workbenchtemplate", {
 	"WorkbenchTemplateID": {
 		type: DataTypes.INTEGER,
-		primaryKey: true
+		primaryKey: true,
+		autoIncrement:true, 
+		allowNull:false
 	},
 	"TimestampCreated": DataTypes.DATE,
 	"TimestampModified": DataTypes.DATE,
