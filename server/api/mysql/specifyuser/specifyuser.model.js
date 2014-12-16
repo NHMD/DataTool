@@ -27,6 +27,10 @@ module.exports = function(sequelize, DataTypes) {
 		  .hasMany(models.Workbenchtemplatemappingitem, { foreignKey : "WorkbenchTemplateID" });
 		 models.Workbenchtemplatemappingitem
 		  .hasMany(models.Workbenchdataitem, { foreignKey : "WorkbenchDataItemID" });
+		 
+        models.Specifyuser
+		  .hasMany(models.Workbench, {foreignKey : 'SpecifyUserID'}); 
+		 
       }
 	  
 	}

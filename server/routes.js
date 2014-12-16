@@ -9,6 +9,8 @@ var errors = require('./components/errors');
 module.exports = function(app) {
 
 	// Insert routes below
+app.use('/api/workbenches', require('./api/mysql/workbench'));
+app.use('/api/workbenchrows', require('./api/mysql/workbenchrow'));
 app.use('/api/specifyusers', require('./api/mysql/specifyuser'));
 	app.use('/api/agents', require('./api/mysql/agent'));
 

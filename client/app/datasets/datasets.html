@@ -8,29 +8,47 @@
   				    <input type="text" 
   							class="form-control" 
   							ng-model="selectedWorkbench" 
-  							ng-options="wb.Name for wb in workbenchtemplates" 
+  							ng-options="wb.Name for wb in workbenches" 
   							placeholder="Search for workbench" 
   							limit="20"
-  							bs-typeahead="workbenchtemplates">
+  							bs-typeahead="workbenches">
   				</div>
   			</form>
 			  <h3 ng-show="mappedRows.length">Showing data for workbench: {{ selectedWorkbench.Name }} ({{mappedRows.length}} rows)</h3>
 			  <h3 ng-show="selectedWorkbench && !mappedRows.length"><i class="fa fa-spinner fa-spin"></i> Fetching data...</h3>
+			  <button class="btn btn-default" ng-click="addRowToGrid()">Add row</button>
 		   <table st-persist="tableStateWorkbenchTemplate_{{selectedWorkbench.WorkbenchTemplateID}}" ng-show="workbenchtemplatemappingitems"  st-table="rowCollection" st-safe-src="mappedRows" class="table table-striped" >
 		   	<thead>
 				<tr><th colspan="3">
 							<input st-search="CellData" placeholder="global search" class="input-sm form-control" type="search"/>
 						</th></tr>
 				<tr>
-				
+				<th></th>
 					<th lr-drag-src="headers" lr-drop-target="headers" st-sort="getters.{{wtmi.FieldName}}" ng-repeat="wtmi in workbenchtemplatemappingitems" >{{wtmi.FieldName}}</th></tr>
 		   	</thead>
 		   	<tbody>
 		        
-		   	<tr ng-repeat="row in rowCollection" >	
+		   	<tr ng-repeat="row in rowCollection" ng-if="row !== undefined" >
+				 <!-- form -->
+				<td style="white-space: nowrap">
+				       
+				        <form editable-form name="rowform" onbeforesave="saveRow($data, row.WorkbenchRowID)" ng-show="rowform.$visible" class="form-buttons form-inline">
+				          <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-primary">
+				            save
+				          </button>
+				          <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default">
+				            cancel
+				          </button>
+				        </form>
+				        <div class="buttons" ng-show="!rowform.$visible">
+				          <button class="btn btn-primary" ng-click="rowform.$show()">edit</button>
+				          <button class="btn btn-danger" ng-click="deleteRow(row, $index)">del</button>
+				        </div>  
+				      </td>
+					  	 <!-- form end-->
 		   		<td ng-repeat="wtmi in workbenchtemplatemappingitems">
 
-						<a href="#" editable-text="row[wtmi.WorkbenchTemplateMappingItemID].CellData" onaftersave=" createOrUpdateWorkBenchDataItem(row, row[wtmi.WorkbenchTemplateMappingItemID], wtmi)">
+						<a href="#" editable-text="row[wtmi.WorkbenchTemplateMappingItemID].CellData" e-name="{{wtmi.WorkbenchTemplateMappingItemID}}" e-form="rowform" onaftersave=" createOrUpdateWorkBenchDataItem(row, row[wtmi.WorkbenchTemplateMappingItemID], wtmi)">
 					
 						{{ row[wtmi.WorkbenchTemplateMappingItemID].CellData || ' + ' }}</a>
 				

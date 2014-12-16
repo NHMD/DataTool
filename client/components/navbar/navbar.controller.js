@@ -7,8 +7,8 @@ angular.module('specifyDataCleanerApp')
       'link': '/'
     },
 	{
-	      'title': 'Clean data',
-	      'link': '/cleanup'
+	      'title': 'Data sets',
+	      'link': '/datasets'
 	    }];
 
     $scope.isCollapsed = true;

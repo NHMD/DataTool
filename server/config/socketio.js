@@ -18,6 +18,8 @@ function onConnect(socket) {
   });
 
   // Insert sockets below
+ // require('../api/workbench/workbench.socket').register(socket);
+//  require('../api/workbenchrow/workbenchrow.socket').register(socket);
  // require('../api/mysql/specifyuser/specifyuser.socket').register(socket);
 //  require('../api/mysql/agent/agent.socket').register(socket);
 //  require('../api/mysql/workbenchdataitem/workbenchdataitem.socket').register(socket);

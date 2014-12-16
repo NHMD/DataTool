@@ -1,10 +1,10 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-  .factory('WorkbenchTemplatesFactory', function ($resource) {
-
+  .factory('Workbench', function ($resource) {
+    // Service logic
     // Public API here
-	  return $resource('/api/workbenchtemplates/:id', { id: '@WorkbenchTemplateID' }, {
+	  return $resource('/api/workbenches/:id', { id: '@WorkbenchID' }, {
 	      update: {
 	        method: 'PUT' // this method issues a PUT request
 	      }

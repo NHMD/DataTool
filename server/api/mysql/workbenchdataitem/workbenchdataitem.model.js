@@ -32,7 +32,20 @@ module.exports = function(sequelize, DataTypes) {
 						foreignKey: "SpecifyUserID"
 					});
 			},
-
+			
+			getByWorkbenchID: function(WorkbenchID, models){
+			
+		return sequelize
+			.query('SELECT a.* FROM workbenchdataitem a , workbenchrow b  where b.WorkbenchID = :WorkbenchID and a.WorkbenchRowID = b.WorkbenchRowID',
+				models.Workbenchdataitem, {
+					raw: true
+				}, {
+					WorkbenchID: WorkbenchID
+				}).catch(function(err){
+					console.log(err.message)
+				})
+			
+			}
 
 		},
 		instanceMethods: {
@@ -56,7 +69,9 @@ module.exports = function(sequelize, DataTypes) {
 
 					})
 			}
+			
 		}
+		
 	});
 
 	return Workbenchdataitem;

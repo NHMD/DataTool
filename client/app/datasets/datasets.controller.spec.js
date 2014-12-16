@@ -1,16 +1,16 @@
 'use strict';
 
-describe('Controller: CleanupCtrl', function () {
+describe('Controller: DatasetsCtrl', function () {
 
   // load the controller's module
   beforeEach(module('specifyDataCleanerApp'));
 
-  var CleanupCtrl, scope;
+  var DatasetsCtrl, scope;
 
   // Initialize the controller and a mock scope
   beforeEach(inject(function ($controller, $rootScope) {
     scope = $rootScope.$new();
-    CleanupCtrl = $controller('CleanupCtrl', {
+    DatasetsCtrl = $controller('DatasetsCtrl', {
       $scope: scope
     });
   }));

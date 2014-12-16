@@ -3,8 +3,8 @@
 angular.module('specifyDataCleanerApp')
   .config(function ($routeProvider) {
     $routeProvider
-      .when('/cleanup', {
-        templateUrl: 'app/cleanup/cleanup.html',
-        controller: 'CleanupCtrl'
+      .when('/datasets', {
+        templateUrl: 'app/datasets/datasets.html',
+        controller: 'DatasetsCtrl'
       });
   });

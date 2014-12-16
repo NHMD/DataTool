@@ -1,7 +1,7 @@
     'use strict';
 
   angular.module('specifyDataCleanerApp')
-    .factory('WorkbenchTemplateMappingItemsFactory', function ($resource) {
+    .factory('WorkbenchTemplateMappingItem', function ($resource) {
 
       // Public API here
 		

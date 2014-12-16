@@ -1,14 +1,12 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-  .factory('WorkbenchDataItemsFactory', function ($resource) {
+  .factory('WorkbenchTemplate', function ($resource) {
 
     // Public API here
-	  return $resource('/api/workbenchdataitems/:id', { id: '@WorkbenchDataItemID' }, {
+	  return $resource('/api/workbenchtemplates/:id', { id: '@WorkbenchTemplateID' }, {
 	      update: {
 	        method: 'PUT' // this method issues a PUT request
 	      }
 	    });
-   
-   
   });
