@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-	.controller('DatasetsCtrl', ['$scope', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench',
-		function($scope, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench) {
+	.controller('DatasetsCtrl', ['$scope', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench', 'hotkeys',
+		function($scope, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys) {
 
 
 			$scope.workbenches = Workbench.query();
@@ -140,6 +140,13 @@ angular.module('specifyDataCleanerApp')
 				// remove the mark that this row is "dirty"
 				delete row.inserted;
 			};
+			
+		 hotkeys.bindTo($scope)
+		    .add({
+		      combo: 'ctrl+n',
+		      description: 'Add row',
+		      callback: $scope.addRowToGrid
+		    })
 
 		}
 

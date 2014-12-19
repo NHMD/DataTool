@@ -9,7 +9,8 @@ angular.module('specifyDataCleanerApp', [
 	'mgcrea.ngStrap', 
 	 'smart-table',
 	'lrDragNDrop',
-	'xeditable'
+	'xeditable',
+	'cfp.hotkeys'
 ])
   .config(function ($routeProvider, $locationProvider, $httpProvider) {
     $routeProvider
