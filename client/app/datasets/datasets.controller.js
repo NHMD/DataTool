@@ -68,8 +68,13 @@ angular.module('specifyDataCleanerApp')
 			$scope.createOrUpdateWorkBenchDataItem = function(row, item, template) {
 
 				if (item.constructor.name === "Resource" && item.CellData !== "" && item.CellData !== undefined) {
-					item.$update();
-				} else if(item.constructor.name === "Resource" && item.CellData ===""){
+					if(item.WorkbenchDataItemID === undefined){
+						item.$save();
+					}
+					else {
+						item.$update();
+					}
+				} else if(item.constructor.name === "Resource" && item.CellData ==="" && item.WorkbenchDataItemID !== undefined){
 					item.$delete();
 				}
 				else if(item.CellData !== ""){
@@ -110,7 +115,7 @@ angular.module('specifyDataCleanerApp')
 											
 											row[$scope.workbenchtemplatemappingitems[i].WorkbenchTemplateMappingItemID] = new WorkbenchDataItem({
 												"CellData" : "",
-												"WorkbenchTemplateMappingID": $scope.workbenchtemplatemappingitems[i].WorkbenchTemplateMappingID,
+												"WorkbenchTemplateMappingItemID": $scope.workbenchtemplatemappingitems[i].WorkbenchTemplateMappingItemID,
 												"ValidationStatus": 0,
 												"WorkbenchRowID": workbenchrow.WorkbenchRowID,
 												"RowNumber": workbenchrow.RowNumber
