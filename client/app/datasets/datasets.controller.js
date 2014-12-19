@@ -21,8 +21,10 @@ angular.module('specifyDataCleanerApp')
 							return elm.WorkbenchTemplateMappingItemID;
 						});
 
-						$scope.workbenchdataitems= WorkbenchDataItem.getFromWorkbench({"id": $scope.selectedWorkbench.WorkbenchID });
-						
+						$scope.workbenchdataitems = WorkbenchDataItem.getFromWorkbench({
+							"id": $scope.selectedWorkbench.WorkbenchID
+						});
+
 						/*
 						$scope.workbenchdataitems = WorkbenchDataItem.query({
 							_query: {
@@ -67,22 +69,22 @@ angular.module('specifyDataCleanerApp')
 
 			$scope.createOrUpdateWorkBenchDataItem = function(row, item, template) {
 
-				if (item.constructor.name === "Resource" && item.CellData !== "" && item.CellData !== undefined) {
-					if(item.WorkbenchDataItemID === undefined){
+				if (item.constructor.name === "Resource") {
+
+					if (item.WorkbenchDataItemID === undefined) {
 						item.$save();
-					}
-					else {
+					} else if (item.CellData !== "" && item.CellData !== undefined) {
 						item.$update();
-					}
-				} else if(item.constructor.name === "Resource" && item.CellData ==="" && item.WorkbenchDataItemID !== undefined){
-					item.$delete();
-				}
-				else if(item.CellData !== ""){
-					
+					} else if (item.CellData === "" || item.CellData === undefined) {
+						item.$delete();
+					};
+
+				} else if (item.CellData !== "") {
+
 					$scope.mappedRows[row.RowNumber][template.WorkbenchTemplateMappingItemID] = WorkbenchDataItem.save({
 						"WorkbenchRowID": row.WorkbenchRowID,
 						"RowNumber": row.RowNumber,
-					    "CellData": item.CellData,
+						"CellData": item.CellData,
 						"WorkbenchTemplateMappingItemID": template.WorkbenchTemplateMappingItemID,
 						"ValidationStatus": 0
 					});
@@ -91,47 +93,52 @@ angular.module('specifyDataCleanerApp')
 
 
 			};
-						
-			$scope.deleteRow = function(row, idx){
-				
-				WorkbenchRow.remove({id: row.WorkbenchRowID}).$promise.then(function(){
-					 $scope.mappedRows.splice(idx, 1);
+
+			$scope.deleteRow = function(row, idx) {
+
+				WorkbenchRow.remove({
+					id: row.WorkbenchRowID
+				}).$promise.then(function() {
+					$scope.mappedRows.splice($scope.mappedRows.indexOf(row), 1);
 				});
-					
-				
+
+
 			};
-			
-		    $scope.addRowToGrid = function() {
+
+			$scope.addRowToGrid = function() {
 				WorkbenchRow.save({
-										"WorkbenchID": $scope.selectedWorkbench.WorkbenchID
-									}).
-									$promise.then(function(workbenchrow){
-										var row = {
-											"WorkbenchRowID": workbenchrow.WorkbenchRowID,
-											"RowNumber": workbenchrow.RowNumber
-										};
-										for (var i=0; i< $scope.workbenchtemplatemappingitems.length; i++) {
-											
-											
-											row[$scope.workbenchtemplatemappingitems[i].WorkbenchTemplateMappingItemID] = new WorkbenchDataItem({
-												"CellData" : "",
-												"WorkbenchTemplateMappingItemID": $scope.workbenchtemplatemappingitems[i].WorkbenchTemplateMappingItemID,
-												"ValidationStatus": 0,
-												"WorkbenchRowID": workbenchrow.WorkbenchRowID,
-												"RowNumber": workbenchrow.RowNumber
-											});
-											
-										};
-										$scope.mappedRows[workbenchrow.RowNumber]	= row;
-										
-									});
-				
-		      
-		    };
-			
-			$scope.saveRow = function(data, WorkbenchRowID){
-				
-				console.log(WorkbenchRowID);
+					"WorkbenchID": $scope.selectedWorkbench.WorkbenchID
+				}).
+				$promise.then(function(workbenchrow) {
+					var row = {
+						"WorkbenchRowID": workbenchrow.WorkbenchRowID,
+						"RowNumber": workbenchrow.RowNumber,
+						"inserted" : true
+					};
+					for (var i = 0; i < $scope.workbenchtemplatemappingitems.length; i++) {
+
+
+						row[$scope.workbenchtemplatemappingitems[i].WorkbenchTemplateMappingItemID] = new WorkbenchDataItem({
+							"CellData": "",
+							"WorkbenchTemplateMappingItemID": $scope.workbenchtemplatemappingitems[i].WorkbenchTemplateMappingItemID,
+							"ValidationStatus": 0,
+							"WorkbenchRowID": workbenchrow.WorkbenchRowID,
+							"RowNumber": workbenchrow.RowNumber
+						});
+
+					};
+					$scope.mappedRows[workbenchrow.RowNumber] = row;
+					// had to use JQuery for this one....
+					$("tbody").animate({scrollTop: $("tbody tr:last").offset().top}, "slow");
+
+				});
+
+
+			};
+
+			$scope.saveRow = function(row) {
+				// remove the mark that this row is "dirty"
+				delete row.inserted;
 			};
 
 		}

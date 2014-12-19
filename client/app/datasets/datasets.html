@@ -1,4 +1,4 @@
-<div class="container">		
+<div class="container-fluid">		
         <div class="row main-content">
 			
           <div class="col-lg-12 col-md-12">
@@ -17,22 +17,22 @@
 			  <h3 ng-show="mappedRows.length">Showing data for workbench: {{ selectedWorkbench.Name }} ({{mappedRows.length}} rows)</h3>
 			  <h3 ng-show="selectedWorkbench && !mappedRows.length"><i class="fa fa-spinner fa-spin"></i> Fetching data...</h3>
 			  <button class="btn btn-default" ng-click="addRowToGrid()">Add row</button>
-		   <table st-persist="tableStateWorkbenchTemplate_{{selectedWorkbench.WorkbenchTemplateID}}" ng-show="workbenchtemplatemappingitems"  st-table="rowCollection" st-safe-src="mappedRows" class="table table-striped" >
+		   <table st-persist="tableStateWorkbench_{{selectedWorkbench.WorkbenchID}}" ng-show="workbenchtemplatemappingitems"  st-table="rowCollection" st-safe-src="mappedRows" class="table table-striped" >
 		   	<thead>
 				<tr><th colspan="3">
 							<input st-search="CellData" placeholder="global search" class="input-sm form-control" type="search"/>
 						</th></tr>
 				<tr>
-				<th></th>
+				<th st-ratio="40"></th>
 					<th lr-drag-src="headers" lr-drop-target="headers" st-sort="getters.{{wtmi.FieldName}}" ng-repeat="wtmi in workbenchtemplatemappingitems" >{{wtmi.FieldName}}</th></tr>
 		   	</thead>
 		   	<tbody>
 		        
 		   	<tr ng-repeat="row in rowCollection" ng-if="row !== undefined" >
 				 <!-- form -->
-				<td style="white-space: nowrap">
+				<td style="white-space: nowrap" st-ratio="40">
 				       
-				        <form editable-form name="rowform" onbeforesave="saveRow($data, row.WorkbenchRowID)" ng-show="rowform.$visible" class="form-buttons form-inline">
+				        <form editable-form name="rowform" onbeforesave="saveRow(row)" ng-show="rowform.$visible" class="form-buttons form-inline" shown="row.inserted === true">
 				          <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-primary">
 				            save
 				          </button>
@@ -48,9 +48,9 @@
 					  	 <!-- form end-->
 		   		<td ng-repeat="wtmi in workbenchtemplatemappingitems">
 
-						<a href="#" editable-text="row[wtmi.WorkbenchTemplateMappingItemID].CellData" e-name="{{wtmi.WorkbenchTemplateMappingItemID}}" e-form="rowform" onaftersave=" createOrUpdateWorkBenchDataItem(row, row[wtmi.WorkbenchTemplateMappingItemID], wtmi)">
+						<span editable-text="row[wtmi.WorkbenchTemplateMappingItemID].CellData" e-name="{{wtmi.WorkbenchTemplateMappingItemID}}" e-form="rowform" onaftersave=" createOrUpdateWorkBenchDataItem(row, row[wtmi.WorkbenchTemplateMappingItemID], wtmi)">
 					
-						{{ row[wtmi.WorkbenchTemplateMappingItemID].CellData || ' + ' }}</a>
+						{{ row[wtmi.WorkbenchTemplateMappingItemID].CellData }}</span>
 				
 				</td>
 
@@ -58,6 +58,7 @@
 		   	</tbody>
 			<tfoot>
 						<tr>
+							<td><button class="btn btn-default" ng-click="addRowToGrid()">Add row</button></td>
 							<td colspan="3" class="text-center">
 								<div st-pagination="" st-items-by-page="10" st-displayed-pages="7"></div>
 							</td>
