@@ -104,7 +104,19 @@ angular.module('specifyDataCleanerApp')
 
 
 			};
-
+			
+			$scope.carryForward = function(rowNumber, workbenchTemplateMappingItem){
+				
+				if (!workbenchTemplateMappingItem.CarryForward){
+					return "";
+				} else if (workbenchTemplateMappingItem.CarryForward){
+					var forwardValue = $scope.mappedRows[$scope.mappedRows.length -1][workbenchTemplateMappingItem.WorkbenchTemplateMappingItemID].CellData;
+					return forwardValue;
+				};
+				
+				
+			};
+			
 			$scope.addRowToGrid = function() {
 				WorkbenchRow.save({
 					"WorkbenchID": $scope.selectedWorkbench.WorkbenchID
@@ -119,7 +131,7 @@ angular.module('specifyDataCleanerApp')
 
 
 						row[$scope.workbenchtemplatemappingitems[i].WorkbenchTemplateMappingItemID] = new WorkbenchDataItem({
-							"CellData": "",
+							"CellData": $scope.carryForward(workbenchrow.RowNumber, $scope.workbenchtemplatemappingitems[i] ),
 							"WorkbenchTemplateMappingItemID": $scope.workbenchtemplatemappingitems[i].WorkbenchTemplateMappingItemID,
 							"ValidationStatus": 0,
 							"WorkbenchRowID": workbenchrow.WorkbenchRowID,
