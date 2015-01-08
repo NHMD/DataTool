@@ -71,7 +71,7 @@ function handleError(res, err) {
 // Get list of workbenchtemplatemappingitems
 exports.indexWorkbenchtemplatemappingitems = function(req, res) {
   models.Workbenchtemplate.find(req.params.id).then(function(workbenchtemplate){
-	  return workbenchtemplate.getWorkbenchtemplatemappingitems();	
+	  return workbenchtemplate.getWorkbenchtemplatemappingitems({order: [['TableName', 'ASC']]});	
   }).then(function(workbenchtemplatemappingitems){
   	return res.json(200, workbenchtemplatemappingitems);	
   }).catch(function(err){

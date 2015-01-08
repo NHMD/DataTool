@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-  .controller('NavbarCtrl', function ($scope, $location, Auth) {
+  .controller('NavbarCtrl', function ($scope, $location, Auth, Collection, Discipline, Icons) {
     $scope.menu = [{
       'title': 'Home',
       'link': '/'
@@ -24,4 +24,20 @@ angular.module('specifyDataCleanerApp')
     $scope.isActive = function(route) {
       return route === $location.path();
     };
+
+		if($scope.isLoggedIn()){
+			$scope.collections = Collection.query();
+		}
+	
+	
+//	$scope.collections = Collection.query();
+    $scope.selectedIcon = '';
+    
+     $scope.icons = [
+       {value: 'Gear', label: '<i class="fa fa-gear"></i> Gear'},
+       {value: 'Globe', label: '<i class="fa fa-globe"></i> Globe'},
+       {value: 'Heart', label: '<i class="fa fa-heart"></i> Heart'},
+       {value: 'Camera', label: '<i class="fa fa-camera"></i> Camera'}
+     ];
+	
   });

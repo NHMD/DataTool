@@ -9,16 +9,20 @@ var errors = require('./components/errors');
 module.exports = function(app) {
 
 	// Insert routes below
-app.use('/api/workbenches', require('./api/mysql/workbench'));
-app.use('/api/workbenchrows', require('./api/mysql/workbenchrow'));
-app.use('/api/specifyusers', require('./api/mysql/specifyuser'));
+	//mysql
+	app.use('/api/disciplines', require('./api/mysql/discipline'));
+	app.use('/api/collections', require('./api/mysql/collection'));
+	app.use('/api/taxons', require('./api/mysql/taxon'));
+	app.use('/api/taxontreedefitems', require('./api/mysql/taxontreedefitem'));
+	app.use('/api/workbenches', require('./api/mysql/workbench'));
+	app.use('/api/workbenchrows', require('./api/mysql/workbenchrow'));
+	app.use('/api/specifyusers', require('./api/mysql/specifyuser'));
 	app.use('/api/agents', require('./api/mysql/agent'));
-
 	app.use('/api/workbenchdataitems', require('./api/mysql/workbenchdataitem'));
 	app.use('/api/workbenchtemplatemappingitems', require('./api/mysql/workbenchtemplatemappingitem'));
 	app.use('/api/workbenchtemplates', require('./api/mysql/workbenchtemplate'));
-	//  app.use('/api/workbenchdatarows', require('./api/mysql/workbenchdatarow'));
-	//  app.use('/api/collectionobjects', require('./api/mysql/collectionobject'));
+	
+	//MongoDB
 	app.use('/api/things', require('./api/mongo/thing'));
 	app.use('/api/users', require('./api/mongo/user'));
 

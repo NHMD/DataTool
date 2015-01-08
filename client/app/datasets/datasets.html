@@ -24,7 +24,10 @@
 						</th></tr>
 				<tr>
 				<th st-ratio="40"></th>
-					<th lr-drag-src="headers" lr-drop-target="headers" st-sort="getters.{{wtmi.FieldName}}" ng-repeat="wtmi in workbenchtemplatemappingitems" >{{wtmi.FieldName}}</th></tr>
+					<th lr-drag-src="headers" lr-drop-target="headers" st-sort="getters.{{wtmi.FieldName}}" ng-repeat="wtmi in workbenchtemplatemappingitems" >
+						<img ng-src="{{ Icons.datamodel.get(wtmi.TableName) }}" class="specify-header-icon"> {{wtmi.FieldName}}
+					</th>
+				</tr>
 		   	</thead>
 		   	<tbody>
 		        

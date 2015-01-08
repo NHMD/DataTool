@@ -119,6 +119,7 @@ thead > tr, tbody > tr, tfoot > tr {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: nowrap;
+	white-space: nowrap;
 }
 
 thead, tfoot {
@@ -143,4 +144,8 @@ tfoot td {
 	padding: 0px;
 }
 
-
+img.specify-header-icon {
+	height: 16px;
+	width: 16px;
+	display:inline-block;
+}

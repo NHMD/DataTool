@@ -18,6 +18,10 @@ function onConnect(socket) {
   });
 
   // Insert sockets below
+  //require('../api/discipline/discipline.socket').register(socket);
+ // require('../api/collection/collection.socket').register(socket);
+ // require('../api/taxon/taxon.socket').register(socket);
+ // require('../api/taxontreedefitem/taxontreedefitem.socket').register(socket);
  // require('../api/workbench/workbench.socket').register(socket);
 //  require('../api/workbenchrow/workbenchrow.socket').register(socket);
  // require('../api/mysql/specifyuser/specifyuser.socket').register(socket);
