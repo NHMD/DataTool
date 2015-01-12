@@ -10,6 +10,7 @@ module.exports = function(app) {
 
 	// Insert routes below
 	//mysql
+	app.use('/api/spprincipals', require('./api/mysql/spprincipal'));
 	app.use('/api/disciplines', require('./api/mysql/discipline'));
 	app.use('/api/collections', require('./api/mysql/collection'));
 	app.use('/api/taxons', require('./api/mysql/taxon'));

@@ -8,7 +8,9 @@ exports.index = function(req, res) {
 	var query = (req.query._query) ? {where: JSON.parse(req.query._query)} : undefined;
 	
 	
-  models.Collection.findAll(query).then(function(collection){
+  models.Collection.findAll({include: [{
+					model: models.Discipline
+				}]}).then(function(collection){
   	return res.json(200, collection);	
   }).catch(function(err){
 	  handleError(res, err);
@@ -24,6 +26,15 @@ exports.show = function(req, res) {
   });
 };
 
+exports.showDiscipline = function(req, res) {
+  models.Collection.find(req.params.id).then(function(collection){
+  	return collection.getDiscipline(models, req.specifyuser)
+  }).then(function(discipline){
+  	return res.json(200, discipline);	
+  }).catch(function(err){
+	  handleError(res, err);
+  });
+};
 
 function handleError(res, err) {
   return res.send(500, err);

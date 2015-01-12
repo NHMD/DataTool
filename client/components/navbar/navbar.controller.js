@@ -25,9 +25,8 @@ angular.module('specifyDataCleanerApp')
       return route === $location.path();
     };
 
-		if($scope.isLoggedIn()){
-			$scope.collections = Collection.query();
-		}
+	Auth.isLoggedInAsync(function(){$scope.collections = Collection.query();});
+		
 	
 	
 //	$scope.collections = Collection.query();

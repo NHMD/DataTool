@@ -7,6 +7,7 @@ var router = express.Router();
 
 router.get('/', controller.index);
 router.get('/:id', controller.show);
+router.get('/:id/discipline', controller.showDiscipline);
 
 
 module.exports = router;
