@@ -7,6 +7,11 @@ angular.module('specifyDataCleanerApp')
 	  return $resource('/api/collections/:id', { id: '@collectionId' }, {
 	      update: {
 	        method: 'PUT' // this method issues a PUT request
-	      }
+	      },
+		  'getFromSpecifyuser': {
+		        method:'GET',
+		        url: '/api/specifyusers/me/collections',
+		        isArray: true
+		       }
 	    });
   });

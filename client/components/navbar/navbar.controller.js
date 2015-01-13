@@ -1,42 +1,50 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-  .controller('NavbarCtrl', function ($scope, $location, Auth, Collection, Discipline, Icons) {
-    $scope.menu = [{
-      'title': 'Home',
-      'link': '/'
-    },
-	{
-	      'title': 'Data sets',
-	      'link': '/datasets'
-	    }];
+	.controller('NavbarCtrl', function($rootScope, $scope, $location, Auth, Collection, Discipline, Icons) {
+		$scope.menu = [{
+			'title': 'Home',
+			'link': '/'
+		}, {
+			'title': 'Data sets',
+			'link': '/datasets'
+		}];
 
-    $scope.isCollapsed = true;
-    $scope.isLoggedIn = Auth.isLoggedIn;
-    $scope.isAdmin = Auth.isAdmin;
-    $scope.getCurrentUser = Auth.getCurrentUser;
+		$scope.isCollapsed = true;
+		$scope.isLoggedIn = Auth.isLoggedIn;
+		$scope.isAdmin = Auth.isAdmin;
+		$scope.getCurrentUser = Auth.getCurrentUser;
+		$scope.user;
+		$scope.logout = function() {
+			$scope.collections = undefined;
+			Auth.logout();
+			$location.path('/login');
+		};
 
-    $scope.logout = function() {
-      Auth.logout();
-      $location.path('/login');
-    };
+		$scope.isActive = function(route) {
+			return route === $location.path();
+		};
 
-    $scope.isActive = function(route) {
-      return route === $location.path();
-    };
+		$scope.getCurrentUser(function(user) {
+			$scope.user = user;
+			$scope.collections = Collection.getFromSpecifyuser();
+		});
 
-	Auth.isLoggedInAsync(function(){$scope.collections = Collection.query();});
-		
-	
-	
-//	$scope.collections = Collection.query();
-    $scope.selectedIcon = '';
-    
-     $scope.icons = [
-       {value: 'Gear', label: '<i class="fa fa-gear"></i> Gear'},
-       {value: 'Globe', label: '<i class="fa fa-globe"></i> Globe'},
-       {value: 'Heart', label: '<i class="fa fa-heart"></i> Heart'},
-       {value: 'Camera', label: '<i class="fa fa-camera"></i> Camera'}
-     ];
-	
-  });
+		$scope.$watch(Auth.isLoggedIn, function(newval, oldval) {
+
+				$scope.collections = Collection.getFromSpecifyuser();
+				$scope.collections.$promise.then(function() {
+					$rootScope.fields.selectedCollection = $scope.collections[0].collectionId;
+				});
+
+		})
+
+		$rootScope.fields = {};
+
+		$scope.getCollectionLabel = function(collection) {
+			var imgpath = Icons.discipline.get(collection.discipline.Type);
+			return '<img src="' + imgpath + '" class="specify-discipline-icon"> ' + collection.CollectionName;
+		};
+
+
+	});

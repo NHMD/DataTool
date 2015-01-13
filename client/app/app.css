@@ -39,5 +39,10 @@
 }
 
 ul.nav > li > button {
-	margin-top: 9px;
+	margin-top: 7px;
+	}
+img.specify-discipline-icon {
+	height: 24px;
+	width: 24px;
+	display: inline-block;
 	}

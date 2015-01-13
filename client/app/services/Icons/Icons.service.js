@@ -202,26 +202,26 @@ angular.module('specifyDataCleanerApp')
 		};
 
 		this.groups.discipline = {
-			"bird": "assets/images/specify/discipline/bird.png",
-			"bug": "assets/images/specify/discipline/bug.png",
-			"fish": "assets/images/specify/discipline/fish.png",
-			"frogs": "assets/images/specify/discipline/frog.png",
-			"invertpaleo": "assets/images/specify/discipline/paleo_invert.png",
-			"lizard": "assets/images/specify/discipline/lizard.png",
-			"lowerplants": "assets/images/specify/discipline/lower_plant.png",
-			"mammal": "assets/images/specify/discipline/mammal.png",
-			"paleobotany": "assets/images/specify/discipline/paleo_bot.png",
-			"plants": "assets/images/specify/discipline/flower.png",
-			"snake": "assets/images/specify/discipline/snake.png",
-			"spider": "assets/images/specify/discipline/spider.png",
-			"vertpaleo": "assets/images/specify/discipline/paleo_vert.png",
-			"invertebrate": "assets/images/specify/discipline/starfish.png",
-			"vascularplants": "assets/images/specify/discipline/flower.png",
-			"herpetology": "assets/images/specify/discipline/frog.png",
-			"insect": "assets/images/specify/discipline/bug.png",
-			"botany": "assets/images/specify/discipline/flower.png",
-			"vascplant": "assets/images/specify/discipline/flower.png",
-			"fungi": "assets/images/specify/discipline/lower_plant.png"
+			"bird": "assets/images/specify/disciplines/bird.png",
+			"bug": "assets/images/specify/disciplines/bug.png",
+			"fish": "assets/images/specify/disciplines/fish.png",
+			"frogs": "assets/images/specify/disciplines/frog.png",
+			"invertpaleo": "assets/images/specify/disciplines/paleo_invert.png",
+			"lizard": "assets/images/specify/disciplines/lizard.png",
+			"lowerplants": "assets/images/specify/disciplines/lower_plant.png",
+			"mammal": "assets/images/specify/disciplines/mammal.png",
+			"paleobotany": "assets/images/specify/disciplines/paleo_bot.png",
+			"plants": "assets/images/specify/disciplines/flower.png",
+			"snake": "assets/images/specify/disciplines/snake.png",
+			"spider": "assets/images/specify/disciplines/spider.png",
+			"vertpaleo": "assets/images/specify/disciplines/paleo_vert.png",
+			"invertebrate": "assets/images/specify/disciplines/starfish.png",
+			"vascularplants": "assets/images/specify/disciplines/flower.png",
+			"herpetology": "assets/images/specify/disciplines/frog.png",
+			"insect": "assets/images/specify/disciplines/bug.png",
+			"botany": "assets/images/specify/disciplines/flower.png",
+			"vascplant": "assets/images/specify/disciplines/flower.png",
+			"fungi": "assets/images/specify/disciplines/lower_plant.png"
 		};
 
 		this.groups.imgproc = {
