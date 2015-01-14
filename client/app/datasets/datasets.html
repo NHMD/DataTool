@@ -31,7 +31,7 @@
 		   	</thead>
 		   	<tbody>
 		        
-		   	<tr ng-repeat="row in rowCollection" ng-if="row !== undefined" >
+		   	<tr ng-repeat="row in rowCollection track by row.WorkbenchRowID" ng-if="row !== undefined" >
 				 <!-- form -->
 				<td style="white-space: nowrap" st-ratio="40">
 				       

@@ -8,8 +8,8 @@ angular.module('specifyDataCleanerApp')
 			
 			$scope.workbenches = Workbench.query();
 			$rootScope.$watch('fields.selectedCollection', function(newval, oldval){
-				console.log(newval.collectionId);
-				console.log(newval.discipline.disciplineId);
+				//console.log(newval.collectionId);
+				//console.log(newval.discipline.disciplineId);
 			})
 
 			$scope.$watch('selectedWorkbench', function(newval, oldval) {
