@@ -6,7 +6,7 @@ var _ = require('lodash');
 // Get list of taxons
 exports.index = function(req, res) {
 	var query = (req.query._query) ? {where: JSON.parse(req.query._query)} : undefined;
-
+	console.log(query);
   models.Taxon.findAll(query).then(function(taxon){
   	return res.json(200, taxon);	
   }).catch(function(err){

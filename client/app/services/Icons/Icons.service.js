@@ -6,28 +6,28 @@ angular.module('specifyDataCleanerApp')
 		var that = this;
 		this.datamodel = {
 			get: function(iconname) {
-				console.log(iconname);
+				
 				return that.groups.datamodel[iconname.toLowerCase()];
 			}
 		};
 
 		this.discipline = {
 			get: function(iconname) {
-				console.log(iconname);
+				
 				return that.groups.discipline[iconname.toLowerCase()];
 			}
 		};
 
 		this.imgproc = {
 			get: function(iconname) {
-				console.log(iconname);
+				
 				return that.groups.imgproc[iconname.toLowerCase()];
 			}
 		};
 
 		this.plugin = {
 			get: function(iconname) {
-				console.log(iconname);
+				
 				return that.groups.plugin[iconname.toLowerCase()];
 			}
 		};
@@ -35,7 +35,7 @@ angular.module('specifyDataCleanerApp')
 		this.
 		default = {
 			get: function(iconname) {
-				console.log(iconname);
+				
 				return that.groups.
 				default [iconname.toLowerCase()];
 			}

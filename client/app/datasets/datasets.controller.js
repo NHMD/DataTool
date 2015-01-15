@@ -1,17 +1,30 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-	.controller('DatasetsCtrl', ['$rootScope','$scope', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench', 'hotkeys', 'Icons',
-		function($rootScope, $scope, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons) {
+	.controller('DatasetsCtrl', ['$rootScope', '$scope', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench', 'hotkeys', 'Icons', 'Taxon',
+		function($rootScope, $scope, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons, Taxon) {
 
 			$scope.Icons = Icons;
-			
-			$scope.workbenches = Workbench.query();
-			$rootScope.$watch('fields.selectedCollection', function(newval, oldval){
-				//console.log(newval.collectionId);
-				//console.log(newval.discipline.disciplineId);
-			})
 
+			$scope.workbenches = Workbench.query();
+
+
+			$scope.selectedTaxon;
+			$scope.getTaxon = function(viewValue) {
+				var TaxonTreeDefID = ($rootScope.fields.selectedCollection !== undefined) ? $rootScope.fields.selectedCollection.discipline.TaxonTreeDefID : -1;
+				var params = {
+					_query: {
+						Name: { like : "%"+viewValue+"%"},
+						TaxonTreeDefID: { eq : TaxonTreeDefID}
+					}
+				};
+
+				return Taxon.query(params).$promise
+					.then(function(res) {
+						return res;
+					});
+			};
+			
 			$scope.$watch('selectedWorkbench', function(newval, oldval) {
 				if (newval && typeof newval === 'object' && newval !== oldval) {
 
@@ -108,19 +121,19 @@ angular.module('specifyDataCleanerApp')
 
 
 			};
-			
-			$scope.carryForward = function(rowNumber, workbenchTemplateMappingItem){
-				
-				if (!workbenchTemplateMappingItem.CarryForward){
+
+			$scope.carryForward = function(rowNumber, workbenchTemplateMappingItem) {
+
+				if (!workbenchTemplateMappingItem.CarryForward) {
 					return "";
-				} else if (workbenchTemplateMappingItem.CarryForward){
-					var forwardValue = $scope.mappedRows[$scope.mappedRows.length -1][workbenchTemplateMappingItem.WorkbenchTemplateMappingItemID].CellData;
+				} else if (workbenchTemplateMappingItem.CarryForward) {
+					var forwardValue = $scope.mappedRows[$scope.mappedRows.length - 1][workbenchTemplateMappingItem.WorkbenchTemplateMappingItemID].CellData;
 					return forwardValue;
 				};
-				
-				
+
+
 			};
-			
+
 			$scope.addRowToGrid = function() {
 				WorkbenchRow.save({
 					"WorkbenchID": $scope.selectedWorkbench.WorkbenchID
@@ -129,13 +142,13 @@ angular.module('specifyDataCleanerApp')
 					var row = {
 						"WorkbenchRowID": workbenchrow.WorkbenchRowID,
 						"RowNumber": workbenchrow.RowNumber,
-						"inserted" : true
+						"inserted": true
 					};
 					for (var i = 0; i < $scope.workbenchtemplatemappingitems.length; i++) {
 
 
 						row[$scope.workbenchtemplatemappingitems[i].WorkbenchTemplateMappingItemID] = new WorkbenchDataItem({
-							"CellData": $scope.carryForward(workbenchrow.RowNumber, $scope.workbenchtemplatemappingitems[i] ),
+							"CellData": $scope.carryForward(workbenchrow.RowNumber, $scope.workbenchtemplatemappingitems[i]),
 							"WorkbenchTemplateMappingItemID": $scope.workbenchtemplatemappingitems[i].WorkbenchTemplateMappingItemID,
 							"ValidationStatus": 0,
 							"WorkbenchRowID": workbenchrow.WorkbenchRowID,
@@ -145,7 +158,9 @@ angular.module('specifyDataCleanerApp')
 					};
 					$scope.mappedRows[workbenchrow.RowNumber] = row;
 					// had to use JQuery for this one....
-					$("tbody").animate({scrollTop: $("tbody tr:last").offset().top}, "slow");
+					$("tbody").animate({
+						scrollTop: $("tbody tr:last").offset().top
+					}, "slow");
 
 				});
 
@@ -156,13 +171,13 @@ angular.module('specifyDataCleanerApp')
 				// remove the mark that this row is "dirty"
 				delete row.inserted;
 			};
-			
-		 hotkeys.bindTo($scope)
-		    .add({
-		      combo: 'ctrl+n',
-		      description: 'Add row',
-		      callback: $scope.addRowToGrid
-		    })
+
+			hotkeys.bindTo($scope)
+				.add({
+					combo: 'ctrl+n',
+					description: 'Add row',
+					callback: $scope.addRowToGrid
+				})
 
 		}
 

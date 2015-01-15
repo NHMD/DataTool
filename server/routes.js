@@ -9,6 +9,7 @@ var errors = require('./components/errors');
 module.exports = function(app) {
 
 	// Insert routes below
+
 	//mysql
 	app.use('/api/spprincipals', require('./api/mysql/spprincipal'));
 	app.use('/api/disciplines', require('./api/mysql/discipline'));

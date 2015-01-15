@@ -28,13 +28,14 @@ angular.module('specifyDataCleanerApp')
 		$scope.getCurrentUser(function(user) {
 			$scope.user = user;
 			$scope.collections = Collection.getFromSpecifyuser();
+			
 		});
 
 		$scope.$watch(Auth.isLoggedIn, function(newval, oldval) {
-
+		
 				$scope.collections = Collection.getFromSpecifyuser();
 				$scope.collections.$promise.then(function() {
-					$rootScope.fields.selectedCollection = $scope.collections[0].collectionId;
+					$rootScope.fields.selectedCollection = $scope.collections[0];
 				});
 
 		})
