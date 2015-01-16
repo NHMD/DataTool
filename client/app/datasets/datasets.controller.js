@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-	.controller('DatasetsCtrl', ['$rootScope', '$scope', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench', 'hotkeys', 'Icons', 'Taxon',
-		function($rootScope, $scope, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons, Taxon) {
+	.controller('DatasetsCtrl', ['$rootScope', '$scope', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench', 'hotkeys', 'Icons', 'Taxon', 'TaxonTreeDefItem',
+		function($rootScope, $scope, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons, Taxon, TaxonTreeDefItem) {
 
 			$scope.Icons = Icons;
 
@@ -14,17 +14,19 @@ angular.module('specifyDataCleanerApp')
 				var TaxonTreeDefID = ($rootScope.fields.selectedCollection !== undefined) ? $rootScope.fields.selectedCollection.discipline.TaxonTreeDefID : -1;
 				var params = {
 					_query: {
-						Name: { like : "%"+viewValue+"%"},
-						TaxonTreeDefID: { eq : TaxonTreeDefID}
+						Name: {
+							like: viewValue + "%"
+						},
+						TaxonTreeDefID: {
+							eq: TaxonTreeDefID
+						}
 					}
 				};
 
-				return Taxon.query(params).$promise
-					.then(function(res) {
-						return res;
-					});
+				return Taxon.query(params).$promise;
+					
 			};
-			
+
 			$scope.$watch('selectedWorkbench', function(newval, oldval) {
 				if (newval && typeof newval === 'object' && newval !== oldval) {
 
@@ -51,10 +53,46 @@ angular.module('specifyDataCleanerApp')
 						});
 						*/
 						$scope.workbenchdataitems.$promise.then($scope.mapRows);
-
+						$scope.determinationworkbenchtemplatemappingitems = [];
 						$scope.getters = {};
+
+						$scope.isTaxonMapping = function(workbenchtemplatemappingitem) {
+							if (workbenchtemplatemappingitem.TableName !== "determination") {
+								return false;
+							};
+
+							var ranks = {
+								"life": true,
+								"kingdom": true,
+								"division": true,
+								"class": true,
+								"order": true,
+								"family": true,
+								"phylum": true,
+								"genus": true,
+								"species": true,
+								"subfamily": true,
+								"subgenus": true,
+								"subspecies": true,
+								"variety": true,
+								"subclass": true,
+								"superclass": true,
+								"suborder": true,
+								"superfamily": true,
+								"superorder": true
+							};
+						
+							var rank =	workbenchtemplatemappingitem.FieldName.substring(0, workbenchtemplatemappingitem.length-1);
+							
+							return (ranks[rank] === true) ? true : false;
+						};
+
 						$scope.workbenchtemplatemappingitems.$promise.then(function() {
+
 							angular.forEach($scope.workbenchtemplatemappingitems, function(elm) {
+								if ($scope.isTaxonMapping(elm)) {
+									$scope.determinationworkbenchtemplatemappingitems.push(elm);
+								};
 								$scope.getters[elm.FieldName] = function(row) {
 									return (row[elm.WorkbenchTemplateMappingItemID]) ? row[elm.WorkbenchTemplateMappingItemID].CellData : "";
 								}
@@ -170,6 +208,10 @@ angular.module('specifyDataCleanerApp')
 			$scope.saveRow = function(row) {
 				// remove the mark that this row is "dirty"
 				delete row.inserted;
+			};
+
+			$scope.addTaxonToRow = function(row) {
+				var test;
 			};
 
 			hotkeys.bindTo($scope)

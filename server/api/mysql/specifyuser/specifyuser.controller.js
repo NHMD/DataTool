@@ -47,7 +47,13 @@ exports.indexCollections = function(req, res) {
 			include: [{
 				model: models.Collection,
 				include: [{
-					model: models.Discipline
+					model: models.Discipline,
+					include: [{
+						model: models.Taxontreedef,
+						include: [{
+							model: models.Taxontreedefitem
+						}]
+					}]
 				}]
 			}]
 		}]

@@ -2,8 +2,8 @@
 
 
 module.exports = function(sequelize, DataTypes) {
-  var Taxontreedefitem = sequelize.define("taxontreedefitem", {
-	TaxontreedefitemID: {
+  var Taxontreedef = sequelize.define("taxontreedef", {
+	TaxonTreeDefID: {
 		type: DataTypes.INTEGER,
 		primaryKey: true,
 		autoIncrement:true, 
@@ -21,48 +21,16 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER(11),
       allowNull: true,
     },
-    FormatToken: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    FullNameSeparator: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    IsEnforced: {
-      type: DataTypes.BOOLEAN,
-      allowNull: true,
-    },
-    IsInFullName: {
-      type: DataTypes.BOOLEAN,
+    FullNameDirection: {
+      type: DataTypes.INTEGER(11),
       allowNull: true,
     },
     Name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    RankID: {
-      type: DataTypes.INTEGER(11),
-      allowNull: false,
-    },
     Remarks: {
-      type: DataTypes.TEXT,
-      allowNull: true,
-    },
-    TextAfter: {
       type: DataTypes.STRING,
-      allowNull: true,
-    },
-    TextBefore: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    Title: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    ParentItemID: {
-      type: DataTypes.INTEGER(11),
       allowNull: true,
     },
     ModifiedByAgentID: {
@@ -72,21 +40,23 @@ module.exports = function(sequelize, DataTypes) {
     CreatedByAgentID: {
       type: DataTypes.INTEGER(11),
       allowNull: true,
-    },
-    TaxonTreeDefID: {
-      type: DataTypes.INTEGER(11),
-      allowNull: false,
     }
    
 }, {
-	tableName: 'taxontreedefitem',
+	tableName: 'taxontreedef',
 	timestamps: false,
 	freezeTableName: true,
 	classMethods: {
 		
 		associate: function(models) {
-		
-
+         
+		  
+          models.Discipline
+  		  .belongsTo(models.Taxontreedef, {foreignKey : 'TaxonTreeDefID'});
+		  
+     
+      models.Taxontreedef
+		  .hasMany(models.Taxontreedefitem, {foreignKey : 'TaxonTreeDefID'}); 
 		},
 	authorize: function(models, user) {
 		return sequelize.Promise.resolve("Access granted");
@@ -103,6 +73,6 @@ module.exports = function(sequelize, DataTypes) {
 	  
 	}
 });
-return Taxontreedefitem;
+return Taxontreedef;
 };
 

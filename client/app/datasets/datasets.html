@@ -37,7 +37,7 @@
 				 <!-- form -->
 				<td style="white-space: nowrap" st-ratio="40">
 				       
-				        <form editable-form name="rowform" onbeforesave="saveRow(row)" ng-show="rowform.$visible" class="form-buttons form-inline" shown="row.inserted === true">
+				        <form editable-form name="rowform" onbeforesave="saveRow(row)" onaftersave="addTaxonToRow(row)" ng-show="rowform.$visible" class="form-buttons form-inline" shown="row.inserted === true">
 				          <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-primary">
 				            save
 				          </button>
