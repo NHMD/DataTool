@@ -9,7 +9,6 @@ angular.module('specifyDataCleanerApp')
 			$scope.workbenches = Workbench.query();
 
 
-			$scope.selectedTaxon;
 			$scope.getTaxon = function(viewValue) {
 				var TaxonTreeDefID = ($rootScope.fields.selectedCollection !== undefined) ? $rootScope.fields.selectedCollection.discipline.TaxonTreeDefID : -1;
 				var params = {
@@ -27,6 +26,25 @@ angular.module('specifyDataCleanerApp')
 					
 			};
 
+			$rootScope.$watch('fields.selectedCollection', function(newval, oldval) {
+				if(newval !== undefined){
+					$scope.taxonRanks = {};
+					var taxontreedefitems = $rootScope.fields.selectedCollection.discipline.taxontreedef.taxontreedefitems;
+					for (var i=0; i< taxontreedefitems.length; i++){
+						$scope.taxonRanks[taxontreedefitems[i].Name.toLowerCase()] = taxontreedefitems[i].RankID;
+					}
+				}
+			});
+			
+			$scope.$watch('selectedTaxon', function(newval, oldval) {
+				if(newval !== undefined && newval.constructor.name === "Resource"){
+					$scope.taxonParent = Taxon.getParents({id:$scope.selectedTaxon.TaxonID });
+				}
+				
+				
+			});
+			
+			
 			$scope.$watch('selectedWorkbench', function(newval, oldval) {
 				if (newval && typeof newval === 'object' && newval !== oldval) {
 
@@ -53,51 +71,22 @@ angular.module('specifyDataCleanerApp')
 						});
 						*/
 						$scope.workbenchdataitems.$promise.then($scope.mapRows);
-						$scope.determinationworkbenchtemplatemappingitems = [];
+
 						$scope.getters = {};
-
-						$scope.isTaxonMapping = function(workbenchtemplatemappingitem) {
-							if (workbenchtemplatemappingitem.TableName !== "determination") {
-								return false;
-							};
-
-							var ranks = {
-								"life": true,
-								"kingdom": true,
-								"division": true,
-								"class": true,
-								"order": true,
-								"family": true,
-								"phylum": true,
-								"genus": true,
-								"species": true,
-								"subfamily": true,
-								"subgenus": true,
-								"subspecies": true,
-								"variety": true,
-								"subclass": true,
-								"superclass": true,
-								"suborder": true,
-								"superfamily": true,
-								"superorder": true
-							};
-						
-							var rank =	workbenchtemplatemappingitem.FieldName.substring(0, workbenchtemplatemappingitem.length-1);
-							
-							return (ranks[rank] === true) ? true : false;
-						};
-
-						$scope.workbenchtemplatemappingitems.$promise.then(function() {
+						$scope.taxonMappings = {};
 
 							angular.forEach($scope.workbenchtemplatemappingitems, function(elm) {
-								if ($scope.isTaxonMapping(elm)) {
-									$scope.determinationworkbenchtemplatemappingitems.push(elm);
+								
+								var taxonname = elm.FieldName.toLowerCase().substring(0, elm.FieldName.length -1)
+								if($scope.taxonRanks[taxonname]){
+									$scope.taxonMappings[elm.WorkbenchTemplateMappingItemID] = $scope.taxonRanks[taxonname];
 								};
+
 								$scope.getters[elm.FieldName] = function(row) {
 									return (row[elm.WorkbenchTemplateMappingItemID]) ? row[elm.WorkbenchTemplateMappingItemID].CellData : "";
 								}
 							});
-						});
+				
 					});
 
 
@@ -211,7 +200,31 @@ angular.module('specifyDataCleanerApp')
 			};
 
 			$scope.addTaxonToRow = function(row) {
-				var test;
+				
+				if($scope.selectedTaxon === undefined || $scope.selectedTaxon.constructor.name !== 'Resource' ) return;
+				
+				for (var key in row) {
+				   if (row.hasOwnProperty(key) && $scope.taxonMappings[key] !== undefined ) {
+					   if ($scope.selectedTaxon.RankID === $scope.taxonMappings[key]){
+					
+							 row[key].CellData = $scope.selectedTaxon.Name;
+   						
+   					}
+					else if($scope.taxonMappings[key] !== undefined){
+						var p = $scope.taxonParent;
+						while(p !== null){
+	 					   if (p.RankID === $scope.taxonMappings[key]){
+					
+	 							 row[key].CellData = p.Name;
+								 break;
+   						
+	    					};
+							p = p.Parent;
+						}
+					}
+				   }
+				}			
+				
 			};
 
 			hotkeys.bindTo($scope)

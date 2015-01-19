@@ -7,7 +7,15 @@ angular.module('specifyDataCleanerApp')
 	  return $resource('/api/taxons/:id', { id: '@TaxonID' }, {
 	      update: {
 	        method: 'PUT' // this method issues a PUT request
-	      }
+	      },
+		  'getParents': {
+		        method:'GET',
+		        params: {
+		         id: '@TaxonID'
+		        },
+		        url: '/api/taxons/:id/parents',
+		        isArray: false
+		       }
 	    });
    
   });

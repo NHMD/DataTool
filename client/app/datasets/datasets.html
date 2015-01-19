@@ -13,7 +13,7 @@
   							limit="20"
   							bs-typeahead="workbenches">
 							
-					<input type="text" class="form-control" ng-model="selectedTaxon" ng-options="taxon as taxon.FullName for taxon in getTaxon($viewValue)" placeholder="Enter taxon name" minLength="3" bs-typeahead>
+					<input type="text" class="form-control" ng-model="selectedTaxon" ng-model-options="{allowInvalid:true}" ng-options="taxon as taxon.FullName for taxon in getTaxon($viewValue)" placeholder="Enter taxon name" minLength="3" bs-typeahead>
   				</div>
   			</form>
 			  <h3 ng-show="mappedRows.length">Showing data for workbench: {{ selectedWorkbench.Name }} ({{mappedRows.length}} rows)</h3>

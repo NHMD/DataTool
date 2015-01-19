@@ -40,7 +40,9 @@ angular.module('specifyDataCleanerApp')
 
 		})
 
-		$rootScope.fields = {};
+		$rootScope.fields = {
+			selectedCollection: undefined
+		};
 
 		$scope.getCollectionLabel = function(collection) {
 			var imgpath = Icons.discipline.get(collection.discipline.Type);

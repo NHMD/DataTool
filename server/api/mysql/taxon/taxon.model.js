@@ -245,11 +245,14 @@ module.exports = function(sequelize, DataTypes) {
 	classMethods: {
 		
 		associate: function(models) {
-			/*
-			models.Taxontreedefitemrow
-				.belongsTo(models.Taxontreedefitem, {
-					foreignKey: "TaxontreedefitemID"
+		
+			models.Taxon
+				.belongsTo(models.Taxon, {
+					foreignKey: "ParentID",
+					as: "Parent"
 				});
+			
+				/*
 			models.Taxontreedefitem
 				.hasMany(models.Taxontreedefitemrow, {
 					foreignKey: "TaxontreedefitemID"
@@ -258,7 +261,8 @@ module.exports = function(sequelize, DataTypes) {
 				.hasOne(models.Taxontreedefitemtemplate, {
 					foreignKey: "TaxontreedefitemTemplateID"
 				});
-			*/
+				*/
+		
 		},
 	authorize: function(models, user) {
 		return sequelize.Promise.resolve("Access granted");
