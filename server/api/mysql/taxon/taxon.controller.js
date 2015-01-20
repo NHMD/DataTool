@@ -1,14 +1,11 @@
 'use strict';
 var models = require('../');
 var _ = require('lodash');
-//var Taxon = require('./taxon.model');
+var qp = require('../nestedQueryParser');
 
 // Get list of taxons
 exports.index = function(req, res) {
-	var query = (req.query._query) ? {
-		where: JSON.parse(req.query._query)
-	} : undefined;
-	console.log(query);
+	var query = (req.query) ? qp.parseQueryString(req.query) : undefined;
 	models.Taxon.findAll(query).then(function(taxon) {
 		return res.json(200, taxon);
 	}).

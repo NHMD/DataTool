@@ -1,10 +1,10 @@
 'use strict';
 var models = require('../');
-//var Workbenchdataitem = require('./workbenchdataitem.model');
+var qp = require('../nestedQueryParser');
 
 // Get list of workbenchdataitems
 exports.index = function(req, res) {
-	var query = (req.query._query) ? {where: JSON.parse(req.query._query)} : undefined;
+	var query = (req.query) ? qp.parseQueryString(req.query) : undefined;
   models.Workbenchdataitem.findAll(query).then(function(workbenchdataitem){
   	return res.json(200, workbenchdataitem);	
   }).catch(function(err){

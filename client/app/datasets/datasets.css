@@ -89,7 +89,7 @@
 
 }
 
-table {
+table:not(.modal-taxon-table) {
 	box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	display: flex;
@@ -115,7 +115,7 @@ tbody {
 	 min-height: 0px;
 }
 
-thead > tr, tbody > tr, tfoot > tr {
+thead > tr:not(.modal-taxon-table), tbody > tr:not(.modal-taxon-table), tfoot > tr:not(.modal-taxon-table) {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: nowrap;
@@ -126,7 +126,7 @@ thead, tfoot {
 	flex-shrink: 0;
 }
 
-th, tbody td {
+th, tbody td:not(.modal-taxon-table) {
 	width: 20%; /* this can vary */
 	overflow-x: hidden;
 	text-overflow: ellipsis;
@@ -144,8 +144,18 @@ tfoot td {
 	padding: 0px;
 }
 
-img.specify-header-icon {
-	height: 16px;
-	width: 16px;
-	display:inline-block;
+
+img.modal-icon {
+	float: left;
+	margin-right: 8px;
 }
+
+table.modal-taxon-table > tr > td:first-child {
+	
+	width: 25%;
+}
+
+input.taxon-typeahead {
+	width: 80% !important;
+}
+

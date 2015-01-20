@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-	.controller('DatasetsCtrl', ['$rootScope', '$scope', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench', 'hotkeys', 'Icons', 'Taxon', 'TaxonTreeDefItem',
-		function($rootScope, $scope, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons, Taxon, TaxonTreeDefItem) {
+	.controller('DatasetsCtrl', ['$rootScope', '$scope', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench', 'hotkeys', 'Icons', 'Taxon', 'TaxonTreeDefItem','$modal',
+		function($rootScope, $scope, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons, Taxon, TaxonTreeDefItem, $modal) {
 
 			$scope.Icons = Icons;
 
@@ -10,16 +10,20 @@ angular.module('specifyDataCleanerApp')
 
 
 			$scope.getTaxon = function(viewValue) {
-				var TaxonTreeDefID = ($rootScope.fields.selectedCollection !== undefined) ? $rootScope.fields.selectedCollection.discipline.TaxonTreeDefID : -1;
+				if($rootScope.fields.selectedCollection === undefined) return "";
+				var TaxonTreeDefID = $rootScope.fields.selectedCollection.discipline.TaxonTreeDefID;
+				var value = (viewValue.constructor.name === 'Resource')? viewValue.Name : viewValue;
+				
 				var params = {
-					_query: {
+					where: {
 						Name: {
-							like: viewValue + "%"
+							like: value + "%"
 						},
 						TaxonTreeDefID: {
 							eq: TaxonTreeDefID
 						}
-					}
+					},
+					limit: 30
 				};
 
 				return Taxon.query(params).$promise;
@@ -36,9 +40,10 @@ angular.module('specifyDataCleanerApp')
 				}
 			});
 			
-			$scope.$watch('selectedTaxon', function(newval, oldval) {
+			$scope.$watch('modal.selectedTaxon', function(newval, oldval) {
+				console.log(newval);
 				if(newval !== undefined && newval.constructor.name === "Resource"){
-					$scope.taxonParent = Taxon.getParents({id:$scope.selectedTaxon.TaxonID });
+					$scope.taxonParent = Taxon.getParents({id:$scope.modal.selectedTaxon.TaxonID });
 				}
 				
 				
@@ -198,16 +203,24 @@ angular.module('specifyDataCleanerApp')
 				// remove the mark that this row is "dirty"
 				delete row.inserted;
 			};
-
+			$scope.addTaxonToSelectedRows = function(){
+				for(var i=0; i< $scope.rowCollection.length; i++){
+					
+					if($scope.rowCollection[i].isSelected){
+						$scope.addTaxonToRow($scope.rowCollection[i]); 
+					}
+				}
+			};
 			$scope.addTaxonToRow = function(row) {
 				
-				if($scope.selectedTaxon === undefined || $scope.selectedTaxon.constructor.name !== 'Resource' ) return;
+				if($scope.modal.selectedTaxon === undefined || $scope.modal.selectedTaxon.constructor.name !== 'Resource' ) return;
 				
 				for (var key in row) {
 				   if (row.hasOwnProperty(key) && $scope.taxonMappings[key] !== undefined ) {
-					   if ($scope.selectedTaxon.RankID === $scope.taxonMappings[key]){
+					   if ($scope.modal.selectedTaxon.RankID === $scope.taxonMappings[key]){
 					
-							 row[key].CellData = $scope.selectedTaxon.Name;
+							 row[key].CellData = $scope.modal.selectedTaxon.Name;
+							 $scope.createOrUpdateWorkBenchDataItem(row, row[key], {WorkbenchTemplateMappingItemID: key});
    						
    					}
 					else if($scope.taxonMappings[key] !== undefined){
@@ -216,6 +229,7 @@ angular.module('specifyDataCleanerApp')
 	 					   if (p.RankID === $scope.taxonMappings[key]){
 					
 	 							 row[key].CellData = p.Name;
+								  $scope.createOrUpdateWorkBenchDataItem(row, row[key], {WorkbenchTemplateMappingItemID: key});
 								 break;
    						
 	    					};
@@ -226,7 +240,28 @@ angular.module('specifyDataCleanerApp')
 				}			
 				
 			};
-
+			
+			$scope.getTaxonRankNameFromRankID = function(rankId){
+					
+				for(var key in $scope.taxonRanks) { 
+					if ($scope.taxonRanks[key] === rankId){
+						return key;
+					}
+				};
+				return "";
+			};
+			$scope.resetTaxon = function(){
+				$scope.modal.selectedTaxon = undefined;
+			};
+			
+			$scope.modal = {
+			  selectedTaxon: $scope.selectedTaxon,
+			  title: "Taxon browser",
+			  content: "Hello Modal<br />This is a multiline message!",
+				
+			};
+			
+			
 			hotkeys.bindTo($scope)
 				.add({
 					combo: 'ctrl+n',

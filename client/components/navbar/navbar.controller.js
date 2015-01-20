@@ -46,7 +46,7 @@ angular.module('specifyDataCleanerApp')
 
 		$scope.getCollectionLabel = function(collection) {
 			var imgpath = Icons.discipline.get(collection.discipline.Type);
-			return '<img src="' + imgpath + '" class="specify-discipline-icon"> ' + collection.CollectionName;
+			return '<img src="' + imgpath + '" class="specify-icon-24"> ' + collection.CollectionName;
 		};
 
 
