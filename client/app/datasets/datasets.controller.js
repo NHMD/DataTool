@@ -1,55 +1,14 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-	.controller('DatasetsCtrl', ['$rootScope', '$scope', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench', 'hotkeys', 'Icons', 'Taxon', 'TaxonTreeDefItem','$modal',
-		function($rootScope, $scope, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons, Taxon, TaxonTreeDefItem, $modal) {
+	.controller('DatasetsCtrl', ['$rootScope', '$scope', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench', 'hotkeys', 'Icons', 'TaxonTreeDefItem', 'TaxonBrowserService',
+		function($rootScope, $scope, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons, TaxonTreeDefItem, TaxonBrowserService) {
 
 			$scope.Icons = Icons;
 
 			$scope.workbenches = Workbench.query();
 
 
-			$scope.getTaxon = function(viewValue) {
-				if($rootScope.fields.selectedCollection === undefined) return "";
-				var TaxonTreeDefID = $rootScope.fields.selectedCollection.discipline.TaxonTreeDefID;
-				var value = (viewValue.constructor.name === 'Resource')? viewValue.Name : viewValue;
-				
-				var params = {
-					where: {
-						Name: {
-							like: value + "%"
-						},
-						TaxonTreeDefID: {
-							eq: TaxonTreeDefID
-						}
-					},
-					limit: 30
-				};
-
-				return Taxon.query(params).$promise;
-					
-			};
-
-			$rootScope.$watch('fields.selectedCollection', function(newval, oldval) {
-				if(newval !== undefined){
-					$scope.taxonRanks = {};
-					var taxontreedefitems = $rootScope.fields.selectedCollection.discipline.taxontreedef.taxontreedefitems;
-					for (var i=0; i< taxontreedefitems.length; i++){
-						$scope.taxonRanks[taxontreedefitems[i].Name.toLowerCase()] = taxontreedefitems[i].RankID;
-					}
-				}
-			});
-			
-			$scope.$watch('modal.selectedTaxon', function(newval, oldval) {
-				console.log(newval);
-				if(newval !== undefined && newval.constructor.name === "Resource"){
-					$scope.taxonParent = Taxon.getParents({id:$scope.modal.selectedTaxon.TaxonID });
-				}
-				
-				
-			});
-			
-			
 			$scope.$watch('selectedWorkbench', function(newval, oldval) {
 				if (newval && typeof newval === 'object' && newval !== oldval) {
 
@@ -67,31 +26,26 @@ angular.module('specifyDataCleanerApp')
 							"id": $scope.selectedWorkbench.WorkbenchID
 						});
 
-						/*
-						$scope.workbenchdataitems = WorkbenchDataItem.query({
-							_query: {
-								WorkbenchTemplateMappingItemID: { in : WorkbenchTemplateMappingItemIDs
-								}
-							}
-						});
-						*/
-						$scope.workbenchdataitems.$promise.then($scope.mapRows);
 
+						$scope.workbenchdataitems.$promise.then($scope.mapRows);
+						
+						// getters are used for sorting
 						$scope.getters = {};
+						// this dataset's Workbenchtemplatemappings for taxonomy
 						$scope.taxonMappings = {};
 
-							angular.forEach($scope.workbenchtemplatemappingitems, function(elm) {
-								
-								var taxonname = elm.FieldName.toLowerCase().substring(0, elm.FieldName.length -1)
-								if($scope.taxonRanks[taxonname]){
-									$scope.taxonMappings[elm.WorkbenchTemplateMappingItemID] = $scope.taxonRanks[taxonname];
-								};
+						angular.forEach($scope.workbenchtemplatemappingitems, function(elm) {
 
-								$scope.getters[elm.FieldName] = function(row) {
-									return (row[elm.WorkbenchTemplateMappingItemID]) ? row[elm.WorkbenchTemplateMappingItemID].CellData : "";
-								}
-							});
-				
+							var taxonname = elm.FieldName.toLowerCase().substring(0, elm.FieldName.length - 1)
+							if (TaxonBrowserService.taxonRanks[taxonname]) {
+								$scope.taxonMappings[elm.WorkbenchTemplateMappingItemID] = TaxonBrowserService.taxonRanks[taxonname];
+							};
+
+							$scope.getters[elm.FieldName] = function(row) {
+								return (row[elm.WorkbenchTemplateMappingItemID]) ? row[elm.WorkbenchTemplateMappingItemID].CellData : "";
+							}
+						});
+
 					});
 
 
@@ -203,65 +157,51 @@ angular.module('specifyDataCleanerApp')
 				// remove the mark that this row is "dirty"
 				delete row.inserted;
 			};
-			$scope.addTaxonToSelectedRows = function(){
-				for(var i=0; i< $scope.rowCollection.length; i++){
-					
-					if($scope.rowCollection[i].isSelected){
-						$scope.addTaxonToRow($scope.rowCollection[i]); 
+			$scope.addTaxonToSelectedRows = function() {
+				for (var i = 0; i < $scope.rowCollection.length; i++) {
+
+					if ($scope.rowCollection[i] !== undefined && $scope.rowCollection[i].isSelected) {
+						$scope.addTaxonToRow($scope.rowCollection[i]);
 					}
 				}
 			};
+			// tell the TaxonBrowserService to add selected taxon to the selected rows when selection is done
+			TaxonBrowserService.selectCallbacks.push($scope.addTaxonToSelectedRows);
+			
 			$scope.addTaxonToRow = function(row) {
-				
-				if($scope.modal.selectedTaxon === undefined || $scope.modal.selectedTaxon.constructor.name !== 'Resource' ) return;
-				
+
+				if (TaxonBrowserService.selectedTaxon === undefined || TaxonBrowserService.selectedTaxon.constructor.name !== 'Resource') return;
+
 				for (var key in row) {
-				   if (row.hasOwnProperty(key) && $scope.taxonMappings[key] !== undefined ) {
-					   if ($scope.modal.selectedTaxon.RankID === $scope.taxonMappings[key]){
-					
-							 row[key].CellData = $scope.modal.selectedTaxon.Name;
-							 $scope.createOrUpdateWorkBenchDataItem(row, row[key], {WorkbenchTemplateMappingItemID: key});
-   						
-   					}
-					else if($scope.taxonMappings[key] !== undefined){
-						var p = $scope.taxonParent;
-						while(p !== null){
-	 					   if (p.RankID === $scope.taxonMappings[key]){
-					
-	 							 row[key].CellData = p.Name;
-								  $scope.createOrUpdateWorkBenchDataItem(row, row[key], {WorkbenchTemplateMappingItemID: key});
-								 break;
-   						
-	    					};
-							p = p.Parent;
+					if (row.hasOwnProperty(key) && $scope.taxonMappings[key] !== undefined) {
+						if (TaxonBrowserService.selectedTaxon.RankID === $scope.taxonMappings[key]) {
+
+							row[key].CellData = TaxonBrowserService.selectedTaxon.Name;
+							$scope.createOrUpdateWorkBenchDataItem(row, row[key], {
+								WorkbenchTemplateMappingItemID: key
+							});
+
+						} else if ($scope.taxonMappings[key] !== undefined) {
+							var p = TaxonBrowserService.taxonParent;
+							while (p !== null) {
+								if (p.RankID === $scope.taxonMappings[key]) {
+
+									row[key].CellData = p.Name;
+									$scope.createOrUpdateWorkBenchDataItem(row, row[key], {
+										WorkbenchTemplateMappingItemID: key
+									});
+									break;
+
+								};
+								p = p.Parent;
+							}
 						}
 					}
-				   }
-				}			
-				
+				}
+
 			};
-			
-			$scope.getTaxonRankNameFromRankID = function(rankId){
-					
-				for(var key in $scope.taxonRanks) { 
-					if ($scope.taxonRanks[key] === rankId){
-						return key;
-					}
-				};
-				return "";
-			};
-			$scope.resetTaxon = function(){
-				$scope.modal.selectedTaxon = undefined;
-			};
-			
-			$scope.modal = {
-			  selectedTaxon: $scope.selectedTaxon,
-			  title: "Taxon browser",
-			  content: "Hello Modal<br />This is a multiline message!",
-				
-			};
-			
-			
+
+
 			hotkeys.bindTo($scope)
 				.add({
 					combo: 'ctrl+n',

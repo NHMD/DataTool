@@ -1,0 +1,35 @@
+<div class="modal ng-scope top am-fade-and-slide-top" tabindex="-1" role="dialog" style="display: block;">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			
+			<div class="modal-header" ng-show="title"><button type="button" class="close" ng-click="resetTaxon();$hide()">×</button>
+				<img ng-src="{{Icons.datamodel.get('taxon')}}" class="modal-icon"> <h4 class="modal-title" ng-bind-html="title">Taxon browser</h4></div>
+				<div class="modal-body" ng-show="content">
+					<form>
+						<input type="text" class="form-control taxon-typeahead" ng-model="TaxonBrowserService.selectedTaxon" ng-model-options="{allowInvalid:true}" ng-options="taxon as taxon.FullName for taxon in getTaxon($viewValue)" placeholder="Enter taxon name" minLength="3" bs-typeahead>
+					</form>
+					<br>
+					<table ng-show="TaxonBrowserService.selectedTaxon !== undefined && TaxonBrowserService.selectedTaxon.constructor.name === 'Resource'" class="table modal-taxon-table">
+
+					  <tr class="modal-taxon-table"><td class="modal-taxon-table">Full taxon name:</td><td class="modal-taxon-table">{{TaxonBrowserService.selectedTaxon.FullName}}</td></tr>
+					  <tr class="modal-taxon-table"><td class="modal-taxon-table">Epithet :</td><td class="modal-taxon-table">{{TaxonBrowserService.selectedTaxon.Name}}</td></tr>
+					  <tr class="modal-taxon-table"><td class="modal-taxon-table">Author(s):</td><td class="modal-taxon-table"><i>{{TaxonBrowserService.selectedTaxon.Author}}</i></td></tr>
+					  <tr ng-show="TaxonBrowserService.selectedTaxon !== undefined && TaxonBrowserService.selectedTaxon.constructor.name === 'Resource'" class="modal-taxon-table"><td class="modal-taxon-table">Taxon rank:</td><td class="modal-taxon-table">{{getTaxonRankNameFromRankID(TaxonBrowserService.selectedTaxon.RankID)}}</td></tr>
+				
+					</table>
+				<!--	<p ng-bind-html="content">{{modal.content}}</p>
+					<pre>2 + 3 = 5</pre>
+					<h4>Popover in a modal</h4>
+					<p>This <a href="#" role="button" class="btn btn-default popover-test ng-scope" data-title="A Title" data-content="And here's some amazing content. It's very engaging. right?" bs-popover="">button</a> should trigger a popover on click.</p>
+					<h4>Tooltips in a modal</h4><p><a href="#" class="tooltip-test ng-scope" data-title="Tooltip" bs-tooltip="">This link</a> and <a href="#" class="tooltip-test ng-scope" data-title="Tooltip" bs-tooltip="">that link</a> should have tooltips on hover.</p>
+				</div>-->
+				<div class="modal-footer"><div class="col-md-6 taxon-footer-txt"><small class="text-muted">ctrl+x : close and select taxon <br> ctrl+z : close and discard taxon</small>
+				</div>
+					<div class="col-md-6">
+					<button type="button" class="btn btn-danger" ng-click="resetTaxon(); $hide()"> <i class="fa fa-times"></i> Don't use</button> 
+					<button type="button" class="btn btn-success" ng-click="TaxonBrowserService.taxonSelected(); $hide()"><i class="fa fa-check"></i> Use taxon</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>

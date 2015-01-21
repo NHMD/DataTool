@@ -5,6 +5,6 @@ angular.module('specifyDataCleanerApp')
     $routeProvider
       .when('/datasets', {
         templateUrl: 'app/datasets/datasets.html',
-        controller: 'DatasetsCtrl'
+        controller: 'DatasetsCtrl',
       });
   });

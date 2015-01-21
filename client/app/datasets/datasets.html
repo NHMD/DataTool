@@ -2,25 +2,34 @@
         <div class="row main-content">
 			
           <div class="col-lg-12 col-md-12">
-  			<form class="form-inline" role="form">
-  	  			<div class="form-group">
-  				    <label>Dataset:
-  				    <input type="text" 
-  							class="form-control" 
-  							ng-model="selectedWorkbench" 
-  							ng-options="wb.Name for wb in workbenches" 
-  							placeholder="Find dataset" 
-  							limit="20"
-  							bs-typeahead="workbenches">
-							
-					<!-- You can use a custom html template with the `data-template` attr -->
-					<button type="button" class="btn btn-default" data-animation="am-fade-and-slide-top" data-template="/app/datasets/taxonmodal.tpl.html" bs-modal="modal"><img ng-src="{{Icons.datamodel.get('taxon')}}" class="specify-icon-24"> Taxon browser
-	
-					</button>
-  				</div>
-  			</form>
-			  <h3 ng-show="mappedRows.length">Showing dataset: {{ selectedWorkbench.Name }} ({{mappedRows.length}} rows)</h3>
-			  <h3 ng-show="selectedWorkbench && !mappedRows.length"><i class="fa fa-spinner fa-spin"></i> Fetching data...</h3>
+			<div class="col-md-3">
+	  			<form class="form-inline" role="form">
+	  	  			<div class="form-group">
+	  				    <label>Dataset:
+	  				    <input type="text" 
+	  							class="form-control" 
+	  							ng-model="selectedWorkbench" 
+	  							ng-options="wb.Name for wb in workbenches" 
+	  							placeholder="Find dataset" 
+	  							limit="20"
+	  							bs-typeahead="workbenches"></label>
+					
+	  				</div>
+	  			</form>
+			</div>
+				<!-- Start Taxon browser controller -->		
+				<div ng-controller="TaxonbrowserCtrl" class="col-md-2">
+					
+				<button type="button" class="btn btn-default"  ng-click="taxonModal.show()"><img ng-src="{{Icons.datamodel.get('taxon')}}" class="specify-icon-24"> Taxon browser
+
+				</button>
+			</div>
+			<!-- End Taxon browser controller -->
+			<div class="col-md-4">
+			</div>
+  			
+			  <h3 class="col-md-12" ng-show="mappedRows.length">Showing dataset: {{ selectedWorkbench.Name }} ({{mappedRows.length}} rows)</h3>
+			  <h3 class="col-md-12" ng-show="selectedWorkbench && !mappedRows.length"><i class="fa fa-spinner fa-spin"></i> Fetching data...</h3>
 
 		   <table st-persist="tableStateWorkbench_{{selectedWorkbench.WorkbenchID}}" ng-show="workbenchtemplatemappingitems"  st-table="rowCollection" st-safe-src="mappedRows" class="table table-striped" >
 		   	<thead>
