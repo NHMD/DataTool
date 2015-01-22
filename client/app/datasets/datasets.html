@@ -17,16 +17,22 @@
 	  				</div>
 	  			</form>
 			</div>
+			<div class="col-md-2">
 				<!-- Start Taxon browser controller -->		
-				<div ng-controller="TaxonbrowserCtrl" class="col-md-2">
+				<div ng-controller="TaxonbrowserCtrl" >
 					
-				<button type="button" class="btn btn-default"  ng-click="taxonModal.show()"><img ng-src="{{Icons.datamodel.get('taxon')}}" class="specify-icon-24"> Taxon browser
+				<button type="button" class="btn btn-default"  ng-click="taxonModal.show()"><img ng-src="{{Icons.datamodel.get('taxon')}}" class="specify-icon-16"> Taxon browser
 
 				</button>
 			</div>
 			<!-- End Taxon browser controller -->
+			</div>
 			<div class="col-md-4">
-				<button type="button" class="btn btn-default"  ng-click="carryForwardModal.show()"><img ng-src="{{Icons.default.get('carryforward20x20')}}" class="specify-icon-24"> Carry forward
+				<button type="button" class="btn btn-default"  ng-click="carryForwardModal.show()"  ng-show="workbenchtemplatemappingitems"><img ng-src="{{Icons.default.get('carryforward20x20')}}" class="specify-icon-16"> Carry forward
+
+				</button>
+				
+				<button type="button" class="btn btn-default"  ng-click="showcolumnsModal.show()"  ng-show="workbenchtemplatemappingitems"><i class="fa fa-eye-slash fa-lg"></i> Hide columns
 
 				</button>
 			</div>
@@ -41,7 +47,7 @@
 						</th></tr>
 				<tr>
 				<th st-ratio="40"></th>
-					<th lr-drag-src="headers" lr-drop-target="headers" st-sort="getters.{{wtmi.FieldName}}" ng-repeat="wtmi in workbenchtemplatemappingitems" >
+					<th lr-drag-src="headers" lr-drop-target="headers" st-sort="getters.{{wtmi.FieldName}}" ng-repeat="wtmi in workbenchtemplatemappingitems" ng-show="!wtmi.HideColumn">
 						<img ng-src="{{ Icons.datamodel.get(wtmi.TableName) }}" class="specify-icon-16"> {{wtmi.FieldName}}
 					</th>
 				</tr>
@@ -66,7 +72,7 @@
 				        </div>  
 				      </td>
 					  	 <!-- form end-->
-		   		<td ng-repeat="wtmi in workbenchtemplatemappingitems">
+		   		<td ng-repeat="wtmi in workbenchtemplatemappingitems" ng-show="!wtmi.HideColumn">
 
 						<span editable-text="row[wtmi.WorkbenchTemplateMappingItemID].CellData" e-name="{{wtmi.WorkbenchTemplateMappingItemID}}" e-form="rowform" onaftersave=" createOrUpdateWorkBenchDataItem(row, row[wtmi.WorkbenchTemplateMappingItemID], wtmi)">
 					

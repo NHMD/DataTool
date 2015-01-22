@@ -63,7 +63,7 @@ angular.module('specifyDataCleanerApp')
 
 			$scope.taxonModal = $modal({
 				scope: $scope,
-				template: '/app/taxonbrowser/taxonmodal.tpl.html',
+				template: '/app/taxonbrowser/taxon.modal.tpl.html',
 				show: false,
 				prefixEvent: "taxonmodal"
 			});

@@ -4,7 +4,8 @@ angular.module('specifyDataCleanerApp')
 	.factory('TaxonBrowserService', function() {
 
 		return {
-
+			determinations : [],
+			selectedDetermination : undefined,
 			selectCallbacks: [],
 			taxonRanks: {},
 			selectedTaxon: undefined,

@@ -33,19 +33,28 @@ angular.module('specifyDataCleanerApp')
 						$scope.getters = {};
 						// this dataset's Workbenchtemplatemappings for taxonomy
 						$scope.taxonMappings = {};
+						
+						// a small map to identyfy if we have 1, 2 or 3 determinations on this row
+						TaxonBrowserService.determinations = [];
 
 						angular.forEach($scope.workbenchtemplatemappingitems, function(elm) {
 
 							var taxonname = elm.FieldName.toLowerCase().substring(0, elm.FieldName.length - 1)
 							if (TaxonBrowserService.taxonRanks[taxonname]) {
-								$scope.taxonMappings[elm.WorkbenchTemplateMappingItemID] = TaxonBrowserService.taxonRanks[taxonname];
+								var determinationNumber = elm.FieldName.slice(-1);
+								$scope.taxonMappings[elm.WorkbenchTemplateMappingItemID] = {
+									determinationNumber: determinationNumber, // refers to appended number: species1, species2, species3 etc
+									RankID: TaxonBrowserService.taxonRanks[taxonname]
+								};
+								TaxonBrowserService.determinations[parseInt(determinationNumber-1)] = determinationNumber;
 							};
 
 							$scope.getters[elm.FieldName] = function(row) {
 								return (row[elm.WorkbenchTemplateMappingItemID]) ? row[elm.WorkbenchTemplateMappingItemID].CellData : "";
 							}
 						});
-
+						
+						TaxonBrowserService.selectedDetermination = (TaxonBrowserService.determinations.length) ? TaxonBrowserService.determinations[0]: undefined;
 					});
 
 
@@ -171,23 +180,27 @@ angular.module('specifyDataCleanerApp')
 			$scope.addTaxonToRow = function(row) {
 
 				if (TaxonBrowserService.selectedTaxon === undefined || TaxonBrowserService.selectedTaxon.constructor.name !== 'Resource') return;
-
-				for (var key in row) {
-					if (row.hasOwnProperty(key) && $scope.taxonMappings[key] !== undefined) {
-						if (TaxonBrowserService.selectedTaxon.RankID === $scope.taxonMappings[key]) {
-
-							row[key].CellData = TaxonBrowserService.selectedTaxon.Name;
-							$scope.createOrUpdateWorkBenchDataItem(row, row[key], {
+				for (var key in $scope.taxonMappings) {
+					if($scope.taxonMappings[key].determinationNumber === TaxonBrowserService.selectedDetermination){
+						
+						if (TaxonBrowserService.selectedTaxon.RankID === $scope.taxonMappings[key].RankID){
+							
+							var item = (row[key] !== undefined) ? row[key] : {};
+							
+							item.CellData = TaxonBrowserService.selectedTaxon.Name;
+							
+							$scope.createOrUpdateWorkBenchDataItem(row, item, {
 								WorkbenchTemplateMappingItemID: key
 							});
-
-						} else if ($scope.taxonMappings[key] !== undefined) {
+							
+						} else {
 							var p = TaxonBrowserService.taxonParent;
 							while (p !== null) {
-								if (p.RankID === $scope.taxonMappings[key]) {
-
-									row[key].CellData = p.Name;
-									$scope.createOrUpdateWorkBenchDataItem(row, row[key], {
+								if (p.RankID === $scope.taxonMappings[key].RankID && $scope.taxonMappings[key].determinationNumber === TaxonBrowserService.selectedDetermination) {
+									
+									var item = (row[key] !== undefined) ? row[key] : {};
+									item.CellData = p.Name;
+									$scope.createOrUpdateWorkBenchDataItem(row, item, {
 										WorkbenchTemplateMappingItemID: key
 									});
 									break;
@@ -197,6 +210,7 @@ angular.module('specifyDataCleanerApp')
 							}
 						}
 					}
+					
 				}
 
 			};
@@ -208,19 +222,57 @@ angular.module('specifyDataCleanerApp')
 					description: 'Add row to dataset',
 					callback: $scope.addRowToGrid
 				})
+				.add({
+					combo: 'ctrl+f',
+					description: 'Open /close carry forward window',
+					allowIn: ['INPUT'],
+					callback: function() {
+						if (!$scope.carryForwardModal.$isShown) {
+							$scope.carryForwardModal.$promise.then($scope.carryForwardModal.show);
+						} else {
+							$scope.updateWorkBenchtemplateMappingitems();
+							$scope.carryForwardModal.hide();
+						};
+
+					}
+				})
+				.add({
+					combo: 'ctrl+h',
+					description: 'Open /close hide columns window',
+					allowIn: ['INPUT'],
+					callback: function() {
+						if (!$scope.showcolumnsModal.$isShown) {
+							$scope.showcolumnsModal.$promise.then($scope.showcolumnsModal.show);
+						} else {
+							
+							$scope.showcolumnsModal.hide();
+						};
+
+					}
+				})
 				
 				$scope.carryForwardModal = $modal({
 					scope: $scope,
-					template: '/app/datasets/carryforwardmodal.tpl.html',
+					template: '/app/datasets/carryforward.modal.tpl.html',
 					show: false,
 					prefixEvent: "carryforwardmodal"
 				});
 				
+				$scope.showcolumnsModal = $modal({
+					scope: $scope,
+					template: '/app/datasets/showcolumns.modal.tpl.html',
+					show: false,
+					prefixEvent: "showcolumnsmodal"
+				});
+				
+				// used for updating carry forward
 				$scope.updateWorkBenchtemplateMappingitems = function(){			
 					for(var i=0; i < $scope.workbenchtemplatemappingitems.length; i++){
 						$scope.workbenchtemplatemappingitems[i].$update();
 					}
 				};
+				
+				
 
 		}
 

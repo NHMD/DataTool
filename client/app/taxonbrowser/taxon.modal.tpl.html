@@ -5,8 +5,15 @@
 			<div class="modal-header"><button type="button" class="close" ng-click="resetTaxon();$hide()">×</button>
 				<img ng-src="{{Icons.datamodel.get('taxon')}}" class="modal-icon"> <h4 class="modal-title">Taxon browser</h4></div>
 				<div class="modal-body">
-					<form>
+					<form >
 						<input type="text" class="form-control taxon-typeahead" ng-model="TaxonBrowserService.selectedTaxon" ng-model-options="{allowInvalid:true}" ng-options="taxon as taxon.FullName for taxon in getTaxon($viewValue)" placeholder="Enter taxon name" minLength="3" bs-typeahead>
+						<div class="form-group" ng-show="TaxonBrowserService.selectedTaxon !== undefined && TaxonBrowserService.selectedTaxon.constructor.name === 'Resource' && TaxonBrowserService.determinations.length > 1">
+							<label for="selectedDetermination" class="col-sm-6 control-label">Apply taxon to determination number: </label>
+						
+						<label class="radio-inline" ng-repeat="d in TaxonBrowserService.determinations" ng-show="d">
+						  <input type="radio" name="selectedDetermination" ng-model="TaxonBrowserService.selectedDetermination" value="{{d}}"> #{{d}}
+						</label>
+						</div>
 					</form>
 					<br>
 					<table ng-show="TaxonBrowserService.selectedTaxon !== undefined && TaxonBrowserService.selectedTaxon.constructor.name === 'Resource'" class="table modal-taxon-table">

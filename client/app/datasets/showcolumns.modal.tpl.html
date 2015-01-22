@@ -2,15 +2,15 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			
-			<div class="modal-header"><button type="button" class="close" ng-click="updateWorkBenchtemplateMappingitems();$hide()">×</button>
-				<img ng-src="{{Icons.default.get('carryforward20x20')}}" class="modal-icon"> <h4 class="modal-title">Carry forward</h4></div>
+			<div class="modal-header"><button type="button" class="close" ng-click="$hide()">×</button>
+				<img ng-src="{{Icons.default.get('carryforward20x20')}}" class="modal-icon"> <h4 class="modal-title">Hide columns</h4></div>
 				<div class="modal-body">
 					
 					<table ng-show="workbenchtemplatemappingitems" class="table table-striped">
 
 					  <tr ng-repeat="wtmi in workbenchtemplatemappingitems">
-						  <td ><img ng-src="{{ Icons.datamodel.get(wtmi.TableName) }}" class="specify-icon-16"> {{wtmi.FieldName}}</td>
-						  <td><input type="checkbox" ng-model="wtmi.CarryForward"></td>
+						  <td ><img ng-src="{{ Icons.datamodel.get(wtmi.TableName) }}" class="specify-icon-16"> {{wtmi.TableName}}.{{wtmi.FieldName}}</td>
+						  <td><input type="checkbox" ng-model="wtmi.HideColumn"></td>
 					  </tr>
 					  
 				
@@ -24,7 +24,7 @@
 				<div class="modal-footer"><div class="col-md-6 taxon-footer-txt"><small class="text-muted">ctrl+f : show / hide this window</small>
 				</div>
 					<div class="col-md-6">
-					<button type="button" class="btn btn-danger" ng-click="updateWorkBenchtemplateMappingitems(); $hide()"> <i class="fa fa-times"></i> Close</button> 
+					<button type="button" class="btn btn-danger" ng-click="$hide()"> <i class="fa fa-times"></i> Close</button> 
 					</div>
 				</div>
 			</div>
