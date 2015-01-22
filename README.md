@@ -1,4 +1,4 @@
-#SNM DataTool
+#Dina Data Tool
 
 > A web based tool for cleaning, manipulating and entering natural history collections data in a Specify/MySQL database
 
@@ -9,7 +9,7 @@
 * MySQL
 * Specify 6.5 (or at least a database the Specify 6.5 MySQL schema on your MySQL)
 
-**SNM DataTool**
+**Dina Data Tool**
 
 * Node.js v0.10.x+
 * npm (which comes bundled with Node) v2.1.0+

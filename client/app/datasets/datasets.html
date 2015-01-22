@@ -26,6 +26,9 @@
 			</div>
 			<!-- End Taxon browser controller -->
 			<div class="col-md-4">
+				<button type="button" class="btn btn-default"  ng-click="carryForwardModal.show()"><img ng-src="{{Icons.default.get('carryforward20x20')}}" class="specify-icon-24"> Carry forward
+
+				</button>
 			</div>
   			
 			  <h3 class="col-md-12" ng-show="mappedRows.length">Showing dataset: {{ selectedWorkbench.Name }} ({{mappedRows.length}} rows)</h3>

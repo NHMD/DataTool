@@ -2,9 +2,9 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			
-			<div class="modal-header" ng-show="title"><button type="button" class="close" ng-click="resetTaxon();$hide()">×</button>
-				<img ng-src="{{Icons.datamodel.get('taxon')}}" class="modal-icon"> <h4 class="modal-title" ng-bind-html="title">Taxon browser</h4></div>
-				<div class="modal-body" ng-show="content">
+			<div class="modal-header"><button type="button" class="close" ng-click="resetTaxon();$hide()">×</button>
+				<img ng-src="{{Icons.datamodel.get('taxon')}}" class="modal-icon"> <h4 class="modal-title">Taxon browser</h4></div>
+				<div class="modal-body">
 					<form>
 						<input type="text" class="form-control taxon-typeahead" ng-model="TaxonBrowserService.selectedTaxon" ng-model-options="{allowInvalid:true}" ng-options="taxon as taxon.FullName for taxon in getTaxon($viewValue)" placeholder="Enter taxon name" minLength="3" bs-typeahead>
 					</form>

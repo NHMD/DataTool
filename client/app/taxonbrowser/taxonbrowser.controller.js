@@ -63,8 +63,6 @@ angular.module('specifyDataCleanerApp')
 
 			$scope.taxonModal = $modal({
 				scope: $scope,
-				title: "Taxon browser",
-				content: "A modal for taxon selection.",
 				template: '/app/taxonbrowser/taxonmodal.tpl.html',
 				show: false,
 				prefixEvent: "taxonmodal"

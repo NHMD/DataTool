@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-	.controller('DatasetsCtrl', ['$rootScope', '$scope', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench', 'hotkeys', 'Icons', 'TaxonTreeDefItem', 'TaxonBrowserService',
-		function($rootScope, $scope, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons, TaxonTreeDefItem, TaxonBrowserService) {
+	.controller('DatasetsCtrl', ['$rootScope', '$scope', '$modal', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench', 'hotkeys', 'Icons', 'TaxonTreeDefItem', 'TaxonBrowserService',
+		function($rootScope, $scope, $modal, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons, TaxonTreeDefItem, TaxonBrowserService) {
 
 			$scope.Icons = Icons;
 
@@ -208,6 +208,19 @@ angular.module('specifyDataCleanerApp')
 					description: 'Add row to dataset',
 					callback: $scope.addRowToGrid
 				})
+				
+				$scope.carryForwardModal = $modal({
+					scope: $scope,
+					template: '/app/datasets/carryforwardmodal.tpl.html',
+					show: false,
+					prefixEvent: "carryforwardmodal"
+				});
+				
+				$scope.updateWorkBenchtemplateMappingitems = function(){			
+					for(var i=0; i < $scope.workbenchtemplatemappingitems.length; i++){
+						$scope.workbenchtemplatemappingitems[i].$update();
+					}
+				};
 
 		}
 
