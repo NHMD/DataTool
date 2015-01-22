@@ -69,38 +69,37 @@ angular.module('specifyDataCleanerApp')
 				show: false,
 				prefixEvent: "taxonmodal"
 			});
-			
+
 			$scope.$on('taxonmodal.show', function() {
 				$('.taxon-typeahead').focus();
 			});
-			
+
 			hotkeys.bindTo($scope)
 				.add({
-					combo: 'ctrl+t',
-					description: 'Open taxon browser',
+					combo: 'ctrl+x',
+					description: 'Open Taxon browser / Close taxon browser and use selected taxon',
+					allowIn: ['INPUT'],
 					callback: function() {
-						$scope.taxonModal.$promise.then($scope.taxonModal.show);
+						if (!$scope.taxonModal.$isShown) {
+							$scope.taxonModal.$promise.then($scope.taxonModal.show);
+						} else {
+							TaxonBrowserService.taxonSelected();
+							$scope.taxonModal.hide();
+						};
+
 					}
 				})
 				.add({
 					combo: 'ctrl+z',
-					description: 'Close taxon browser and discard selected taxon',
+					description: 'Close Taxon browser and discard selected taxon',
 					allowIn: ['INPUT'],
 					callback: function() {
 						$scope.resetTaxon();
-						$scope.taxonModal.hide();	
+						$scope.taxonModal.hide();
 					}
 				})
-				.add({
-					combo: 'ctrl+x',
-					description: 'Close taxon browser and use selected taxon',
-					allowIn: ['INPUT'],
-					callback: function() {
-						TaxonBrowserService.taxonSelected();
-						$scope.taxonModal.hide();	
-					}
-				})
-				;
+
+
 
 		}
 	]);

@@ -31,7 +31,7 @@
 			  <h3 class="col-md-12" ng-show="mappedRows.length">Showing dataset: {{ selectedWorkbench.Name }} ({{mappedRows.length}} rows)</h3>
 			  <h3 class="col-md-12" ng-show="selectedWorkbench && !mappedRows.length"><i class="fa fa-spinner fa-spin"></i> Fetching data...</h3>
 
-		   <table st-persist="tableStateWorkbench_{{selectedWorkbench.WorkbenchID}}" ng-show="workbenchtemplatemappingitems"  st-table="rowCollection" st-safe-src="mappedRows" class="table table-striped" >
+		   <table st-persist="tableStateWorkbench_{{selectedWorkbench.WorkbenchID}}" ng-show="workbenchtemplatemappingitems"  st-table="rowCollection" st-safe-src="mappedRows" class="table table-striped dataset-table" >
 		   	<thead>
 				<tr><th colspan="3">
 							<input st-search="CellData" placeholder="Search dataset" class="input-sm form-control" type="search"/>

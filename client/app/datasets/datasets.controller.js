@@ -205,7 +205,7 @@ angular.module('specifyDataCleanerApp')
 			hotkeys.bindTo($scope)
 				.add({
 					combo: 'ctrl+n',
-					description: 'Add row',
+					description: 'Add row to dataset',
 					callback: $scope.addRowToGrid
 				})
 

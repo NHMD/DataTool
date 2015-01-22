@@ -89,7 +89,7 @@
 
 }
 
-table:not(.modal-taxon-table) {
+table.dataset-table {
 	box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	display: flex;
@@ -115,7 +115,7 @@ tbody {
 	 min-height: 0px;
 }
 
-thead > tr:not(.modal-taxon-table), tbody > tr:not(.modal-taxon-table), tfoot > tr:not(.modal-taxon-table) {
+table.dataset-table > thead > tr:not(.modal-taxon-table),table.dataset-table > tbody > tr:not(.modal-taxon-table),table.dataset-table > tfoot > tr:not(.modal-taxon-table) {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: nowrap;
@@ -126,7 +126,7 @@ thead, tfoot {
 	flex-shrink: 0;
 }
 
-th, tbody td:not(.modal-taxon-table) {
+th,table.dataset-table > tbody td:not(.modal-taxon-table) {
 	width: 20%; /* this can vary */
 	overflow-x: hidden;
 	text-overflow: ellipsis;
