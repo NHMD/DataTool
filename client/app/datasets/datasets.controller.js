@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-	.controller('DatasetsCtrl', ['$rootScope', '$scope', '$modal', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench', 'hotkeys', 'Icons', 'TaxonTreeDefItem', 'TaxonBrowserService',
-		function($rootScope, $scope, $modal, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons, TaxonTreeDefItem, TaxonBrowserService) {
+	.controller('DatasetsCtrl', ['$rootScope', '$scope', '$modal', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench', 'hotkeys', 'Icons', 'TaxonTreeDefItem', 'TaxonBrowserService','$timeout',
+		function($rootScope, $scope, $modal, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons, TaxonTreeDefItem, TaxonBrowserService, $timeout) {
 
 			$scope.Icons = Icons;
 
@@ -152,10 +152,20 @@ angular.module('specifyDataCleanerApp')
 
 					};
 					$scope.mappedRows[workbenchrow.RowNumber] = row;
-					// had to use JQuery for this one....
-					$("tbody").animate({
-						scrollTop: $("tbody tr:last").offset().top
-					}, "slow");
+					
+					
+					// timout is needed to move the click trigger outside the current digest cycle
+					$timeout(function(){
+			
+						// had to use JQuery for these ones....
+						$("ul.pagination li:last a").trigger('click');
+						$("tbody").animate({
+							scrollTop: $("tbody tr:last").offset().top
+						}, "slow");
+					});
+					
+					
+					
 
 				});
 
