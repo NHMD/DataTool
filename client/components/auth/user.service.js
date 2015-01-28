@@ -16,7 +16,7 @@ angular.module('specifyDataCleanerApp')
         method: 'GET',
         params: {
           id:'me'
-        }
+        }	
       }
 	  });
   });

@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-	.controller('DatasetsCtrl', ['$rootScope', '$scope', '$modal', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench', 'hotkeys', 'Icons', 'TaxonTreeDefItem', 'TaxonBrowserService','$timeout',
-		function($rootScope, $scope, $modal, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons, TaxonTreeDefItem, TaxonBrowserService, $timeout) {
+	.controller('DatasetsCtrl', ['$rootScope', '$scope', '$modal', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench', 'hotkeys', 'Icons', 'TaxonTreeDefItem', 'TaxonBrowserService','$timeout','Auth','localStorageService',
+		function($rootScope, $scope, $modal, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons, TaxonTreeDefItem, TaxonBrowserService, $timeout,  Auth, localStorageService) {
 
 			$scope.Icons = Icons;
 
@@ -16,7 +16,14 @@ angular.module('specifyDataCleanerApp')
 						id: $scope.selectedWorkbench.WorkbenchTemplateID
 					});
 
-
+					localStorageService.bind($scope, 'showHideWorkBenchTemplate');
+					if(!$scope.showHideWorkBenchTemplate){
+						$scope.showHideWorkBenchTemplate = {};
+						if(!$scope.showHideWorkBenchTemplate[$scope.selectedWorkbench.WorkbenchTemplateID]) {
+							$scope.showHideWorkBenchTemplate[$scope.selectedWorkbench.WorkbenchTemplateID] = {};
+						}
+					}
+					
 					$scope.workbenchtemplatemappingitems.$promise.then(function() {
 						var WorkbenchTemplateMappingItemIDs = $scope.workbenchtemplatemappingitems.map(function(elm) {
 							return elm.WorkbenchTemplateMappingItemID;
@@ -275,14 +282,19 @@ angular.module('specifyDataCleanerApp')
 					prefixEvent: "showcolumnsmodal"
 				});
 				
+				
+				$scope.saveTableSettingsForWorkbench = function() {
+					
+				}
+				
+				
 				// used for updating carry forward
 				$scope.updateWorkBenchtemplateMappingitems = function(){			
 					for(var i=0; i < $scope.workbenchtemplatemappingitems.length; i++){
 						$scope.workbenchtemplatemappingitems[i].$update();
 					}
 				};
-				
-				
+					
 
 		}
 

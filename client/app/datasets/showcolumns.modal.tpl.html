@@ -10,7 +10,7 @@
 
 					  <tr ng-repeat="wtmi in workbenchtemplatemappingitems">
 						  <td ><img ng-src="{{ Icons.datamodel.get(wtmi.TableName) }}" class="specify-icon-16"> {{wtmi.TableName}}.{{wtmi.FieldName}}</td>
-						  <td><input type="checkbox" ng-model="wtmi.HideColumn"></td>
+						  <td><input type="checkbox" ng-model="showHideWorkBenchTemplate[wtmi.WorkbenchTemplateID][wtmi.WorkbenchTemplateMappingItemID]"></td>
 					  </tr>
 					  
 				

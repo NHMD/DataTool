@@ -10,7 +10,8 @@ angular.module('specifyDataCleanerApp', [
 	 'smart-table',
 	'lrDragNDrop',
 	'xeditable',
-	'cfp.hotkeys'
+	'cfp.hotkeys',
+	'LocalStorageModule'
 ])
   .config(function ($routeProvider, $locationProvider, $httpProvider) {
     $routeProvider

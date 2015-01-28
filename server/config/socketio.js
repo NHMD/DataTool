@@ -18,6 +18,7 @@ function onConnect(socket) {
   });
 
   // Insert sockets below
+  require('../api/usersettings/usersettings.socket').register(socket);
  // require('../api/spprincipal/spprincipal.socket').register(socket);
   //require('../api/discipline/discipline.socket').register(socket);
  // require('../api/collection/collection.socket').register(socket);
