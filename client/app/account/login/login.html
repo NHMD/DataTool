@@ -2,8 +2,8 @@
   <div class="row">
     <div class="col-sm-12">
       <h1>Login</h1>
-      <p>Accounts are reset on server restart from <code>server/config/seed.js</code>. Default account is <code>test@test.com</code> / <code>test</code></p>
-      <p>Admin account is <code>admin@admin.com</code> / <code>admin</code></p>
+      <p>Accounts are reset on server restart from <code>server/config/seed.js</code>. Create mappings to our specifyuser ids in that file.</p>
+     
     </div>
     <div class="col-sm-12">
       <form class="form" name="form" ng-submit="login(form)" novalidate>
@@ -42,7 +42,8 @@
 
         <hr>
         <div>
-          <a class="btn btn-facebook" href="" ng-click="loginOauth('facebook')">
+        <!--  Open Auth providers. We will probably not use Twitter, FaceBook etc, but the Oauth features could be templates for a Dina Oauth sign on
+			<a class="btn btn-facebook" href="" ng-click="loginOauth('facebook')">
             <i class="fa fa-facebook"></i> Connect with Facebook
           </a>
           <a class="btn btn-google-plus" href="" ng-click="loginOauth('google')">
@@ -51,6 +52,7 @@
           <a class="btn btn-twitter" href="" ng-click="loginOauth('twitter')">
             <i class="fa fa-twitter"></i> Connect with Twitter
           </a>
+			-->
         </div>
       </form>
     </div>
