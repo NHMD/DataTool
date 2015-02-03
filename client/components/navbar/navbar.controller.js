@@ -3,9 +3,6 @@
 angular.module('specifyDataCleanerApp')
 	.controller('NavbarCtrl', function($rootScope, $scope, $location, Auth, Collection, Discipline, Icons) {
 		$scope.menu = [{
-			'title': 'Home',
-			'link': '/'
-		}, {
 			'title': 'Data sets',
 			'link': '/datasets'
 		}];

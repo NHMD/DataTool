@@ -294,7 +294,17 @@ angular.module('specifyDataCleanerApp')
 						$scope.workbenchtemplatemappingitems[i].$update();
 					}
 				};
-					
+				
+				// Not pretty but we don´t want a click to focus an input field to also selct the row
+				$scope.stopClickFromBubbleUp = function(){
+					$timeout(
+					function(){
+						$("input.editable-input").click(function(e){
+							e.stopPropagation();
+						})
+					},
+					100);	
+					}
 
 		}
 

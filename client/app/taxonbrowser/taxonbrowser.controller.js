@@ -38,7 +38,7 @@ angular.module('specifyDataCleanerApp')
 			});
 
 			$scope.$watch('TaxonBrowserService.selectedTaxon', function(newval, oldval) {
-				console.log(newval);
+				
 				if (newval !== undefined && newval.constructor.name === "Resource") {
 					TaxonBrowserService.taxonParent = Taxon.getParents({
 						id: TaxonBrowserService.selectedTaxon.TaxonID

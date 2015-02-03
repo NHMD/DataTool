@@ -58,17 +58,17 @@
 				 <!-- form -->
 				<td style="white-space: nowrap" st-ratio="40">
 				       
-				        <form editable-form name="rowform" onbeforesave="saveRow(row)"  ng-show="rowform.$visible" class="form-buttons form-inline" shown="row.inserted === true">
-				          <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-primary">
+				        <form editable-form name="rowform" onshow="stopClickFromBubbleUp()" onbeforesave="saveRow(row)"  ng-show="rowform.$visible" class="form-buttons form-inline" shown="row.inserted === true">
+				          <button type="submit" ng-disabled="rowform.$waiting" ng-click="$event.stopPropagation();" class="btn btn-primary">
 				            save
 				          </button>
-				          <button type="button" ng-disabled="rowform.$waiting" ng-click="(row.inserted) ? deleteRow(row, $index) : rowform.$cancel()" class="btn btn-default">
+				          <button type="button" ng-disabled="rowform.$waiting" ng-click="(row.inserted) ? deleteRow(row, $index) : rowform.$cancel(); $event.stopPropagation();" class="btn btn-default">
 				            cancel
 				          </button>
 				        </form>
 				        <div class="buttons" ng-show="!rowform.$visible">
-				          <button class="btn btn-primary" ng-click="rowform.$show()">edit</button>
-				          <button class="btn btn-danger" ng-click="deleteRow(row, $index)">del</button>
+				          <button class="btn btn-primary" ng-click="rowform.$show(); $event.stopPropagation();">edit</button>
+				          <button class="btn btn-danger" ng-click="deleteRow(row, $index); $event.stopPropagation();">del</button>
 				        </div>  
 				      </td>
 					  	 <!-- form end-->
