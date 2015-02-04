@@ -17,10 +17,10 @@ var db        = {};
 fs
   .readdirSync(__dirname)
   .filter(function(file){
-	 // console.log(file)
+	
   	return fs.statSync(path.join(__dirname, file)).isDirectory();
   })
- // .forEach(fs.readdirSync)
+
   .forEach(function(dir) {
 	  
 fs

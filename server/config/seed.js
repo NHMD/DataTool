@@ -5,8 +5,9 @@
 
 'use strict';
 
-var Thing = require('../api/mongo/thing/thing.model');
 var User = require('../api/mongo/user/user.model');
+/*
+var Thing = require('../api/mongo/thing/thing.model');
 
 Thing.find({}).remove(function() {
   Thing.create({
@@ -29,7 +30,7 @@ Thing.find({}).remove(function() {
     info : 'Easily deploy your app to Heroku or Openshift with the heroku and openshift subgenerators'
   });
 });
-
+*/
 User.find({}).remove(function() {
   User.create({
     provider: 'local',

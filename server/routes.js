@@ -25,7 +25,7 @@ module.exports = function(app) {
 	app.use('/api/workbenchtemplates', require('./api/mysql/workbenchtemplate'));
 	
 	//MongoDB
-	app.use('/api/things', require('./api/mongo/thing'));
+//	app.use('/api/things', require('./api/mongo/thing'));
 	app.use('/api/users', require('./api/mongo/user'));
 
 	app.use('/auth', require('./auth'));
