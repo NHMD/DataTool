@@ -26,7 +26,8 @@
 						   
 						   <div class="col-sm-9" ng-if="wtmi.FieldType === 4">
 				
-						   <span editable-bsdate="row[wtmi.WorkbenchTemplateMappingItemID].CellData" e-name="{{wtmi.WorkbenchTemplateMappingItemID}}" onaftersave="$parent.createOrUpdateWorkBenchDataItem(row, row[wtmi.WorkbenchTemplateMappingItemID], wtmi)">{{ row[wtmi.WorkbenchTemplateMappingItemID].CellData }}</span>
+						 <!--  <span editable-bsdate="row[wtmi.WorkbenchTemplateMappingItemID].CellData" e-name="{{wtmi.WorkbenchTemplateMappingItemID}}" onaftersave="$parent.createOrUpdateWorkBenchDataItem(row, row[wtmi.WorkbenchTemplateMappingItemID], wtmi)" >{{ row[wtmi.WorkbenchTemplateMappingItemID].CellData }}</span>-->
+						 <input type="text" class="form-control" ng-model="row[wtmi.WorkbenchTemplateMappingItemID].CellData" ng-change="$parent.createOrUpdateWorkBenchDataItem(row, row[wtmi.WorkbenchTemplateMappingItemID], wtmi)" name="date" bs-datepicker>
 					       </div>
 						   
 						

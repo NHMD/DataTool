@@ -98,35 +98,35 @@ table.dataset-table {
 	height: 700px; /* this can vary */
 }
 
-table * {
+table.dataset-table * {
 	box-sizing: inherit;
 	-moz-box-sizing: inherit;
 }
 
-thead {
+.dataset-table thead {
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
 }
 
-tbody {
+.dataset-table tbody {
 	overflow-y: scroll;
 	display: inline-block;
 	min-height: 0px;
 }
 
-table.dataset-table > thead > tr:not(.modal-taxon-table),table.dataset-table > tbody > tr:not(.modal-taxon-table),table.dataset-table > tfoot > tr:not(.modal-taxon-table) {
+table.dataset-table  thead  tr:not(.modal-table),table.dataset-table  tbody  tr:not(.modal-table),table.dataset-table  tfoot  tr:not(.modal-table) {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: nowrap;
 	white-space: nowrap;
 }
 
-thead, tfoot {
+.dataset-table thead, .dataset-table tfoot {
 	flex-shrink: 0;
 }
 
-th,table.dataset-table > tbody td:not(.modal-taxon-table) {
+.dataset-table th,table.dataset-table > tbody td:not(.modal-table) {
 	width: 20%; /* this can vary */
 	overflow-x: hidden;
 	text-overflow: ellipsis;
@@ -150,7 +150,7 @@ img.modal-icon {
 	margin-right: 8px;
 }
 
-table.modal-taxon-table > tr > td:first-child {
+table.modal-table > tr > td:first-child {
 	width: 25%;
 }
 
@@ -164,5 +164,28 @@ input.taxon-typeahead {
 
 li.active {
 background-color: #eee;
+}
+
+/*
+ * Datepicker element
+ */
+.datepicker.dropdown-menu {
+  width: 250px;
+  height: 270px;
+  padding: 5px;
+}
+.datepicker.dropdown-menu button {
+  outline: none;
+  border: 0px;
+}
+.datepicker.dropdown-menu tbody {
+  height: 180px;
+}
+.datepicker.dropdown-menu tbody button {
+  padding: 6px;
+}
+.datepicker.dropdown-menu.datepicker-mode-1 tbody button,
+.datepicker.dropdown-menu.datepicker-mode-2 tbody button {
+  height: 65px;
 }
 
