@@ -67,6 +67,7 @@
 				          </button>
 				        </form>
 				        <div class="buttons" ng-show="!rowform.$visible">
+						<button class="btn btn-primary" ng-click="openDataForm(row); $event.stopPropagation();" ng-controller="DataFormCtrl">form</button>
 				          <button class="btn btn-primary" ng-click="rowform.$show(); $event.stopPropagation();">edit</button>
 				          <button class="btn btn-danger" ng-click="deleteRow(row, $index); $event.stopPropagation();">del</button>
 				        </div>  
@@ -84,7 +85,16 @@
 		   	</tbody>
 			<tfoot>
 						<tr>
-							<td ><button class="btn btn-default" ng-click="addRowToGrid()">Add row</button></td>
+							<td ><button class="btn btn-default" ng-click="addRowToGrid()">Add row</button> 
+								
+						</td>
+						<td>
+									<!-- Start Data Form controller -->		
+									<div ng-controller="DataFormCtrl" >
+									<button class="btn btn-default" ng-click="dataFormModal.show()">Open form</button>
+								</div>
+							<!-- End Data Form  controller -->
+						</td>
 							<td colspan="3" class="text-center">
 								<div st-pagination="" st-items-by-page="10" st-displayed-pages="7">
 								</div>

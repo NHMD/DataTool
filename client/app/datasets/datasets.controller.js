@@ -98,7 +98,7 @@ angular.module('specifyDataCleanerApp')
 						item.$delete();
 					};
 
-				} else if (item.CellData !== "") {
+				} else if (item.CellData !== "" && item.CellData !== undefined) {
 
 					$scope.mappedRows[row.RowNumber][template.WorkbenchTemplateMappingItemID] = WorkbenchDataItem.save({
 						"WorkbenchRowID": row.WorkbenchRowID,
@@ -295,7 +295,7 @@ angular.module('specifyDataCleanerApp')
 					}
 				};
 				
-				// Not pretty but we don´t want a click to focus an input field to also selct the row
+				// Not pretty but we don´t want a click to focus an input field to also select the row
 				$scope.stopClickFromBubbleUp = function(){
 					$timeout(
 					function(){

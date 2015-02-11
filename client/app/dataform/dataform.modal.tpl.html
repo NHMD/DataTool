@@ -1,0 +1,61 @@
+<div class="modal ng-scope top am-fade-and-slide-top" tabindex="-1" role="dialog" style="display: block;">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			
+			<div class="modal-header"><button type="button" class="close" ng-click="$hide()">×</button>
+				<!--<img ng-src="{{Icons.default.get('carryforward20x20')}}" class="modal-icon"> --><h4 class="modal-title">Data Entry</h4></div>
+				<div class="modal-body row">
+					
+					
+					<form class="form-horizontal" editable-form name="dataform" shown="true">
+					
+				<div bs-active-pane="tabs.activeTab" nav-class="nav-stacked" active-class="active" template="/app/dataform/tab.tpl.html" bs-tabs>
+				  <div ng-repeat="tab in tabs" title='{{ tab.title }}' bs-active-pane="tabs.activeTab" bs-pane>
+				  	<div ng-repeat="wtmi in tab.workbenchtemplatemappingitems" class="form-group">
+					    <label  class="col-sm-3 control-label">{{wtmi.Caption}}</label>
+						
+					   <div class="col-sm-9" ng-if="wtmi.Caption.substring(0, wtmi.Caption.length - 1) === 'Yes No'">
+			
+					   <span editable-radiolist="row[wtmi.WorkbenchTemplateMappingItemID].CellData" e-name="{{wtmi.WorkbenchTemplateMappingItemID}}" onaftersave="$parent.createOrUpdateWorkBenchDataItem(row, row[wtmi.WorkbenchTemplateMappingItemID], wtmi)" e-ng-options="s.value as s.text for s in [{value: 0, text: 'No'}, {value: 1, text: 'Yes'}]">{{ row[wtmi.WorkbenchTemplateMappingItemID].CellData }}</span>
+				       </div>
+					      
+						   <div class="col-sm-9" ng-if="wtmi.Caption.substring(0, wtmi.Caption.length - 1) !== 'Yes No' && (wtmi.FieldType === 1 || wtmi.FieldType === 5)">
+				
+						   <span editable-text="row[wtmi.WorkbenchTemplateMappingItemID].CellData" e-name="{{wtmi.WorkbenchTemplateMappingItemID}}" onaftersave="$parent.createOrUpdateWorkBenchDataItem(row, row[wtmi.WorkbenchTemplateMappingItemID], wtmi)">{{ row[wtmi.WorkbenchTemplateMappingItemID].CellData }}</span>
+					       </div>
+						   
+						   <div class="col-sm-9" ng-if="wtmi.FieldType === 4">
+				
+						   <span editable-bsdate="row[wtmi.WorkbenchTemplateMappingItemID].CellData" e-name="{{wtmi.WorkbenchTemplateMappingItemID}}" onaftersave="$parent.createOrUpdateWorkBenchDataItem(row, row[wtmi.WorkbenchTemplateMappingItemID], wtmi)">{{ row[wtmi.WorkbenchTemplateMappingItemID].CellData }}</span>
+					       </div>
+						   
+						
+				</div>
+				<div class=" col-sm-offset-3">
+	          <button type="submit" ng-disabled="dataform.$waiting" ng-click="$hide()" class="btn btn-primary">
+	            save
+	          </button>
+	          <button type="button" ng-disabled="dataform.$waiting" ng-click="(row.inserted) ? deleteRow(row, $index) : dataform.$cancel(); $hide();" class="btn btn-default">
+	            cancel
+	          </button>
+			  </div>
+				  </div>
+				</div>
+			    
+			</form>
+				<!--	<p ng-bind-html="content">{{modal.content}}</p>
+					<pre>2 + 3 = 5</pre>
+					<h4>Popover in a modal</h4>
+					<p>This <a href="#" role="button" class="btn btn-default popover-test ng-scope" data-title="A Title" data-content="And here's some amazing content. It's very engaging. right?" bs-popover="">button</a> should trigger a popover on click.</p>
+					<h4>Tooltips in a modal</h4><p><a href="#" class="tooltip-test ng-scope" data-title="Tooltip" bs-tooltip="">This link</a> and <a href="#" class="tooltip-test ng-scope" data-title="Tooltip" bs-tooltip="">that link</a> should have tooltips on hover.</p>
+				</div>-->
+				
+			</div>
+			<div class="modal-footer"><div class="col-md-6 taxon-footer-txt"><small class="text-muted">ctrl+f : show / hide this window</small>
+			</div>
+				<div class="col-md-6">
+				<button type="button" class="btn btn-danger" ng-click="$hide()"> <i class="fa fa-times"></i> Close</button> 
+				</div>
+			</div>
+		</div>
+	</div>
