@@ -7,39 +7,40 @@
 				<div class="modal-body row">
 					
 					
-					<form class="form-horizontal" editable-form name="dataform" shown="true">
+					<form class="form-horizontal">
 					
 				<div bs-active-pane="tabs.activeTab" nav-class="nav-stacked" active-class="active" template="/app/dataform/tab.tpl.html" bs-tabs>
 				  <div ng-repeat="tab in tabs" title='{{ tab.title }}' bs-active-pane="tabs.activeTab" bs-pane>
 				  	<div ng-repeat="wtmi in tab.workbenchtemplatemappingitems" class="form-group">
 					    <label  class="col-sm-3 control-label">{{wtmi.Caption}}</label>
 						
-					   <div class="col-sm-9" ng-if="wtmi.Caption.substring(0, wtmi.Caption.length - 1) === 'Yes No'">
-			
-					   <span editable-radiolist="row[wtmi.WorkbenchTemplateMappingItemID].CellData" e-name="{{wtmi.WorkbenchTemplateMappingItemID}}" onaftersave="$parent.createOrUpdateWorkBenchDataItem(row, row[wtmi.WorkbenchTemplateMappingItemID], wtmi)" e-ng-options="s.value as s.text for s in [{value: 0, text: 'No'}, {value: 1, text: 'Yes'}]">{{ row[wtmi.WorkbenchTemplateMappingItemID].CellData }}</span>
+					   <div class="col-sm-9 radio" ng-if="wtmi.Caption.substring(0, wtmi.Caption.length - 1) === 'Yes No'">
+						   
+						   <label class="radio-inline" ng-repeat="opt in [{value: 0, text: 'No'}, {value: 1, text: 'Yes'}]">
+						       <input
+							   	name="optionsRadios"
+						           type="radio"
+						           value="{{opt.value}}"
+						           ng-model="row[wtmi.WorkbenchTemplateMappingItemID].CellData">
+						           {{opt.text}}
+						   </label>
+
 				       </div>
 					      
-						   <div class="col-sm-9" ng-if="wtmi.Caption.substring(0, wtmi.Caption.length - 1) !== 'Yes No' && (wtmi.FieldType === 1 || wtmi.FieldType === 5)">
+						   <div class="col-sm-9" ng-if="wtmi.Caption.substring(0, wtmi.Caption.length - 1) !== 'Yes No' && (wtmi.FieldType !== 4)">
 				
-						   <span editable-text="row[wtmi.WorkbenchTemplateMappingItemID].CellData" e-name="{{wtmi.WorkbenchTemplateMappingItemID}}" onaftersave="$parent.createOrUpdateWorkBenchDataItem(row, row[wtmi.WorkbenchTemplateMappingItemID], wtmi)">{{ row[wtmi.WorkbenchTemplateMappingItemID].CellData }}</span>
+						    <input type="text" class="form-control" ng-model="row[wtmi.WorkbenchTemplateMappingItemID].CellData" ng-change="$parent.createOrUpdateWorkBenchDataItem(row, row[wtmi.WorkbenchTemplateMappingItemID], wtmi)" ng-model-options='{ debounce: 500 }'>
 					       </div>
 						   
 						   <div class="col-sm-9" ng-if="wtmi.FieldType === 4">
 				
 						 <!--  <span editable-bsdate="row[wtmi.WorkbenchTemplateMappingItemID].CellData" e-name="{{wtmi.WorkbenchTemplateMappingItemID}}" onaftersave="$parent.createOrUpdateWorkBenchDataItem(row, row[wtmi.WorkbenchTemplateMappingItemID], wtmi)" >{{ row[wtmi.WorkbenchTemplateMappingItemID].CellData }}</span>-->
-						 <input type="text" class="form-control" ng-model="row[wtmi.WorkbenchTemplateMappingItemID].CellData" ng-change="$parent.createOrUpdateWorkBenchDataItem(row, row[wtmi.WorkbenchTemplateMappingItemID], wtmi)" name="date" bs-datepicker>
+						 <input type="text" class="form-control" ng-model="row[wtmi.WorkbenchTemplateMappingItemID].CellData" ng-change="$parent.createOrUpdateWorkBenchDataItem(row, row[wtmi.WorkbenchTemplateMappingItemID], wtmi)" name="date" model-date-format="shortDate" autoclose="true" mo-date-input="{{$parent.dateFormat.toUpperCase()}}" data-date-format={{$parent.dateFormat}} bs-datepicker>
 					       </div>
 						   
 						
 				</div>
-				<div class=" col-sm-offset-3">
-	          <button type="submit" ng-disabled="dataform.$waiting" ng-click="$hide()" class="btn btn-primary">
-	            save
-	          </button>
-	          <button type="button" ng-disabled="dataform.$waiting" ng-click="(row.inserted) ? deleteRow(row, $index) : dataform.$cancel(); $hide();" class="btn btn-default">
-	            cancel
-	          </button>
-			  </div>
+			
 				  </div>
 				</div>
 			    

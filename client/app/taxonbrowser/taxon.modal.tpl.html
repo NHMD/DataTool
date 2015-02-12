@@ -16,12 +16,12 @@
 						</div>
 					</form>
 					<br>
-					<table ng-show="TaxonBrowserService.selectedTaxon !== undefined && TaxonBrowserService.selectedTaxon.constructor.name === 'Resource'" class="table modal-taxon-table">
+					<table ng-show="TaxonBrowserService.selectedTaxon !== undefined && TaxonBrowserService.selectedTaxon.constructor.name === 'Resource'" class="table modal-table">
 
-					  <tr class="modal-taxon-table"><td class="modal-taxon-table">Full taxon name:</td><td class="modal-taxon-table">{{TaxonBrowserService.selectedTaxon.FullName}}</td></tr>
-					  <tr class="modal-taxon-table"><td class="modal-taxon-table">Epithet :</td><td class="modal-taxon-table">{{TaxonBrowserService.selectedTaxon.Name}}</td></tr>
-					  <tr class="modal-taxon-table"><td class="modal-taxon-table">Author(s):</td><td class="modal-taxon-table"><i>{{TaxonBrowserService.selectedTaxon.Author}}</i></td></tr>
-					  <tr ng-show="TaxonBrowserService.selectedTaxon !== undefined && TaxonBrowserService.selectedTaxon.constructor.name === 'Resource'" class="modal-taxon-table"><td class="modal-taxon-table">Taxon rank:</td><td class="modal-taxon-table">{{getTaxonRankNameFromRankID(TaxonBrowserService.selectedTaxon.RankID)}}</td></tr>
+					  <tr class="modal-table"><td class="modal-table">Full taxon name:</td><td class="modal-table">{{TaxonBrowserService.selectedTaxon.FullName}}</td></tr>
+					  <tr class="modal-table"><td class="modal-table">Epithet :</td><td class="modal-table">{{TaxonBrowserService.selectedTaxon.Name}}</td></tr>
+					  <tr class="modal-table"><td class="modal-table">Author(s):</td><td class="modal-table"><i>{{TaxonBrowserService.selectedTaxon.Author}}</i></td></tr>
+					  <tr ng-show="TaxonBrowserService.selectedTaxon !== undefined && TaxonBrowserService.selectedTaxon.constructor.name === 'Resource'" class="modal-table"><td class="modal-table">Taxon rank:</td><td class="modal-table">{{getTaxonRankNameFromRankID(TaxonBrowserService.selectedTaxon.RankID)}}</td></tr>
 				
 					</table>
 				<!--	<p ng-bind-html="content">{{modal.content}}</p>

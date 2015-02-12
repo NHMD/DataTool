@@ -5,7 +5,7 @@ angular.module('specifyDataCleanerApp')
 		function($rootScope, $scope, $modal, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons, TaxonTreeDefItem, TaxonBrowserService, $timeout,  Auth, localStorageService) {
 
 			$scope.Icons = Icons;
-
+			$scope.dateFormat = "yyyy-MM-dd";
 			$scope.workbenches = Workbench.query();
 
 
