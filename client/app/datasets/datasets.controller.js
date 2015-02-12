@@ -129,23 +129,25 @@ angular.module('specifyDataCleanerApp')
 				if (!workbenchTemplateMappingItem.CarryForward) {
 					return "";
 				} else if (workbenchTemplateMappingItem.CarryForward) {
-					var forwardValue = $scope.mappedRows[$scope.mappedRows.length - 1][workbenchTemplateMappingItem.WorkbenchTemplateMappingItemID].CellData;
+					var forwardValue = 
+					($scope.mappedRows[$scope.mappedRows.length - 1][workbenchTemplateMappingItem.WorkbenchTemplateMappingItemID]) ? $scope.mappedRows[$scope.mappedRows.length - 1][workbenchTemplateMappingItem.WorkbenchTemplateMappingItemID].CellData : "";
 					return forwardValue;
 				};
 
 
 			};
 
-			$scope.addRowToGrid = function() {
-				WorkbenchRow.save({
+			$scope.addRowToGrid = function(openInGrid) {
+			return	WorkbenchRow.save({
 					"WorkbenchID": $scope.selectedWorkbench.WorkbenchID
 				}).
 				$promise.then(function(workbenchrow) {
 					var row = {
 						"WorkbenchRowID": workbenchrow.WorkbenchRowID,
-						"RowNumber": workbenchrow.RowNumber,
-						"inserted": true
+						"RowNumber": workbenchrow.RowNumber	
 					};
+					
+					if(openInGrid) row["inserted"] = true;
 					for (var i = 0; i < $scope.workbenchtemplatemappingitems.length; i++) {
 
 
@@ -161,7 +163,7 @@ angular.module('specifyDataCleanerApp')
 					$scope.mappedRows[workbenchrow.RowNumber] = row;
 					
 					
-					// timout is needed to move the click trigger outside the current digest cycle
+					// timeout is needed to move the click trigger outside the current digest cycle
 					$timeout(function(){
 			
 						// had to use JQuery for these ones....
@@ -172,7 +174,7 @@ angular.module('specifyDataCleanerApp')
 					});
 					
 					
-					
+					return row;
 
 				});
 

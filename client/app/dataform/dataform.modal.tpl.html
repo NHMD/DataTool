@@ -10,7 +10,7 @@
 					<form class="form-horizontal">
 					
 				<div bs-active-pane="tabs.activeTab" nav-class="nav-stacked" active-class="active" template="/app/dataform/tab.tpl.html" bs-tabs>
-				  <div ng-repeat="tab in tabs" title='{{ tab.title }}' bs-active-pane="tabs.activeTab" bs-pane>
+				  <div ng-repeat="tab in tabs" title='{{ tab.title }}'  bs-pane>
 				  	<div ng-repeat="wtmi in tab.workbenchtemplatemappingitems" class="form-group">
 					    <label  class="col-sm-3 control-label">{{wtmi.Caption}}</label>
 						
