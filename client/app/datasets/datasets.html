@@ -49,8 +49,8 @@
 				<th st-ratio="40"><button class="btn btn-default" ng-click="addRowToGrid(true)"><i class="fa fa-plus"></i> row</button> 
 								
 										<!-- Start Data Form controller -->		
-										<div ng-controller="DataFormCtrl" class="pull-right">
-										<button class="btn btn-default" ng-click="openDataForm()"><i class="fa fa-plus"></i>  form</button>
+										<div class="pull-right">
+										<button class="btn btn-default" ng-click="DataFormService.openDataForm()"><i class="fa fa-plus"></i>  form</button>
 									</div>
 								<!-- End Data Form  controller --></th>
 					<th lr-drag-src="headers" lr-drop-target="headers" st-sort="getters.{{wtmi.FieldName}}" ng-repeat="wtmi in workbenchtemplatemappingitems" ng-show="!showHideWorkBenchTemplate[wtmi.WorkbenchTemplateID][wtmi.WorkbenchTemplateMappingItemID]">
@@ -73,7 +73,7 @@
 				          </button>
 				        </form>
 				        <div class="buttons" ng-show="!rowform.$visible">
-						<button class="btn btn-primary" ng-click="openDataForm(row); $event.stopPropagation();" ng-controller="DataFormCtrl"><i class="fa fa-list-alt fa-lg"></i></button>
+						<button class="btn btn-primary" ng-click="DataFormService.openDataForm(row); $event.stopPropagation();" ><i class="fa fa-list-alt fa-lg"></i></button>
 				          <button class="btn btn-primary" ng-click="rowform.$show(); $event.stopPropagation();"><i class="fa fa-edit fa-lg"></i></button>
 				          <button class="btn btn-danger" ng-click="deleteRow(row, $index); $event.stopPropagation();"><i class="fa fa-trash-o fa-lg"></i></button>
 				        </div>  
@@ -96,7 +96,7 @@
 								
 										<!-- Start Data Form controller -->		
 										<div ng-controller="DataFormCtrl" class="pull-right">
-										<button class="btn btn-default" ng-click="openDataForm()"><i class="fa fa-plus"></i>  form</button>
+										<button class="btn btn-default" ng-click="DataFormService.openDataForm()"><i class="fa fa-plus"></i>  form</button>
 									</div>
 								<!-- End Data Form  controller -->
 								

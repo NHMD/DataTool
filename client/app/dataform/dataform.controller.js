@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-	.controller('DataFormCtrl', ['$rootScope', '$scope', '$modal', 'Icons', 'hotkeys',  '$timeout',
-		function($rootScope, $scope, $modal, Icons, hotkeys,  $timeout) {
+	.controller('DataFormCtrl', ['$rootScope', '$scope', '$modal', 'Icons', 'hotkeys',  '$timeout', 'DataFormService',
+		function($rootScope, $scope, $modal, Icons, hotkeys,  $timeout, DataFormService) {
 			$scope.Icons = Icons;
 			
 			$scope.dataFormModal = $modal({
@@ -39,7 +39,7 @@ angular.module('specifyDataCleanerApp')
 				}
 			});
 			
-			$scope.openDataForm = function(row){
+			DataFormService.openDataForm = function(row){
 				if(row){
 					$scope.row =  row;
 					$scope.dataFormModal.show();
@@ -59,11 +59,7 @@ angular.module('specifyDataCleanerApp')
 				description: 'Open Taxon browser / Close taxon browser and use selected taxon',
 				allowIn: ['INPUT'],
 				callback: function() {
-					/*
-					alert("up")
-					var elm = $( "li.active" ).prev().find("a");
-					elm.trigger('click');
-					*/
+			
 					if($scope.tabs.activeTab > 0){
 						$scope.tabs.activeTab --;
 					}
