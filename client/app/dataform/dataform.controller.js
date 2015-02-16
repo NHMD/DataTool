@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-	.controller('DataFormCtrl', ['$rootScope', '$scope', '$modal', 'Icons', 'hotkeys',  '$timeout', 'DataFormService',
-		function($rootScope, $scope, $modal, Icons, hotkeys,  $timeout, DataFormService) {
+	.controller('DataFormCtrl', ['$rootScope', '$scope', '$modal', 'Icons', 'hotkeys',  '$timeout', 'DataFormService','TaxonBrowserService',
+		function($rootScope, $scope, $modal, Icons, hotkeys,  $timeout, DataFormService, TaxonBrowserService) {
 			$scope.Icons = Icons;
 			
 			$scope.dataFormModal = $modal({
@@ -11,6 +11,16 @@ angular.module('specifyDataCleanerApp')
 				show: false,
 				prefixEvent: "dataformmodal"
 			});
+			
+			TaxonBrowserService.selectCallbacks.push(function(){
+				
+				if($scope.dataFormModal.$isShown){
+					$scope.$parent.addTaxonToRow($scope.row);
+				}
+				
+			});
+			
+			
 			
 			$scope.$parent.$watch('workbenchtemplatemappingitems', function(newval, oldval){
 				if( newval !== undefined){
@@ -24,6 +34,7 @@ angular.module('specifyDataCleanerApp')
 							var wtmi = $scope.$parent.workbenchtemplatemappingitems[i];
 							if(!hashmap[tablename]){
 								var tab = { title: '<img src="'+Icons.datamodel.get(tablename)+'"class="specify-icon-16"> '+tablename,
+								tablename: tablename,
 								workbenchtemplatemappingitems: [wtmi]
 							};
 							
@@ -56,7 +67,7 @@ angular.module('specifyDataCleanerApp')
 		hotkeys.bindTo($scope)
 			.add({
 				combo: 'up',
-				description: 'Open Taxon browser / Close taxon browser and use selected taxon',
+				description: 'Jump to previous tab',
 				allowIn: ['INPUT'],
 				callback: function() {
 			
@@ -71,7 +82,7 @@ angular.module('specifyDataCleanerApp')
 			})
 			.add({
 				combo: 'down',
-				description: 'Close Taxon browser and discard selected taxon',
+				description: 'Jump to next tab',
 				allowIn: ['INPUT'],
 				callback: function() {
 					
@@ -85,7 +96,7 @@ angular.module('specifyDataCleanerApp')
 			})
 			.add({
 				combo: 'right',
-				description: 'Close Taxon browser and discard selected taxon',
+				description: 'Jump to first input under selected tab',
 				allowIn: ['INPUT'],
 				callback: function() {
 					$('.tab-pane.active').find("input")[0].focus();

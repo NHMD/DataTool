@@ -189,3 +189,6 @@ background-color: #eee;
   height: 65px;
 }
 
+button.tax-btn-modal {
+	margin-left: 14px;
+}

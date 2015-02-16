@@ -214,7 +214,7 @@ angular.module('specifyDataCleanerApp')
 							
 						} else {
 							var p = TaxonBrowserService.taxonParent;
-							while (p !== null) {
+							while (p !== null && p !== undefined) {
 								if (p.RankID === $scope.taxonMappings[key].RankID && $scope.taxonMappings[key].determinationNumber === TaxonBrowserService.selectedDetermination) {
 									
 									var item = (row[key] !== undefined) ? row[key] : {};

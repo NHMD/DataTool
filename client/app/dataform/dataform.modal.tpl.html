@@ -11,6 +11,11 @@
 					
 				<div bs-active-pane="tabs.activeTab" nav-class="nav-stacked" active-class="active" template="/app/dataform/tab.tpl.html" bs-tabs>
 				  <div ng-repeat="tab in tabs" title='{{ tab.title }}'  bs-pane>
+					 <div ng-show="tab.tablename === 'determination'" ng-controller="TaxonbrowserCtrl" class="form-group">
+	  				<label  class="col-sm-3 control-label"></label><button type="button" class="btn btn-default tax-btn-modal"  ng-click="taxonModal.show()" ><img ng-src="{{Icons.datamodel.get('taxon')}}" class="specify-icon-16" > Taxon browser
+
+	  				</button>
+				</div>
 				  	<div ng-repeat="wtmi in tab.workbenchtemplatemappingitems" class="form-group">
 					    <label  class="col-sm-3 control-label">{{wtmi.Caption}}</label>
 						
@@ -34,7 +39,6 @@
 						   
 						   <div class="col-sm-9" ng-if="wtmi.FieldType === 4">
 				
-						 <!--  <span editable-bsdate="row[wtmi.WorkbenchTemplateMappingItemID].CellData" e-name="{{wtmi.WorkbenchTemplateMappingItemID}}" onaftersave="$parent.createOrUpdateWorkBenchDataItem(row, row[wtmi.WorkbenchTemplateMappingItemID], wtmi)" >{{ row[wtmi.WorkbenchTemplateMappingItemID].CellData }}</span>-->
 						 <input type="text" class="form-control" ng-model="row[wtmi.WorkbenchTemplateMappingItemID].CellData" ng-change="$parent.createOrUpdateWorkBenchDataItem(row, row[wtmi.WorkbenchTemplateMappingItemID], wtmi)" name="date" model-date-format="shortDate" autoclose="true" mo-date-input="{{$parent.dateFormat.toUpperCase()}}" data-date-format={{$parent.dateFormat}} bs-datepicker>
 					       </div>
 						   
@@ -45,15 +49,10 @@
 				</div>
 			    
 			</form>
-				<!--	<p ng-bind-html="content">{{modal.content}}</p>
-					<pre>2 + 3 = 5</pre>
-					<h4>Popover in a modal</h4>
-					<p>This <a href="#" role="button" class="btn btn-default popover-test ng-scope" data-title="A Title" data-content="And here's some amazing content. It's very engaging. right?" bs-popover="">button</a> should trigger a popover on click.</p>
-					<h4>Tooltips in a modal</h4><p><a href="#" class="tooltip-test ng-scope" data-title="Tooltip" bs-tooltip="">This link</a> and <a href="#" class="tooltip-test ng-scope" data-title="Tooltip" bs-tooltip="">that link</a> should have tooltips on hover.</p>
-				</div>-->
+
 				
 			</div>
-			<div class="modal-footer"><div class="col-md-6 taxon-footer-txt"><small class="text-muted">ctrl+f : show / hide this window</small>
+			<div class="modal-footer"><div class="col-md-6 taxon-footer-txt"><!--<small class="text-muted">ctrl+f : show / hide this window</small>-->
 			</div>
 				<div class="col-md-6">
 				<button type="button" class="btn btn-danger" ng-click="$hide()"> <i class="fa fa-times"></i> Close</button> 
