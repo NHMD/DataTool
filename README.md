@@ -56,3 +56,6 @@ To run the application in dev mode:
 ```bash
 grunt serve 
 ```
+
+## Copyright
+Copyright (c) 2015 Natural History of Denmark
