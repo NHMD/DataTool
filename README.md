@@ -16,7 +16,7 @@
 * git
 * MongoDB - Download and Install [MongoDB](http://www.mongodb.org/downloads) -  you'll need mongoDB to be installed and have the `mongod` process running. This is used as storage for the web application.
 
-The project has been bootstrapped with the Yeoman scaffolding tool, using the [angular-fullstack] (https://github.com/DaftMonk/generator-angular-fullstack) generator. While the Yeoman tool itself may not be mandatory for the project to run, it offers some helpful generators for routes, services etc. 
+The project has been bootstrapped with the Yeoman scaffolding tool, using the [angular-fullstack] (https://github.com/DaftMonk/generator-angular-fullstack) generator. While the Yeoman tool itself is not mandatory for the project to run, it provides developers some helpful generators for routes, services etc. 
 
 Therefore it is recomended to follow 
 * [this setup guide](http://yeoman.io/codelab/setup.html) to setup yeoman
@@ -39,6 +39,16 @@ You may have noticed the flag ```seedDB``` in the file. When set to ```true``` t
 	
 will create some users on start up, and delete them on shut down. You should create your own users and associate them with their user roles, agent id´s etc form the Specify database.
 
+## Install dependencies
+
+In the root directory (where package.json and bower.json are placed):
+
+```bash
+npm install
+```
+```bash
+bower install
+```
 ## Run the application
 
 To run the application in dev mode:
