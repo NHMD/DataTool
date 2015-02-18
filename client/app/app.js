@@ -50,7 +50,8 @@ angular.module('specifyDataCleanerApp', [
   })
 
   .run(function ($rootScope, $location, Auth, editableOptions) {
-	   editableOptions.theme = 'bs3'; // bootstrap3 theme.
+	 
+	 editableOptions.theme = 'bs3'; // bootstrap3 theme.
     // Redirect to login if route requires auth and you're not logged in
     $rootScope.$on('$routeChangeStart', function (event, next) {
       Auth.isLoggedInAsync(function(loggedIn) {

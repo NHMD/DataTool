@@ -16,20 +16,15 @@
 						</div>
 					</form>
 					<br>
-					<table ng-show="TaxonBrowserService.selectedTaxon !== undefined && TaxonBrowserService.selectedTaxon.constructor.name === 'Resource'" class="table modal-taxon-table">
+					<table ng-show="TaxonBrowserService.selectedTaxon !== undefined && TaxonBrowserService.selectedTaxon.constructor.name === 'Resource'" class="table modal-table">
 
-					  <tr class="modal-taxon-table"><td class="modal-taxon-table">Full taxon name:</td><td class="modal-taxon-table">{{TaxonBrowserService.selectedTaxon.FullName}}</td></tr>
-					  <tr class="modal-taxon-table"><td class="modal-taxon-table">Epithet :</td><td class="modal-taxon-table">{{TaxonBrowserService.selectedTaxon.Name}}</td></tr>
-					  <tr class="modal-taxon-table"><td class="modal-taxon-table">Author(s):</td><td class="modal-taxon-table"><i>{{TaxonBrowserService.selectedTaxon.Author}}</i></td></tr>
-					  <tr ng-show="TaxonBrowserService.selectedTaxon !== undefined && TaxonBrowserService.selectedTaxon.constructor.name === 'Resource'" class="modal-taxon-table"><td class="modal-taxon-table">Taxon rank:</td><td class="modal-taxon-table">{{getTaxonRankNameFromRankID(TaxonBrowserService.selectedTaxon.RankID)}}</td></tr>
+					  <tr class="modal-table"><td class="modal-table">Full taxon name:</td><td class="modal-table">{{TaxonBrowserService.selectedTaxon.FullName}}</td></tr>
+					  <tr class="modal-table"><td class="modal-table">Epithet :</td><td class="modal-table">{{TaxonBrowserService.selectedTaxon.Name}}</td></tr>
+					  <tr class="modal-table"><td class="modal-table">Author(s):</td><td class="modal-table"><i>{{TaxonBrowserService.selectedTaxon.Author}}</i></td></tr>
+					  <tr ng-show="TaxonBrowserService.selectedTaxon !== undefined && TaxonBrowserService.selectedTaxon.constructor.name === 'Resource'" class="modal-table"><td class="modal-table">Taxon rank:</td><td class="modal-table">{{getTaxonRankNameFromRankID(TaxonBrowserService.selectedTaxon.RankID)}}</td></tr>
 				
 					</table>
-				<!--	<p ng-bind-html="content">{{modal.content}}</p>
-					<pre>2 + 3 = 5</pre>
-					<h4>Popover in a modal</h4>
-					<p>This <a href="#" role="button" class="btn btn-default popover-test ng-scope" data-title="A Title" data-content="And here's some amazing content. It's very engaging. right?" bs-popover="">button</a> should trigger a popover on click.</p>
-					<h4>Tooltips in a modal</h4><p><a href="#" class="tooltip-test ng-scope" data-title="Tooltip" bs-tooltip="">This link</a> and <a href="#" class="tooltip-test ng-scope" data-title="Tooltip" bs-tooltip="">that link</a> should have tooltips on hover.</p>
-				</div>-->
+				
 				<div class="modal-footer"><div class="col-md-6 taxon-footer-txt"><small class="text-muted">ctrl+x : close and select taxon <br> ctrl+z : close and discard taxon</small>
 				</div>
 					<div class="col-md-6">

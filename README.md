@@ -7,7 +7,7 @@
 **Specify**
 
 * MySQL
-* Specify 6.6 (or at least a database the Specify 6.6 MySQL schema on your MySQL)
+* Specify 6.6 (or at least a database based on the Specify 6.6 MySQL schema on your MySQL)
 
 **Dina Data Tool**
 

@@ -1,13 +1,13 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-	.controller('DatasetsCtrl', ['$rootScope', '$scope', '$modal', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench', 'hotkeys', 'Icons', 'TaxonTreeDefItem', 'TaxonBrowserService','$timeout','Auth','localStorageService',
-		function($rootScope, $scope, $modal, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons, TaxonTreeDefItem, TaxonBrowserService, $timeout,  Auth, localStorageService) {
+	.controller('DatasetsCtrl', ['$rootScope', '$scope', '$modal', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench', 'hotkeys', 'Icons', 'TaxonTreeDefItem', 'TaxonBrowserService','$timeout','Auth','localStorageService', 'DataFormService',
+		function($rootScope, $scope, $modal, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons, TaxonTreeDefItem, TaxonBrowserService, $timeout,  Auth, localStorageService, DataFormService) {
 
 			$scope.Icons = Icons;
-
 			$scope.workbenches = Workbench.query();
-
+			$scope.DataFormService = DataFormService;
+			
 
 			$scope.$watch('selectedWorkbench', function(newval, oldval) {
 				if (newval && typeof newval === 'object' && newval !== oldval) {
@@ -98,7 +98,7 @@ angular.module('specifyDataCleanerApp')
 						item.$delete();
 					};
 
-				} else if (item.CellData !== "") {
+				} else if (item.CellData !== "" && item.CellData !== undefined) {
 
 					$scope.mappedRows[row.RowNumber][template.WorkbenchTemplateMappingItemID] = WorkbenchDataItem.save({
 						"WorkbenchRowID": row.WorkbenchRowID,
@@ -129,23 +129,25 @@ angular.module('specifyDataCleanerApp')
 				if (!workbenchTemplateMappingItem.CarryForward) {
 					return "";
 				} else if (workbenchTemplateMappingItem.CarryForward) {
-					var forwardValue = $scope.mappedRows[$scope.mappedRows.length - 1][workbenchTemplateMappingItem.WorkbenchTemplateMappingItemID].CellData;
+					var forwardValue = 
+					($scope.mappedRows[$scope.mappedRows.length - 1][workbenchTemplateMappingItem.WorkbenchTemplateMappingItemID]) ? $scope.mappedRows[$scope.mappedRows.length - 1][workbenchTemplateMappingItem.WorkbenchTemplateMappingItemID].CellData : "";
 					return forwardValue;
 				};
 
 
 			};
 
-			$scope.addRowToGrid = function() {
-				WorkbenchRow.save({
+			$scope.addRowToGrid = function(openInGrid) {
+			return	WorkbenchRow.save({
 					"WorkbenchID": $scope.selectedWorkbench.WorkbenchID
 				}).
 				$promise.then(function(workbenchrow) {
 					var row = {
 						"WorkbenchRowID": workbenchrow.WorkbenchRowID,
-						"RowNumber": workbenchrow.RowNumber,
-						"inserted": true
+						"RowNumber": workbenchrow.RowNumber	
 					};
+					
+					if(openInGrid) row["inserted"] = true;
 					for (var i = 0; i < $scope.workbenchtemplatemappingitems.length; i++) {
 
 
@@ -161,7 +163,7 @@ angular.module('specifyDataCleanerApp')
 					$scope.mappedRows[workbenchrow.RowNumber] = row;
 					
 					
-					// timout is needed to move the click trigger outside the current digest cycle
+					// timeout is needed to move the click trigger outside the current digest cycle
 					$timeout(function(){
 			
 						// had to use JQuery for these ones....
@@ -172,7 +174,7 @@ angular.module('specifyDataCleanerApp')
 					});
 					
 					
-					
+					return row;
 
 				});
 
@@ -212,7 +214,7 @@ angular.module('specifyDataCleanerApp')
 							
 						} else {
 							var p = TaxonBrowserService.taxonParent;
-							while (p !== null) {
+							while (p !== null && p !== undefined) {
 								if (p.RankID === $scope.taxonMappings[key].RankID && $scope.taxonMappings[key].determinationNumber === TaxonBrowserService.selectedDetermination) {
 									
 									var item = (row[key] !== undefined) ? row[key] : {};
@@ -295,7 +297,7 @@ angular.module('specifyDataCleanerApp')
 					}
 				};
 				
-				// Not pretty but we don´t want a click to focus an input field to also selct the row
+				// Not pretty but we don´t want a click to focus an input field to also select the row
 				$scope.stopClickFromBubbleUp = function(){
 					$timeout(
 					function(){

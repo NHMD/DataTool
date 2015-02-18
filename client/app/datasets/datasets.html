@@ -46,7 +46,13 @@
 							<input st-search="CellData" placeholder="Search dataset" class="input-sm form-control" type="search"/>
 						</th></tr>
 				<tr>
-				<th st-ratio="40"></th>
+				<th st-ratio="40"><button class="btn btn-default" ng-click="addRowToGrid(true)"><i class="fa fa-plus"></i> row</button> 
+								
+										<!-- Start Data Form controller -->		
+										<div class="pull-right">
+										<button class="btn btn-default" ng-click="DataFormService.openDataForm()"><i class="fa fa-plus"></i>  form</button>
+									</div>
+								<!-- End Data Form  controller --></th>
 					<th lr-drag-src="headers" lr-drop-target="headers" st-sort="getters.{{wtmi.FieldName}}" ng-repeat="wtmi in workbenchtemplatemappingitems" ng-show="!showHideWorkBenchTemplate[wtmi.WorkbenchTemplateID][wtmi.WorkbenchTemplateMappingItemID]">
 						<img ng-src="{{ Icons.datamodel.get(wtmi.TableName) }}" class="specify-icon-16"> {{wtmi.FieldName}}
 					</th>
@@ -67,8 +73,9 @@
 				          </button>
 				        </form>
 				        <div class="buttons" ng-show="!rowform.$visible">
-				          <button class="btn btn-primary" ng-click="rowform.$show(); $event.stopPropagation();">edit</button>
-				          <button class="btn btn-danger" ng-click="deleteRow(row, $index); $event.stopPropagation();">del</button>
+						<button class="btn btn-primary" ng-click="DataFormService.openDataForm(row); $event.stopPropagation();" ><i class="fa fa-list-alt fa-lg"></i></button>
+				          <button class="btn btn-primary" ng-click="rowform.$show(); $event.stopPropagation();"><i class="fa fa-edit fa-lg"></i></button>
+				          <button class="btn btn-danger" ng-click="deleteRow(row, $index); $event.stopPropagation();"><i class="fa fa-trash-o fa-lg"></i></button>
 				        </div>  
 				      </td>
 					  	 <!-- form end-->
@@ -83,8 +90,18 @@
 		   	</tr>
 		   	</tbody>
 			<tfoot>
-						<tr>
-							<td ><button class="btn btn-default" ng-click="addRowToGrid()">Add row</button></td>
+						<tr >
+							<td st-ratio="12">
+								<button class="btn btn-default" ng-click="addRowToGrid(true)"><i class="fa fa-plus"></i> row</button> 
+								
+										<!-- Start Data Form controller -->		
+										<div ng-controller="DataFormCtrl" class="pull-right">
+										<button class="btn btn-default" ng-click="DataFormService.openDataForm()"><i class="fa fa-plus"></i>  form</button>
+									</div>
+								<!-- End Data Form  controller -->
+								
+						</td>
+						
 							<td colspan="3" class="text-center">
 								<div st-pagination="" st-items-by-page="10" st-displayed-pages="7">
 								</div>

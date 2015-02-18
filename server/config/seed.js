@@ -9,6 +9,7 @@ var User = require('../api/mongo/user/user.model');
 /*
 var Thing = require('../api/mongo/thing/thing.model');
 
+/*
 Thing.find({}).remove(function() {
   Thing.create({
     name : 'Development Tools',
@@ -35,7 +36,7 @@ User.find({}).remove(function() {
   User.create({
     provider: 'local',
     name: 'thomas',
-    email: 't.stjernegaard@snm.ku.dk',
+    email: 'thomas@ku.dk',
     password: 'pass',
 	role: 'Manager', 
 	specifyAgentIds: [1, 3],
