@@ -1,10 +1,10 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-	.controller('DataFormCtrl', ['$rootScope', '$scope', '$modal', 'Icons', 'hotkeys',  '$timeout', 'DataFormService','TaxonBrowserService',
-		function($rootScope, $scope, $modal, Icons, hotkeys,  $timeout, DataFormService, TaxonBrowserService) {
+	.controller('DataFormCtrl', ['$rootScope', '$scope', '$modal', 'Icons', 'hotkeys',  '$timeout', 'DataFormService','TaxonBrowserService','DateService',
+		function($rootScope, $scope, $modal, Icons, hotkeys,  $timeout, DataFormService, TaxonBrowserService, DateService) {
 			$scope.Icons = Icons;
-			
+			$scope.DateService = DateService;
 			$scope.dataFormModal = $modal({
 				scope: $scope,
 				template: '/app/dataform/dataform.modal.tpl.html',

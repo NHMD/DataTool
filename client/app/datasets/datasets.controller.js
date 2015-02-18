@@ -5,9 +5,9 @@ angular.module('specifyDataCleanerApp')
 		function($rootScope, $scope, $modal, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons, TaxonTreeDefItem, TaxonBrowserService, $timeout,  Auth, localStorageService, DataFormService) {
 
 			$scope.Icons = Icons;
-			$scope.dateFormat = "yyyy-MM-dd";
 			$scope.workbenches = Workbench.query();
 			$scope.DataFormService = DataFormService;
+			
 
 			$scope.$watch('selectedWorkbench', function(newval, oldval) {
 				if (newval && typeof newval === 'object' && newval !== oldval) {

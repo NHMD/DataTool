@@ -9,25 +9,23 @@ angular.module('specifyDataCleanerApp')
             var moment = $window.moment;
             var dateFormat = attrs.moDateInput;
 			
-            attrs.$observe('moDateInput', function (newValue) {
+			var format = function (value) {
+                scope = scope;
+                if (!dateFormat || !value) return "";
+                var date = moment(value);
+				return (date && date.isValid()) ? date.format(dateFormat) : "Invalid date";
+            }
+			
+            attrs.$observe('moDateInput', function (newValue, oldValue) {
                 if (dateFormat == newValue || !ctrl.$modelValue) return;
                 dateFormat = newValue;
+				ctrl.$modelValue = moment(ctrl.$modelValue, oldValue).format(newValue);
+				ctrl.$setViewValue(ctrl.$modelValue);
             });
 			
 			
-            ctrl.$formatters.unshift(function (modelValue) {
-                scope = scope;
-                if (!dateFormat || !modelValue) return "";
-                var retVal = moment(modelValue).format(dateFormat);
-                return retVal;
-            });
-			
-            ctrl.$parsers.unshift(function (viewValue) {
-                scope = scope;
-                var date = moment(viewValue);
-				return (date && date.isValid()) ? date.format(dateFormat) : "Invalid date";
-              
-            });
+            ctrl.$formatters.unshift(format);
+            ctrl.$parsers.unshift(format);
         }
     };
 });

@@ -38,8 +38,15 @@
 					       </div>
 						   
 						   <div class="col-sm-9" ng-if="wtmi.FieldType === 4">
-				
-						 <input type="text" class="form-control" ng-model="row[wtmi.WorkbenchTemplateMappingItemID].CellData" ng-change="$parent.createOrUpdateWorkBenchDataItem(row, row[wtmi.WorkbenchTemplateMappingItemID], wtmi)" name="date" model-date-format="shortDate" autoclose="true" mo-date-input="{{$parent.dateFormat.toUpperCase()}}" data-date-format={{$parent.dateFormat}} bs-datepicker>
+							   <div class="input-group">
+						 <input type="text" class="form-control" ng-model="row[wtmi.WorkbenchTemplateMappingItemID].CellData" ng-change="$parent.createOrUpdateWorkBenchDataItem(row, row[wtmi.WorkbenchTemplateMappingItemID], wtmi)" name="date" model-date-format="shortDate" autoclose="true" mo-date-input="{{DateService.dateFormat.toUpperCase()}}" data-date-format={{DateService.dateFormat}} bs-datepicker>
+						 <!-- This is for the date format drop down. The feature is awaiting our pull request on the angular-strap lib to be accepted -->
+						 <div class="input-group-btn">
+						 <button class="btn btn-primary" html="true" bs-dropdown="DateService.dateFormatsDropdown"><i class="fa fa-cog"></i> <span class="caret"></span></button>
+						 
+					 </div>
+							 
+						 </div>
 					       </div>
 						   
 						

@@ -18,8 +18,7 @@
     "angular-smart-table": "",
     "angular-xeditable": "",
     "angular-local-storage": "0.1.5",
-    "moment": "~2.9.0",
-	"lrDragNDrop" : ""
+    "moment": "~2.9.0"
   },
   "devDependencies": {
     "angular-mocks": ">=1.2.*",
