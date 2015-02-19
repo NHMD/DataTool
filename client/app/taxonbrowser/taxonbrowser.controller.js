@@ -38,7 +38,6 @@ angular.module('specifyDataCleanerApp')
 			});
 
 			$scope.$watch('TaxonBrowserService.selectedTaxon', function(newval, oldval) {
-				
 				if (newval !== undefined && newval.constructor.name === "Resource") {
 					TaxonBrowserService.taxonParent = Taxon.getParents({
 						id: TaxonBrowserService.selectedTaxon.TaxonID
@@ -63,7 +62,7 @@ angular.module('specifyDataCleanerApp')
 
 			$scope.taxonModal = $modal({
 				scope: $scope,
-				template: '/app/taxonbrowser/taxon.modal.tpl.html',
+				template: 'app/taxonbrowser/taxon.modal.tpl.html',
 				show: false,
 				prefixEvent: "taxonmodal"
 			});

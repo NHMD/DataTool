@@ -214,7 +214,7 @@ angular.module('specifyDataCleanerApp')
 							
 						} else {
 							var p = TaxonBrowserService.taxonParent;
-							while (p !== null && p !== undefined) {
+							p.$promise.then(function(){while (p !== null && p !== undefined) {
 								if (p.RankID === $scope.taxonMappings[key].RankID && $scope.taxonMappings[key].determinationNumber === TaxonBrowserService.selectedDetermination) {
 									
 									var item = (row[key] !== undefined) ? row[key] : {};
@@ -226,7 +226,7 @@ angular.module('specifyDataCleanerApp')
 
 								};
 								p = p.Parent;
-							}
+							}})
 						}
 					}
 					
@@ -272,14 +272,14 @@ angular.module('specifyDataCleanerApp')
 				
 				$scope.carryForwardModal = $modal({
 					scope: $scope,
-					template: '/app/datasets/carryforward.modal.tpl.html',
+					template: 'app/datasets/carryforward.modal.tpl.html',
 					show: false,
 					prefixEvent: "carryforwardmodal"
 				});
 				
 				$scope.showcolumnsModal = $modal({
 					scope: $scope,
-					template: '/app/datasets/showcolumns.modal.tpl.html',
+					template: 'app/datasets/showcolumns.modal.tpl.html',
 					show: false,
 					prefixEvent: "showcolumnsmodal"
 				});

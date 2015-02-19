@@ -1,0 +1,3 @@
+[submodule "dist"]
+	path = dist
+	url = ssh://54e59a32fcf93359a1000050@dinadatatool-nhmd.rhcloud.com/~/git/dinadatatool.git/

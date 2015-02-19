@@ -224,7 +224,6 @@ module.exports = function (grunt) {
           src: [
             '<%= yeoman.dist %>/public/{,*/}*.js',
             '<%= yeoman.dist %>/public/{,*/}*.css',
-            '<%= yeoman.dist %>/public/assets/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
             '<%= yeoman.dist %>/public/assets/fonts/*'
           ]
         }
@@ -259,6 +258,14 @@ module.exports = function (grunt) {
         }
       }
     },
+	
+	uglify: {
+	    options: {
+	      mangle: {
+	        except: ['Resource']
+	      }
+	    }
+	},
 
     // The following *-min tasks produce minified files in the dist folder
     imagemin: {
@@ -300,7 +307,7 @@ module.exports = function (grunt) {
     ngtemplates: {
       options: {
         // This should be the name of your apps angular module
-        module: 'dinaCollectionsApp',
+        module: 'specifyDataCleanerApp',
         htmlmin: {
           collapseBooleanAttributes: true,
           collapseWhitespace: true,
@@ -344,6 +351,7 @@ module.exports = function (grunt) {
             '.htaccess',
             'bower_components/**/*',
             'assets/images/{,*/}*.{webp}',
+			'assets/images/**/**',
             'assets/fonts/**/*',
             'index.html'
           ]

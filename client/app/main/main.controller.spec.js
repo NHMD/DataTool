@@ -3,7 +3,7 @@
 describe('Controller: MainCtrl', function () {
 
   // load the controller's module
-  beforeEach(module('dinaCollectionsApp'));
+  beforeEach(module('specifyDataCleanerApp'));
   beforeEach(module('socketMock'));
 
   var MainCtrl,

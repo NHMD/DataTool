@@ -7,7 +7,7 @@ angular.module('specifyDataCleanerApp')
 			$scope.DateService = DateService;
 			$scope.dataFormModal = $modal({
 				scope: $scope,
-				template: '/app/dataform/dataform.modal.tpl.html',
+				template: 'app/dataform/dataform.modal.tpl.html',
 				show: false,
 				prefixEvent: "dataformmodal"
 			});
