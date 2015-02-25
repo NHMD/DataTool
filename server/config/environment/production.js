@@ -18,7 +18,8 @@ module.exports = {
     uri:    process.env.MONGOLAB_URI ||
             process.env.MONGOHQ_URL ||
             process.env.OPENSHIFT_MONGODB_DB_URL+process.env.OPENSHIFT_APP_NAME ||
-            'mongodb://localhost/dinacollections'
+            'mongodb://localhost/dinacollections',
+	database : 		'dinacollections'
   },
   mysql: {
 	  host: process.env.OPENSHIFT_MYSQL_DB_HOST,
@@ -26,5 +27,6 @@ module.exports = {
 	  username: process.env.OPENSHIFT_MYSQL_DB_USERNAME,
 	  password: process.env.OPENSHIFT_MYSQL_DB_PASSWORD,
 	  database: 'dinadatatool',
-  }
+  },
+  tempuploaddir: process.env.OPENSHIFT_DATA_DIR+'/uploads/'
 };

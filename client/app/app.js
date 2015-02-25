@@ -11,7 +11,8 @@ angular.module('specifyDataCleanerApp', [
 	'lrDragNDrop',
 	'xeditable',
 	'cfp.hotkeys',
-	'LocalStorageModule'
+	'LocalStorageModule',
+	'angularFileUpload'
 ])
   .config(function ($routeProvider, $locationProvider, $httpProvider) {
     $routeProvider

@@ -17,7 +17,8 @@ module.exports = {
 module.exports = {
   // MongoDB connection options
   mongo: {
-    uri: 'mongodb://localhost/dinacollections-dev'
+    uri: 'mongodb://localhost/dinacollections-dev',
+	database : 		'dinacollections-dev'
   },
 
   seedDB: true,
@@ -26,6 +27,7 @@ module.exports = {
 	  database: 'specify',
 	  username: 'specifyit',
 	  password: 'pass'
-  }
+  },
+  tempuploaddir: '../uploads/'
   
 };

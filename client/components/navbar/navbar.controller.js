@@ -5,6 +5,9 @@ angular.module('specifyDataCleanerApp')
 		$scope.menu = [{
 			'title': 'Data sets',
 			'link': '/datasets'
+		}, {
+			'title': 'Csv upload',
+			'link': '/csv-upload'
 		}];
 
 		$scope.isCollapsed = true;
