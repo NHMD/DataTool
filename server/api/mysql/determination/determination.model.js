@@ -2,8 +2,8 @@
 
 
 module.exports = function(sequelize, DataTypes) {
-  var Agent = sequelize.define("agent", {
-      AgentID: {
+  var Determination = sequelize.define("determination", {
+      DeterminationID: {
         type: DataTypes.INTEGER(11),
 			primaryKey: true,
 			autoIncrement: true,
@@ -21,39 +21,31 @@ module.exports = function(sequelize, DataTypes) {
         type: DataTypes.INTEGER(11),
         allowNull: true,
       },
-      Abbreviation: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      AgentType: {
-        type: DataTypes.INTEGER(4),
+      CollectionMemberID: {
+        type: DataTypes.INTEGER(11),
         allowNull: false,
       },
-      DateOfBirth: {
-        type: DataTypes.DATE,
-        allowNull: true,
-      },
-      DateOfBirthPrecision: {
-        type: DataTypes.INTEGER(4),
-        allowNull: true,
-      },
-      DateOfDeath: {
-        type: DataTypes.DATE,
-        allowNull: true,
-      },
-      DateOfDeathPrecision: {
-        type: DataTypes.INTEGER(4),
-        allowNull: true,
-      },
-      DateType: {
-        type: DataTypes.INTEGER(4),
-        allowNull: true,
-      },
-      Email: {
+      Addendum: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      FirstName: {
+      AlternateName: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      Confidence: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      DeterminedDate: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
+      DeterminedDatePrecision: {
+        type: DataTypes.INTEGER(4),
+        allowNull: true,
+      },
+      FeatureOrBasis: {
         type: DataTypes.STRING,
         allowNull: true,
       },
@@ -61,23 +53,27 @@ module.exports = function(sequelize, DataTypes) {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      Initials: {
+      IsCurrent: {
+        type: 'BIT(1)',
+        allowNull: false,
+      },
+      Method: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      Interests: {
+      NameUsage: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      JobTitle: {
-        type: DataTypes.STRING,
+      Number1: {
+        type: DataTypes.FLOAT(20,10),
         allowNull: true,
       },
-      LastName: {
-        type: DataTypes.STRING,
+      Number2: {
+        type: DataTypes.FLOAT(20,10),
         allowNull: true,
       },
-      MiddleInitial: {
+      Qualifier: {
         type: DataTypes.STRING,
         allowNull: true,
       },
@@ -85,65 +81,69 @@ module.exports = function(sequelize, DataTypes) {
         type: DataTypes.TEXT,
         allowNull: true,
       },
-      Title: {
+      SubSpQualifier: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      URL: {
+      Text1: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
+      Text2: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
+      TypeStatusName: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      CollectionTCID: {
+      VarQualifier: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      YesNo1: {
+        type: 'BIT(1)',
+        allowNull: true,
+      },
+      YesNo2: {
+        type: 'BIT(1)',
+        allowNull: true,
+      },
+      TaxonID: {
+        type: DataTypes.INTEGER(11),
+        allowNull: true,
+      },
+      DeterminerID: {
+        type: DataTypes.INTEGER(11),
+        allowNull: true,
+      },
+      CollectionObjectID: {
+        type: DataTypes.INTEGER(11),
+        allowNull: false,
+      },
+      CreatedByAgentID: {
+        type: DataTypes.INTEGER(11),
+        allowNull: true,
+      },
+      PreferredTaxonID: {
         type: DataTypes.INTEGER(11),
         allowNull: true,
       },
       ModifiedByAgentID: {
         type: DataTypes.INTEGER(11),
         allowNull: true,
-      },
-      CreatedByAgentID: {
-        type: DataTypes.INTEGER(11),
-        allowNull: true,
-      },
-      InstitutionTCID: {
-        type: DataTypes.INTEGER(11),
-        allowNull: true,
-      },
-      InstitutionCCID: {
-        type: DataTypes.INTEGER(11),
-        allowNull: true,
-      },
-      DivisionID: {
-        type: DataTypes.INTEGER(11),
-        allowNull: true,
-      },
-      CollectionCCID: {
-        type: DataTypes.INTEGER(11),
-        allowNull: true,
-      },
-      ParentOrganizationID: {
-        type: DataTypes.INTEGER(11),
-        allowNull: true,
-      },
-      SpecifyUserID: {
-        type: DataTypes.INTEGER(11),
-        allowNull: true,
-      },
-      Suffix: {
-        type: DataTypes.STRING,
-        allowNull: true,
       }
 }, {
-	tableName: 'agent',
+	tableName: 'determination',
 	timestamps: false,
 	freezeTableName: true,
 	classMethods: {
 		
       associate: function(models) {
-       // Agent.hasMany(models.Workbenchtemplate)
+       // Determination.hasMany(models.Workbenchtemplate)
       }
 	  
 	}
 });
-return Agent;
+return Determination;
 };

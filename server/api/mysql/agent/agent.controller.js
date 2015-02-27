@@ -58,6 +58,16 @@ exports.destroy = function(req, res) {
 	
 };
 
+// Describe agent
+exports.describe = function(req, res) {
+  models.Agent.describe().then(function(agent){
+	  console.log(agent);
+  	return res.json(200, agent);	
+  }).catch(function(err){
+	  handleError(res, err);
+  });
+};
+
 function handleError(res, err) {
   return res.send(500, err);
 }

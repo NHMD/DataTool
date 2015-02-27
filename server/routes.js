@@ -12,8 +12,12 @@ module.exports = function(app) {
 
 	//mysql
 	app.use('/api/spprincipals', require('./api/mysql/spprincipal'));
+	app.use('/api/determinations', require('./api/mysql/determination'));
 	app.use('/api/disciplines', require('./api/mysql/discipline'));
 	app.use('/api/collections', require('./api/mysql/collection'));
+	app.use('/api/collectionobjects', require('./api/mysql/collectionobject'));
+	app.use('/api/collectingevents', require('./api/mysql/collectingevent'));
+	app.use('/api/preparations', require('./api/mysql/preparation'));
 	app.use('/api/taxons', require('./api/mysql/taxon'));
 	app.use('/api/taxontreedefitems', require('./api/mysql/taxontreedefitem'));
 	app.use('/api/workbenches', require('./api/mysql/workbench'));

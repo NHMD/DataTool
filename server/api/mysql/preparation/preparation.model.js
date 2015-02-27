@@ -2,8 +2,8 @@
 
 
 module.exports = function(sequelize, DataTypes) {
-  var Agent = sequelize.define("agent", {
-      AgentID: {
+  var Preparation = sequelize.define("preparation", {
+      PreparationID: {
         type: DataTypes.INTEGER(11),
 			primaryKey: true,
 			autoIncrement: true,
@@ -21,129 +21,125 @@ module.exports = function(sequelize, DataTypes) {
         type: DataTypes.INTEGER(11),
         allowNull: true,
       },
-      Abbreviation: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      AgentType: {
-        type: DataTypes.INTEGER(4),
+      CollectionMemberID: {
+        type: DataTypes.INTEGER(11),
         allowNull: false,
       },
-      DateOfBirth: {
+      CountAmt: {
+        type: DataTypes.INTEGER(11),
+        allowNull: true,
+      },
+      Description: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      Integer1: {
+        type: DataTypes.INTEGER(11),
+        allowNull: true,
+      },
+      Integer2: {
+        type: DataTypes.INTEGER(11),
+        allowNull: true,
+      },
+      Number1: {
+        type: DataTypes.FLOAT(20,10),
+        allowNull: true,
+      },
+      Number2: {
+        type: DataTypes.FLOAT(20,10),
+        allowNull: true,
+      },
+      PreparedDate: {
         type: DataTypes.DATE,
         allowNull: true,
       },
-      DateOfBirthPrecision: {
+      PreparedDatePrecision: {
         type: DataTypes.INTEGER(4),
-        allowNull: true,
-      },
-      DateOfDeath: {
-        type: DataTypes.DATE,
-        allowNull: true,
-      },
-      DateOfDeathPrecision: {
-        type: DataTypes.INTEGER(4),
-        allowNull: true,
-      },
-      DateType: {
-        type: DataTypes.INTEGER(4),
-        allowNull: true,
-      },
-      Email: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      FirstName: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      GUID: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      Initials: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      Interests: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      JobTitle: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      LastName: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      MiddleInitial: {
-        type: DataTypes.STRING,
         allowNull: true,
       },
       Remarks: {
         type: DataTypes.TEXT,
         allowNull: true,
       },
-      Title: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      URL: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      CollectionTCID: {
+      ReservedInteger3: {
         type: DataTypes.INTEGER(11),
         allowNull: true,
       },
-      ModifiedByAgentID: {
+      ReservedInteger4: {
         type: DataTypes.INTEGER(11),
+        allowNull: true,
+      },
+      SampleNumber: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      Status: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      StorageLocation: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      Text1: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
+      Text2: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
+      YesNo1: {
+        type: 'BIT(1)',
+        allowNull: true,
+      },
+      YesNo2: {
+        type: 'BIT(1)',
+        allowNull: true,
+      },
+      YesNo3: {
+        type: 'BIT(1)',
         allowNull: true,
       },
       CreatedByAgentID: {
         type: DataTypes.INTEGER(11),
         allowNull: true,
       },
-      InstitutionTCID: {
+      CollectionObjectID: {
+        type: DataTypes.INTEGER(11),
+        allowNull: false,
+      },
+      ModifiedByAgentID: {
         type: DataTypes.INTEGER(11),
         allowNull: true,
       },
-      InstitutionCCID: {
+      PrepTypeID: {
+        type: DataTypes.INTEGER(11),
+        allowNull: false,
+      },
+      StorageID: {
         type: DataTypes.INTEGER(11),
         allowNull: true,
       },
-      DivisionID: {
+      PreparationAttributeID: {
         type: DataTypes.INTEGER(11),
         allowNull: true,
       },
-      CollectionCCID: {
+      PreparedByID: {
         type: DataTypes.INTEGER(11),
-        allowNull: true,
-      },
-      ParentOrganizationID: {
-        type: DataTypes.INTEGER(11),
-        allowNull: true,
-      },
-      SpecifyUserID: {
-        type: DataTypes.INTEGER(11),
-        allowNull: true,
-      },
-      Suffix: {
-        type: DataTypes.STRING,
         allowNull: true,
       }
 }, {
-	tableName: 'agent',
+	tableName: 'preparation',
 	timestamps: false,
 	freezeTableName: true,
 	classMethods: {
 		
       associate: function(models) {
-       // Agent.hasMany(models.Workbenchtemplate)
+       // Preparation.hasMany(models.Workbenchtemplate)
       }
 	  
 	}
 });
-return Agent;
+return Preparation;
 };

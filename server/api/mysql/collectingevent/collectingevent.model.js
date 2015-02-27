@@ -2,8 +2,8 @@
 
 
 module.exports = function(sequelize, DataTypes) {
-  var Agent = sequelize.define("agent", {
-      AgentID: {
+  var Collectingevent = sequelize.define("collectingevent", {
+      CollectingEventID: {
         type: DataTypes.INTEGER(11),
 			primaryKey: true,
 			autoIncrement: true,
@@ -21,63 +21,35 @@ module.exports = function(sequelize, DataTypes) {
         type: DataTypes.INTEGER(11),
         allowNull: true,
       },
-      Abbreviation: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      AgentType: {
-        type: DataTypes.INTEGER(4),
-        allowNull: false,
-      },
-      DateOfBirth: {
+      EndDate: {
         type: DataTypes.DATE,
         allowNull: true,
       },
-      DateOfBirthPrecision: {
+      EndDatePrecision: {
         type: DataTypes.INTEGER(4),
         allowNull: true,
       },
-      DateOfDeath: {
-        type: DataTypes.DATE,
-        allowNull: true,
-      },
-      DateOfDeathPrecision: {
-        type: DataTypes.INTEGER(4),
-        allowNull: true,
-      },
-      DateType: {
-        type: DataTypes.INTEGER(4),
-        allowNull: true,
-      },
-      Email: {
+      EndDateVerbatim: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      FirstName: {
-        type: DataTypes.STRING,
+      EndTime: {
+        type: DataTypes.INTEGER(6),
         allowNull: true,
       },
       GUID: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      Initials: {
-        type: DataTypes.STRING,
+      Integer1: {
+        type: DataTypes.INTEGER(11),
         allowNull: true,
       },
-      Interests: {
-        type: DataTypes.STRING,
+      Integer2: {
+        type: DataTypes.INTEGER(11),
         allowNull: true,
       },
-      JobTitle: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      LastName: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      MiddleInitial: {
+      Method: {
         type: DataTypes.STRING,
         allowNull: true,
       },
@@ -85,19 +57,83 @@ module.exports = function(sequelize, DataTypes) {
         type: DataTypes.TEXT,
         allowNull: true,
       },
-      Title: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      URL: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      CollectionTCID: {
+      ReservedInteger3: {
         type: DataTypes.INTEGER(11),
         allowNull: true,
       },
-      ModifiedByAgentID: {
+      ReservedInteger4: {
+        type: DataTypes.INTEGER(11),
+        allowNull: true,
+      },
+      ReservedText1: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      ReservedText2: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      SGRStatus: {
+        type: DataTypes.INTEGER(4),
+        allowNull: true,
+      },
+      StartDate: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
+      StartDatePrecision: {
+        type: DataTypes.INTEGER(4),
+        allowNull: true,
+      },
+      StartDateVerbatim: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      StartTime: {
+        type: DataTypes.INTEGER(6),
+        allowNull: true,
+      },
+      StationFieldNumber: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      Text1: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
+      Text2: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
+      VerbatimDate: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      VerbatimLocality: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
+      Visibility: {
+        type: DataTypes.INTEGER(4),
+        allowNull: true,
+      },
+      VisibilitySetByID: {
+        type: DataTypes.INTEGER(11),
+        allowNull: true,
+      },
+      CollectingEventAttributeID: {
+        type: DataTypes.INTEGER(11),
+        allowNull: true,
+      },
+      DisciplineID: {
+        type: DataTypes.INTEGER(11),
+        allowNull: false,
+      },
+      CollectingTripID: {
+        type: DataTypes.INTEGER(11),
+        allowNull: true,
+      },
+      LocalityID: {
         type: DataTypes.INTEGER(11),
         allowNull: true,
       },
@@ -105,45 +141,25 @@ module.exports = function(sequelize, DataTypes) {
         type: DataTypes.INTEGER(11),
         allowNull: true,
       },
-      InstitutionTCID: {
+      ModifiedByAgentID: {
         type: DataTypes.INTEGER(11),
         allowNull: true,
       },
-      InstitutionCCID: {
+      PaleoContextID: {
         type: DataTypes.INTEGER(11),
-        allowNull: true,
-      },
-      DivisionID: {
-        type: DataTypes.INTEGER(11),
-        allowNull: true,
-      },
-      CollectionCCID: {
-        type: DataTypes.INTEGER(11),
-        allowNull: true,
-      },
-      ParentOrganizationID: {
-        type: DataTypes.INTEGER(11),
-        allowNull: true,
-      },
-      SpecifyUserID: {
-        type: DataTypes.INTEGER(11),
-        allowNull: true,
-      },
-      Suffix: {
-        type: DataTypes.STRING,
         allowNull: true,
       }
 }, {
-	tableName: 'agent',
+	tableName: 'collectingevent',
 	timestamps: false,
 	freezeTableName: true,
 	classMethods: {
 		
       associate: function(models) {
-       // Agent.hasMany(models.Workbenchtemplate)
+       // Collectingevent.hasMany(models.Workbenchtemplate)
       }
 	  
 	}
 });
-return Agent;
+return Collectingevent;
 };

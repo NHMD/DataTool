@@ -9,13 +9,13 @@ var MongoClient = require('mongodb').MongoClient;
 var ObjectID = require('mongodb').ObjectID;
 var uploaddir = config.tempuploaddir;
 
-function parseCSVFile(sourceFilePath, columns, onNewRecord, handleError, done) {
+function parseCSVFile(sourceFilePath, columns, onNewRecord, handleError, done, delimiter) {
 	var source = fs.createReadStream(sourceFilePath);
 
 	var linesRead = 0;
 
 	var parser = parse({
-		delimiter: ',',
+		delimiter: delimiter,
 		columns: columns,
 		relax: true
 	});
@@ -42,6 +42,9 @@ function parseCSVFile(sourceFilePath, columns, onNewRecord, handleError, done) {
 
 exports.getFile = function(req, res) {
 	console.log(req.files);
+	console.log(req.body +" ##### "+req.body.csvdelimiter);
+	var csvdelimiter = (req.body.csvdelimiter) ? req.body.csvdelimiter : ",";
+	console.log("delimiter "+csvdelimiter);
 	var filePath = req.files.file.path;
 	var collName = "csv_temp_" + req.files.file.name.split(".")[0];
 
@@ -75,7 +78,7 @@ exports.getFile = function(req, res) {
 	}
 
 	var columns = true;
-	parseCSVFile(filePath, columns, onNewRecord, onError, done);
+	parseCSVFile(filePath, columns, onNewRecord, onError, done, csvdelimiter);
 
 };
 

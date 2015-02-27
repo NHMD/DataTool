@@ -1,13 +1,13 @@
 'use strict';
 
 var express = require('express');
-var controller = require('./agent.controller');
+var controller = require('./determination.controller');
 var auth = require('../../../auth/auth.service');
 
 var router = express.Router();
-router.get('/fields/', auth.isAuthenticated(),controller.describe);
+router.get('/fields/', controller.describe);
 router.get('/', auth.isAuthenticated(), controller.index);
-router.get('/:id', auth.isAuthenticated(), controller.show);
+router.get('/:id',  controller.show);
 router.post('/', auth.isAuthenticated(), controller.create);
 router.put('/:id', auth.isAuthenticated(), controller.update);
 router.patch('/:id',auth.isAuthenticated(), controller.update);

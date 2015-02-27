@@ -3,11 +3,14 @@
 angular.module('specifyDataCleanerApp')
 	.controller('CsvUploadCtrl', ['$scope', '$http', '$timeout', '$compile', 'FileUploader', 'Csvdataset',
 		function($scope, $http, $timeout, $compile, FileUploader, Csvdataset) {
-
+		
+			$scope.delimiters = [{value:",",label:"Comma ,"}, {value:";",label:"Semicolon ;"}, {value:":",label:"Colon :"}];
+			$scope.delimiter =$scope.delimiters[0].value;
 			var uploader = $scope.uploader = new FileUploader({
 				url: '/api/fileupload'
 			});
-
+			
+			
 			// FILTERS
 
 			uploader.filters.push({
@@ -23,12 +26,14 @@ angular.module('specifyDataCleanerApp')
 				console.info('onWhenAddingFileFailed', item, filter, options);
 			};
 			uploader.onAfterAddingFile = function(fileItem) {
+				
 				console.info('onAfterAddingFile', fileItem);
 			};
 			uploader.onAfterAddingAll = function(addedFileItems) {
 				console.info('onAfterAddingAll', addedFileItems);
 			};
 			uploader.onBeforeUploadItem = function(item) {
+				item.formData.push({csvdelimiter : $scope.delimiter});
 				console.info('onBeforeUploadItem', item);
 			};
 			uploader.onProgressItem = function(fileItem, progress) {
@@ -48,10 +53,10 @@ angular.module('specifyDataCleanerApp')
 				}).$promise.then(function(data) {
 					
 					$scope.data = data;
-					$cope.fields = [];
+					$scope.fields = [];
 					for (var field in data[0]){
 						if (data[0].hasOwnProperty(data[0])) {
-							$cope.fields.push(field);
+							$scope.fields.push(field);
 						}
 					}
 					$scope.isLoading = false;
