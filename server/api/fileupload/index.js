@@ -13,6 +13,7 @@ var router = express.Router();
 router.post('/', [ multer({ dest: uploaddir }), controller.getFile]);
 //router.get('/collections/', controller.index);
 router.get('/collections/:collname', controller.find);
+router.get('/collections/:collname/aggregate', controller.aggr);
 router.get('/collections/:collname/objects/:id', controller.findObject);
 router.get('/collections/:collname/objects', controller.indexObjects);
 

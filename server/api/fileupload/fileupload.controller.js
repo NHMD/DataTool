@@ -9,6 +9,8 @@ var MongoClient = require('mongodb').MongoClient;
 var ObjectID = require('mongodb').ObjectID;
 var uploaddir = config.tempuploaddir;
 
+var datamapper = require('../../components/datamapper');
+
 function parseCSVFile(sourceFilePath, columns, onNewRecord, handleError, done, delimiter) {
 	var source = fs.createReadStream(sourceFilePath);
 
@@ -148,4 +150,28 @@ exports.indexObjects = function(req, res) {
 		});
 
 	})
+}
+
+exports.aggr = function(req, res) {
+	var mappings = {	"Collector First Name1": {
+			refTable: "Collector",
+			fieldName: "FirstName",
+			tableName: "Agent"
+		},
+		"Collector Last Name1": {
+			refTable: "Collector",
+			fieldName: "LastName",
+			tableName: "Agent"
+		},
+		"Collector Middle1": {
+			refTable: "Collector",
+			fieldName: "MiddleInitial",
+			tableName: "Agent"
+		}};
+	datamapper.aggregate(req.params.collname, mappings, 'Agent' ).then(function(inserted){
+		res.send(200);
+	}).catch(function(err) {
+	        throw err;
+	    });
+	
 }

@@ -12,14 +12,17 @@ module.exports = function(sequelize, DataTypes) {
       TimestampCreated: {
         type: DataTypes.DATE,
         allowNull: false,
+		defaultValue: DataTypes.NOW
       },
       TimestampModified: {
         type: DataTypes.DATE,
-        allowNull: true,
+        allowNull: false,
+		defaultValue: DataTypes.NOW
       },
       Version: {
         type: DataTypes.INTEGER(11),
-        allowNull: true,
+        allowNull: false,
+		defaultValue: 0
       },
       Abbreviation: {
         type: DataTypes.STRING,
@@ -28,6 +31,7 @@ module.exports = function(sequelize, DataTypes) {
       AgentType: {
         type: DataTypes.INTEGER(4),
         allowNull: false,
+		defaultValue: 1
       },
       DateOfBirth: {
         type: DataTypes.DATE,
