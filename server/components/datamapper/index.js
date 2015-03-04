@@ -117,20 +117,17 @@ exports.aggregateAndPersist = function(collectionName, mappings, model) {
 }
 
 exports.aggregateTreeAndPersist = function(collectionName, mappings, model, discipline) {
-	
-	
-	var treeDefName = model+"TreeDefID";
-	var treeDefItemName = model+"TreeDefItemID"; // extracting Key field names for the relevant tree
-	var treeDef = model + "treedefitem";
-	//var GeographyTreeDefID = 1; // Hardcoded for test purpose, get it from Discipline
-	
 
-	//, order: [[RankID, 'DESC']]
+
+	var treeDefName = model + "TreeDefID";
+	var treeDefItemName = model + "TreeDefItemID"; // extracting Key field names for the relevant tree
+	var treeDef = model + "treedefitem";
+
 	var where = {
-			Name: Object.keys(mappings)
-		};
-		where[treeDefName] = discipline[treeDefName];
-		
+		Name: Object.keys(mappings)
+	};
+	where[treeDefName] = discipline[treeDefName];
+
 	return specifyModel[treeDef].findAll({
 		where: where,
 		order: [
@@ -139,11 +136,13 @@ exports.aggregateTreeAndPersist = function(collectionName, mappings, model, disc
 	})
 
 	.then(function(treedefitems) {
-		
+
 		var rankMappings = {};
 
 		for (var i = 0; i < treedefitems.length; i++) {
-			rankMappings[treedefitems[i].Name] = {RankID: treedefitems[i].RankID };
+			rankMappings[treedefitems[i].Name] = {
+				RankID: treedefitems[i].RankID
+			};
 			rankMappings[treedefitems[i].Name][treeDefItemName] = treedefitems[i][treeDefItemName];
 		};
 
@@ -171,67 +170,69 @@ exports.aggregateTreeAndPersist = function(collectionName, mappings, model, disc
 		var collection = db.collection("mapped_" + model + "_" + collectionName);
 
 		var instances = [];
-	
-		for (var i = 0; i <  result.length ; i++) {
-			
+
+		for (var i = 0; i < result.length; i++) {
+
 			var mapped = [];
 			for (var key in result[i]._id) {
-				var elm = {RankID: rankMappings[key].RankID, Name: result[i]._id[key] };
+				var elm = {
+					RankID: rankMappings[key].RankID,
+					Name: result[i]._id[key]
+				};
 				elm[treeDefItemName] = rankMappings[key][treeDefItemName];
 				mapped.push(elm)
 			};
-			
-			mapped.sort(function(a,b){
+
+			mapped.sort(function(a, b) {
 				return a.RankID < b.RankID;
 			});
-			
-			
+
+
 			var instance = Promise.reduce(mapped, function(previous, query) {
-				if(previous) {
-					
+				if (previous) {
+
 					return previous;
-				}
-			    else {
-					
+				} else {
+
 					return specifyModel[model].find({
-										where: query
-							});
-						}
-				
+						where: query
+					});
+				}
+
 			}, 0).then(function(treenode) {
-				if(!treenode){
+				if (!treenode) {
 					// No match at any level in the tree, create a new root at level 100
 					// TODO
-				}
-				else if(mapped[0].RankID === treenode.RankID){
+				} else if (mapped[0].RankID === treenode.RankID) {
 					// Theres a match at the leaf node, just make the reference i mongodb
 					return collection.insertAsync(treenode.values, {});
-				}
-				else {
+				} else {
 					// no exact match at leaf level, but a match at a higher level, make a new leaf under the matched parent
 					// at present we set the first existing 'up-tree' node as parent. This could be refined:
 					// If theres several missing tree levels these could be create with a promise.reduce chain
-					
-					var treeNodeDefinition = _.merge(mapped[0], {ParentID: treenode[model+"ID"]});
+
+					var treeNodeDefinition = _.merge(mapped[0], {
+						ParentID: treenode[model + "ID"]
+					});
 					treeNodeDefinition[treeDefName] = discipline[treeDefName];
-					
+
 					return specifyModel[model].create(newInst)
-							.then(function(inserted){
-							
-								return collection.insertAsync(inserted.values, {});
-							})
-					
+						.then(function(inserted) {
+
+							return collection.insertAsync(inserted.values, {});
+						})
+
 				}
 
 			});
-			
+
 			instances.push(instance);
-			
+
 		}
 		return Promise.all(instances);
 	})
-		.
-	catch (function(err) {
+	
+	.catch (function(err) {
 		throw err;
 	});
 
