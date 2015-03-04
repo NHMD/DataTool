@@ -17,6 +17,10 @@ module.exports = function(app) {
 	app.use('/api/collections', require('./api/mysql/collection'));
 	app.use('/api/collectionobjects', require('./api/mysql/collectionobject'));
 	app.use('/api/collectingevents', require('./api/mysql/collectingevent'));
+	app.use('/api/collectors', require('./api/mysql/collector'));
+	app.use('/api/localitys', require('./api/mysql/locality'));
+	app.use('/api/geographys', require('./api/mysql/geography'));
+	app.use('/api/geographytreedefitems', require('./api/mysql/geographytreedefitem'));
 	app.use('/api/preparations', require('./api/mysql/preparation'));
 	app.use('/api/taxons', require('./api/mysql/taxon'));
 	app.use('/api/taxontreedefitems', require('./api/mysql/taxontreedefitem'));

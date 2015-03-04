@@ -36,6 +36,16 @@ exports.showDiscipline = function(req, res) {
   });
 };
 
+// Describe agent
+exports.describe = function(req, res) {
+  models.Collection.describe().then(function(collection){
+	  console.log(collection);
+  	return res.json(200, collection);	
+  }).catch(function(err){
+	  handleError(res, err);
+  });
+};
+
 function handleError(res, err) {
   return res.send(500, err);
 }

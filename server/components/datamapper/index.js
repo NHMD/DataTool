@@ -7,10 +7,9 @@ var specifyModel  = require('../../api/mysql');
 //var ObjectID = require('mongodb').ObjectID;
 
 var Promise = require("bluebird");
-var MongoDB = require("mongodb");
-Promise.promisifyAll(MongoDB);
+var MongoDB = require("./nativeMongoInstance");
 
-var _ = require('lodash');
+
 /*
 var mappings = {
 
@@ -67,37 +66,42 @@ var mappings = {
 
 
 	
-exports.aggregate = function(collection, mappings, model) {
+exports.aggregateAndPersist = function(collectionName, mappings, model) {
 	var aggregation = {}
 	for(var key in mappings){
 		aggregation[mappings[key].fieldName] = "$"+key;
 	}
 	
 	
-	var client = MongoDB.MongoClient.connectAsync(config.mongo.uri)
+	return MongoDB.connect()
 	    .then(function(db) {
-	        return db.collection(collection).aggregateAsync(
+	        return [db.collection(collectionName).aggregateAsync(
 				[{
 					"$group": {
 						"_id": aggregation
 					}
 				}]
-			);
+			)
+			, db
+			, collectionName]
 	    })
-	    .then(function(result) {
+	    .spread(function(result, db, collectionName) {
+			var collection = db.collection("mapped_"+model+"_"+collectionName);
 			var instances = [];
 			for(var i=0; i< result.length; i++ ){
 				console.log(result[i]._id);
 				var instance = specifyModel[model].findOrCreate( {where :result[i]._id})
-				.then(function(user){
-					console.log(user)
+				.spread(function(instance, created){
+					
+				return	collection.insertAsync(instance.values, {}); 
+					 
 				})
 				.catch(function(err){
-					console.log(err)
+					throw err;
 				});
 				instances.push(instance);
 			}
-			return Promise.all(instances);
+			return  Promise.all(instances);
 	    })
 	    .catch(function(err) {
 	        throw err;

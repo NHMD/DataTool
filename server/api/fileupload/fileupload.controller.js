@@ -5,8 +5,8 @@ var config = require('../../config/environment');
 
 var fs = require("fs");
 var parse = require('csv').parse;
-var MongoClient = require('mongodb').MongoClient;
-var ObjectID = require('mongodb').ObjectID;
+var Promise = require("bluebird");
+var MongoDB = require("../../components/datamapper/nativeMongoInstance");
 var uploaddir = config.tempuploaddir;
 
 var datamapper = require('../../components/datamapper');
@@ -61,22 +61,21 @@ exports.getFile = function(req, res) {
 	}
 
 	function done(linesRead) {
-		MongoClient.connect(config.mongo.uri, function(err, db) {
-			if (err) throw err;
-
+		
+		MongoDB.connect().then(function(db){
 			var collection = db.collection(collName);
 			collection.insert(rows, function(err, docs) {
 
 				if (err) throw err;
 
 
-				db.close();
 				fs.unlink(filePath, function() {
 					res.send(200, {collection : collName});
 				});
 
 			});
 		})
+
 	}
 
 	var columns = true;
@@ -88,8 +87,8 @@ exports.find = function(req, res) {
 	var limit = parseInt(req.query.limit) || 100;
 	var offset = parseInt(req.query.offset) || 0;
 
-	MongoClient.connect(config.mongo.uri, function(err, db) {
-		if (err) throw err;
+	MongoDB.connect().then(function(db){
+	
 		db.collection(req.params.collname, function(err, collection) {
 			
 			if (err) throw err;
@@ -102,7 +101,7 @@ exports.find = function(req, res) {
 					
 				}
 				);
-				db.close();
+				
 			
 			});
 		});
@@ -113,17 +112,16 @@ exports.find = function(req, res) {
 exports.findObject = function(req, res) {
 
 
-	MongoClient.connect(config.mongo.uri, function(err, db) {
-		if (err) throw err;
+	MongoDB.connect().then(function(db){
+		
 		db.collection(req.params.collname, function(err, collection) {
 			
-			if (err) throw err;
 			
-			collection.find({_id: ObjectID(req.params.id)}).toArray(function(err, docs) {
+			collection.find({_id: MongoDB.ObjectID(req.params.id)}).toArray(function(err, docs) {
 				console.log(req.params.id)
 				if (err) throw err;
 				res.send(200,docs[0] );
-				db.close();
+				
 			});
 			
 		});
@@ -136,15 +134,14 @@ exports.indexObjects = function(req, res) {
 	var limit = parseInt(req.query.limit) || 100;
 	var offset = parseInt(req.query.offset) || 0;
 
-	MongoClient.connect(config.mongo.uri, function(err, db) {
-		if (err) throw err;
+MongoDB.connect().then(function(db){
 		db.collection(req.params.collname, function(err, collection) {
 			
 			if (err) throw err;
 		
 			collection.find({}).skip(offset).limit(limit).toArray(function(err, docs) {
 				res.send(200, docs);
-				db.close();
+				
 			});
 			
 		});
@@ -153,7 +150,16 @@ exports.indexObjects = function(req, res) {
 }
 
 exports.aggr = function(req, res) {
-	var mappings = {	"Collector First Name1": {
+	// Mappings will be posted from UI
+	var mappings = [
+		{
+			"Locality Name": {
+			fieldName: "LocalityName",
+			tableName: "Locality"
+			}
+		},
+		
+		{	"Collector First Name1": {
 			refTable: "Collector",
 			fieldName: "FirstName",
 			tableName: "Agent"
@@ -167,9 +173,14 @@ exports.aggr = function(req, res) {
 			refTable: "Collector",
 			fieldName: "MiddleInitial",
 			tableName: "Agent"
-		}};
-	datamapper.aggregate(req.params.collname, mappings, 'Agent' ).then(function(inserted){
-		res.send(200);
+		}}];
+		
+		
+		
+		
+	datamapper.aggregateAndPersist(req.params.collname, mappings[1], 'Agent' ).then(function(inserted){
+	//	console.log(inserted);
+		res.send(200, inserted);
 	}).catch(function(err) {
 	        throw err;
 	    });
