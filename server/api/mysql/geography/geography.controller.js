@@ -25,85 +25,10 @@ exports.show = function(req, res) {
 };
 
 exports.showParents = function(req, res) {
-	models.Geography.find({
-		where: {
-			GeographyID: req.params.id
-		},
-		include: [{
-			model: models.Geography,
-			as: "Parent",
-			include: [{
-				model: models.Geography,
-				as: "Parent",
-				include: [{
-					model: models.Geography,
-					as: "Parent",
-					include: [{
-						model: models.Geography,
-						as: "Parent",
-						include: [{
-							model: models.Geography,
-							as: "Parent",
-							include: [{
-								model: models.Geography,
-								as: "Parent",
-								include: [{
-									model: models.Geography,
-									as: "Parent",
-									include: [{
-										model: models.Geography,
-										as: "Parent",
-										include: [{
-											model: models.Geography,
-											as: "Parent",
-											include: [{
-												model: models.Geography,
-												as: "Parent",
-												include: [{
-													model: models.Geography,
-													as: "Parent",
-													include: [{
-														model: models.Geography,
-														as: "Parent",
-														include: [{
-															model: models.Geography,
-															as: "Parent",
-															include: [{
-																model: models.Geography,
-																as: "Parent",
-																include: [{
-																	model: models.Geography,
-																	as: "Parent",
-																	include: [{
-																		model: models.Geography,
-																		as: "Parent",
-																		include: [{
-																			model: models.Geography,
-																			as: "Parent",
-																			include: [{
-																				model: models.Geography,
-																				as: "Parent"
-																			}]
-																		}]
-																	}]
-																}]
-															}]
-														}]
-													}]
-												}]
-											}]
-										}]
-									}]
-								}]
-							}]
-						}]
-					}]
-				}]
-			}]
-		}]
-
-	}).then(function(geography) {
-		return res.json(200, geography.Parent);
+	models.Geography.find(req.params.id).then(function(geography) {
+		return geography.showParents(models);
+	}).then(function(parents) {
+		return res.json(200, parents);
 	}).
 	catch (function(err) {
 		handleError(res, err);

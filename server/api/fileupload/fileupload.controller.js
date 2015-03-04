@@ -150,8 +150,39 @@ MongoDB.connect().then(function(db){
 }
 
 exports.aggr = function(req, res) {
+	
+	var geographytreedef = {
+		
+		Earth : 0,
+		Continent : 100,
+		Country : 200,
+		State : 300,
+		County : 400
+	}
 	// Mappings will be posted from UI
 	var mappings = [
+		{
+			"State": {
+			fieldName: "Name",
+			tableName: "Geography",
+				rankName: 	"State"
+			},
+			"Country": {
+			fieldName: "Name",
+			tableName: "Geography",
+				rankName: 	"Country"
+			},
+			"County": {
+			fieldName: "Name",
+			tableName: "Geography",
+				rankName: 	"Country"
+			},
+			"Continent": {
+			fieldName: "Name",
+			tableName: "Geography",
+				rankName: 	"Continent"
+			}
+		},
 		{
 			"Locality Name": {
 			fieldName: "LocalityName",
@@ -174,15 +205,21 @@ exports.aggr = function(req, res) {
 			fieldName: "MiddleInitial",
 			tableName: "Agent"
 		}}];
+		var discipline = {GeographyTreeDefID : 1}; // emulating a discipline which will have Taxon and Geography tree defs
+		datamapper.aggregateTreeAndPersist(req.params.collname, mappings[0], 'Geography', discipline ).then(function(inserted){
+		//	console.log(inserted);
+			res.send(200, inserted);
+		}).catch(function(err) {
+		        throw err;
+		    });	
 		
-		
-		
-		
+	/*	
 	datamapper.aggregateAndPersist(req.params.collname, mappings[1], 'Agent' ).then(function(inserted){
 	//	console.log(inserted);
 		res.send(200, inserted);
 	}).catch(function(err) {
 	        throw err;
 	    });
+		*/
 	
 }

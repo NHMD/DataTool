@@ -10,16 +10,19 @@ module.exports = function(sequelize, DataTypes) {
 		allowNull:false
 	},
     TimestampCreated: {
-      type: DataTypes.DATE,
-      allowNull: false,
+			type: DataTypes.DATE,
+			allowNull: false,
+			defaultValue: DataTypes.NOW
     },
     TimestampModified: {
-      type: DataTypes.DATE,
-      allowNull: true,
+			type: DataTypes.DATE,
+			allowNull: false,
+			defaultValue: DataTypes.NOW
     },
     Version: {
       type: DataTypes.INTEGER(11),
-      allowNull: true,
+      allowNull: false,
+		defaultValue: 0
     },
     Abbrev: {
       type: DataTypes.STRING,
@@ -49,10 +52,11 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.TEXT,
       allowNull: true,
     },
-    GUID: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
+	GUID: {
+		type: DataTypes.UUID,
+		allowNull: true,
+		defaultValue: DataTypes.UUIDV1,
+	},
     HighestChildNodeNumber: {
       type: DataTypes.INTEGER(11),
       allowNull: true,
@@ -60,6 +64,7 @@ module.exports = function(sequelize, DataTypes) {
     IsAccepted: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
+		defaultValue: true
     },
     IsCurrent: {
       type: DataTypes.BOOLEAN,
@@ -165,7 +170,89 @@ module.exports = function(sequelize, DataTypes) {
 */
 	}
 	  
-	}
+	},
+	instanceMethods: {
+	    showParents: function(models) {
+	      return 	models.Geography.find({
+		where: {
+			GeographyID: this.ParentID
+		},
+		include: [{
+			model: models.Geography,
+			as: "Parent",
+			include: [{
+				model: models.Geography,
+				as: "Parent",
+				include: [{
+					model: models.Geography,
+					as: "Parent",
+					include: [{
+						model: models.Geography,
+						as: "Parent",
+						include: [{
+							model: models.Geography,
+							as: "Parent",
+							include: [{
+								model: models.Geography,
+								as: "Parent",
+								include: [{
+									model: models.Geography,
+									as: "Parent",
+									include: [{
+										model: models.Geography,
+										as: "Parent",
+										include: [{
+											model: models.Geography,
+											as: "Parent",
+											include: [{
+												model: models.Geography,
+												as: "Parent",
+												include: [{
+													model: models.Geography,
+													as: "Parent",
+													include: [{
+														model: models.Geography,
+														as: "Parent",
+														include: [{
+															model: models.Geography,
+															as: "Parent",
+															include: [{
+																model: models.Geography,
+																as: "Parent",
+																include: [{
+																	model: models.Geography,
+																	as: "Parent",
+																	include: [{
+																		model: models.Geography,
+																		as: "Parent",
+																		include: [{
+																			model: models.Geography,
+																			as: "Parent",
+																			include: [{
+																				model: models.Geography,
+																				as: "Parent"
+																			}]
+																		}]
+																	}]
+																}]
+															}]
+														}]
+													}]
+												}]
+											}]
+										}]
+									}]
+								}]
+							}]
+						}]
+					}]
+				}]
+			}]
+		}]
+
+	})
+	    }
+	  }
 });
 return Geography;
 };
