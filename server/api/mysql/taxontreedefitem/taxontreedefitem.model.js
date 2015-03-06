@@ -3,7 +3,7 @@
 
 module.exports = function(sequelize, DataTypes) {
   var Taxontreedefitem = sequelize.define("taxontreedefitem", {
-	TaxontreedefitemID: {
+	TaxonTreeDefItemID: {
 		type: DataTypes.INTEGER,
 		primaryKey: true,
 		autoIncrement:true, 

@@ -12,10 +12,12 @@ module.exports = function(sequelize, DataTypes) {
     TimestampCreated: {
       type: DataTypes.DATE,
       allowNull: false,
+		defaultValue:	DataTypes.NOW
     },
     TimestampModified: {
       type: DataTypes.DATE,
-      allowNull: true,
+      allowNull: false,
+		defaultValue:	DataTypes.NOW
     },
     Version: {
       type: DataTypes.INTEGER(11),
@@ -68,10 +70,12 @@ module.exports = function(sequelize, DataTypes) {
     IsAccepted: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
+		defaultValue:	true
     },
     IsHybrid: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
+		defaultValue:	false
     },
     IsisNumber: {
       type: DataTypes.STRING,
