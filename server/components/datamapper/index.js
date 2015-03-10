@@ -117,30 +117,31 @@ exports.aggregateAndPersist = function(collectionName, mappings, model) {
 }
 
 exports.aggregateTreeAndPersist = function(collectionName, mappings, model, discipline) {
-	
-	
-	var treeDefName = model+"TreeDefID";
-	var treeDefItemName = model+"TreeDefItemID"; // extracting Key field names for the relevant tree
-	var treeDef = model + "treedefitem";
-	//var GeographyTreeDefID = 1; // Hardcoded for test purpose, get it from Discipline
-	
 
-	//, order: [[RankID, 'DESC']]
+
+	var treeDefName = model + "TreeDefID";
+	var treeDefItemName = model + "TreeDefItemID"; // extracting Key field names for the relevant tree
+	var treeDef = model + "treedefitem";
+
 	var where = {
-			Name: _.map(mappings, function(val, key){ return mappings[key].rankName })
-		};
-		where[treeDefName] = discipline[treeDefName];
-		
+		Name: _.map(mappings, function(val, key) {
+			return mappings[key].rankName
+		})
+	};
+	where[treeDefName] = discipline[treeDefName];
+
 	return specifyModel[treeDef].findAll({
 		where: where
 	})
 
 	.then(function(treedefitems) {
-		
+
 		var rankMappings = {};
 
 		for (var i = 0; i < treedefitems.length; i++) {
-			rankMappings[treedefitems[i].Name] = {RankID: treedefitems[i].RankID };
+			rankMappings[treedefitems[i].Name] = {
+				RankID: treedefitems[i].RankID
+			};
 			rankMappings[treedefitems[i].Name][treeDefItemName] = treedefitems[i][treeDefItemName];
 		};
 
@@ -149,7 +150,7 @@ exports.aggregateTreeAndPersist = function(collectionName, mappings, model, disc
 		for (var key in mappings) {
 			if (rankMappings[mappings[key].rankName]) aggregation[key] = "$" + key;
 		};
-		
+
 		return [MongoDB.connect(), aggregation, collectionName, rankMappings];
 	})
 
@@ -164,89 +165,19 @@ exports.aggregateTreeAndPersist = function(collectionName, mappings, model, disc
 	})
 
 	.spread(function(result, db, collectionName, model, rankMappings) {
-	//	console.log("XXxxxxxx"+ JSON.stringify(specifyModel.sequelize.Transaction));
+		//	console.log("XXxxxxxx"+ JSON.stringify(specifyModel.sequelize.Transaction));
 
 		var collection = db.collection("mapped_" + model + "_" + collectionName);
 
 		var instances = [];
-	//	var transaction = specifyModel.sequelize.transaction({isolationLevel: 'READ UNCOMMITTED'});
-		
-		
-		for (var i = 0; i <  result.length ; i++) {
-			//console.log("Aggregated result"+JSON.stringify(result[i]));
-			instances.push(findAndInsert(result[i], db, collectionName, model, rankMappings, mappings, treeDefItemName, treeDefName, discipline, collection));
-			/*
-			var mapped = [];
-			for (var key in result[i]._id) {
-				var elm = {RankID: rankMappings[mappings[key].rankName].RankID, Name: result[i]._id[key] };
-				
-				elm[treeDefItemName] = rankMappings[mappings[key].rankName][treeDefItemName];
-				mapped.push(elm)
-			};
-			
-			mapped.sort(function(a,b){
-				return a.RankID < b.RankID;
-			});
-			
-			console.log(JSON.stringify(mapped))
-			
-			var instance = Promise.reduce(mapped, function(previous, query) {
-				console.log("############## PREVIOUS #############"+ JSON.stringify(previous))
-				console.log("############## QUERY #############"+ JSON.stringify(query))
-				if(previous) {
-					
-					return previous;
-				}
-			    else {
-					
-					return specifyModel[model].find({
-										where: query,
-				
-						include: [{
-							model: specifyModel.Taxon,
-							as: "Parent"}]
-							});
-						}
-				
-			}, 0).then(function(treenode) {
-				if(!treenode){
-					// No match at any level in the tree, create a new root at level 100
-					// TODO
-				}
-				else if(mapped[0].RankID === treenode.RankID && mapped[1].Name === treenode.Parent.Name){
-					//console.log(mapped[1].Name);
-					//console.log("*******Parent child"+ treenode.Parent.Name+" "+treenode.Name )
-					// Theres a match at the leaf node, just make the reference i mongodb
-					return collection.insertAsync(treenode.values, {});
-				}
-				else {
-					// no exact match at leaf level, but a match at a higher level, make a new leaf under the matched parent
-					// at present we set the first existing 'up-tree' node as parent. This could be refined:
-					// If theres several missing tree levels these could be create with a promise.reduce chain
-					
-					var treeNodeDefinition = _.merge(mapped[0], {ParentID: treenode[model+"ID"]});
-				
-					treeNodeDefinition[treeDefName] = discipline[treeDefName];
-				
-					//console.log(JSON.stringify(treeNodeDefinition))
-					
-					return specifyModel[model].create(treeNodeDefinition)
-							.then(function(inserted){
-							
-								return collection.insertAsync(inserted.values, {});
-							}).
-							catch (function(err) {
-								console.log(err.message)
-								console.log(err.errors)
-								throw err;
-							});
-					
-				}
+		var transaction = specifyModel.sequelize.transaction();
 
-			}); */
-			
-			//instances.push(instance);
-			
+
+		for (var i = 0; i < result.length; i++) {
+			//console.log("Aggregated result"+JSON.stringify(result[i]));
+			instances.push(findAndInsert(result[i], db, collectionName, model, rankMappings, mappings, treeDefItemName, treeDefName, discipline, collection, transaction));
+
+
 		}
 		return Promise.all(instances);
 	})
@@ -259,95 +190,55 @@ exports.aggregateTreeAndPersist = function(collectionName, mappings, model, disc
 
 }
 
-function findAndInsert(result, db, collectionName, model, rankMappings, mappings, treeDefItemName, treeDefName, discipline, collection, transaction){
-	
+function findAndInsert(result, db, collectionName, model, rankMappings, mappings, treeDefItemName, treeDefName, discipline, collection, transaction) {
+
 	var mapped = [];
-	var inverseMap = {};
+	
 	for (var key in result._id) {
-		var elm = {RankID: rankMappings[mappings[key].rankName].RankID, Name: result._id[key] };
-		
+		var elm = {
+			RankID: rankMappings[mappings[key].rankName].RankID,
+			Name: result._id[key]
+		};
+
 		elm[treeDefItemName] = rankMappings[mappings[key].rankName][treeDefItemName];
 		mapped.push(elm)
-		
-		inverseMap[rankMappings[mappings[key].rankName].RankID] = elm;
-	};
-	
-	mapped.sort(function(a,b){
-		return a.RankID < b.RankID;
-	});
-	
-	console.log(JSON.stringify(mapped))
-	
-	var deepestUndefinedLevel;
-	
-	return Promise.reduce(mapped, function(previous, query, index, arrayLength) {
-		console.log("############## PREVIOUS #############"+ JSON.stringify(previous))
-		console.log("############## QUERY #############"+ JSON.stringify(query))
-		
-		if(previous) {
-			
-			return previous;
-		}
-	    else {
-			deepestUndefinedLevel = index-1;
-			
-			
-			return specifyModel[model].find({
-			//	transaction: transaction,
-								where: query,
-		
-				include: [{
-					model: specifyModel.Taxon,
-					as: "Parent",
-					where: {Name: mapped[index+1].Name}
-				}]
-					})
-					.catch (function(err) {
-						console.log(err.message)
-						console.log(err.errors)
-						throw err;
-					});
-					;
-				}
-		
-	}, 0).then(function(treenode) {
-		if(!treenode){
-			// No match at any level in the tree, create a new root at level 100
-			// TODO
-		}
-		else if(mapped[0].RankID === treenode.RankID && mapped[1].Name === treenode.Parent.Name){
-			//console.log(mapped[1].Name);
-			//console.log("*******Parent child"+ treenode.Parent.Name+" "+treenode.Name )
-			// Theres a match at the leaf node, just make the reference i mongodb
-			return collection.insertAsync(treenode.values, {});
-		}
-		else {
-			// no exact match at leaf level, but a match at a higher level, make a new leaf under the matched parent
-			// at present we set the first existing 'up-tree' node as parent. This could be refined:
-			// If theres several missing tree levels these could be create with a promise.reduce chain
-			
-			var treeNodeDefinition = _.merge(mapped[deepestUndefinedLevel], {ParentID: treenode[model+"ID"]});
-		
-			treeNodeDefinition[treeDefName] = discipline[treeDefName];
-		
-			
-			return specifyModel[model].findOrCreate({ 
-				//transaction: transaction,
-				where : treeNodeDefinition
-			})
-					.spread(function(treeNode, inserted){
-					
-						return collection.insertAsync(treeNode.values, {});
-					}).
-					catch (function(err) {
-						console.log(err.message)
-						console.log(err.errors)
-						throw err;
-					});
-			
-		}
 
+		
+	};
+
+	mapped.sort(function(a, b) {
+		return a.RankID > b.RankID;
+	});
+
+
+	return Promise.reduce(mapped, function(previous, query) {
+
+		if (previous !== 0) {
+
+			query = _.merge(query, {
+				ParentID: previous[model + "ID"]
+			});
+		};
+
+		query[treeDefName] = discipline[treeDefName];
+
+		return specifyModel[model].findOrCreate({
+			transaction: transaction,
+			where: query
+		}).spread(function(treenode, inserted) {
+			return treenode;
+		})
+			.
+		catch (function(err) {
+			console.log(err.message)
+			console.log(err.errors)
+			throw err;
+		});;
+
+
+	}, 0).then(function(treenode) {
+		return collection.insertAsync(treenode.values, {});
 	})
 
-	
+
 }
