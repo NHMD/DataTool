@@ -3,7 +3,7 @@ var env = process.env.NODE_ENV || "development";
 
 var config = require('../../config/environment');
 var specifyModel = require('../../api/mysql');
-//var MongoClient = require('mongodb').MongoClient;
+
 //var ObjectID = require('mongodb').ObjectID;
 
 var Promise = require("bluebird");
@@ -164,14 +164,16 @@ exports.aggregateTreeAndPersist = function(collectionName, mappings, model, disc
 	})
 
 	.spread(function(result, db, collectionName, model, rankMappings) {
-
+	//	console.log("XXxxxxxx"+ JSON.stringify(specifyModel.sequelize.Transaction));
 
 		var collection = db.collection("mapped_" + model + "_" + collectionName);
 
 		var instances = [];
-	
+	//	var transaction = specifyModel.sequelize.transaction({isolationLevel: 'READ UNCOMMITTED'});
+		
+		
 		for (var i = 0; i <  result.length ; i++) {
-			
+			//console.log("Aggregated result"+JSON.stringify(result[i]));
 			instances.push(findAndInsert(result[i], db, collectionName, model, rankMappings, mappings, treeDefItemName, treeDefName, discipline, collection));
 			/*
 			var mapped = [];
@@ -257,7 +259,7 @@ exports.aggregateTreeAndPersist = function(collectionName, mappings, model, disc
 
 }
 
-function findAndInsert(result, db, collectionName, model, rankMappings, mappings, treeDefItemName, treeDefName, discipline, collection){
+function findAndInsert(result, db, collectionName, model, rankMappings, mappings, treeDefItemName, treeDefName, discipline, collection, transaction){
 	
 	var mapped = [];
 	var inverseMap = {};
@@ -278,22 +280,34 @@ function findAndInsert(result, db, collectionName, model, rankMappings, mappings
 	
 	var deepestUndefinedLevel;
 	
-	return Promise.reduce(mapped, function(previous, query, index) {
+	return Promise.reduce(mapped, function(previous, query, index, arrayLength) {
 		console.log("############## PREVIOUS #############"+ JSON.stringify(previous))
 		console.log("############## QUERY #############"+ JSON.stringify(query))
+		
 		if(previous) {
 			
 			return previous;
 		}
 	    else {
 			deepestUndefinedLevel = index-1;
+			
+			
 			return specifyModel[model].find({
+			//	transaction: transaction,
 								where: query,
 		
 				include: [{
 					model: specifyModel.Taxon,
-					as: "Parent"}]
+					as: "Parent",
+					where: {Name: mapped[index+1].Name}
+				}]
+					})
+					.catch (function(err) {
+						console.log(err.message)
+						console.log(err.errors)
+						throw err;
 					});
+					;
 				}
 		
 	}, 0).then(function(treenode) {
@@ -317,7 +331,10 @@ function findAndInsert(result, db, collectionName, model, rankMappings, mappings
 			treeNodeDefinition[treeDefName] = discipline[treeDefName];
 		
 			
-			return specifyModel[model].findOrCreate({ where : treeNodeDefinition})
+			return specifyModel[model].findOrCreate({ 
+				//transaction: transaction,
+				where : treeNodeDefinition
+			})
 					.spread(function(treeNode, inserted){
 					
 						return collection.insertAsync(treeNode.values, {});
@@ -330,6 +347,7 @@ function findAndInsert(result, db, collectionName, model, rankMappings, mappings
 			
 		}
 
-	});
+	})
+
 	
 }

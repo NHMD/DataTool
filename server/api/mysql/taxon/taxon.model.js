@@ -21,7 +21,8 @@ module.exports = function(sequelize, DataTypes) {
     },
     Version: {
       type: DataTypes.INTEGER(11),
-      allowNull: true,
+      allowNull: false,
+		defaultValue: 0	
     },
     Author: {
       type: DataTypes.STRING,
@@ -75,7 +76,7 @@ module.exports = function(sequelize, DataTypes) {
     IsHybrid: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
-		defaultValue:	false
+	defaultValue:	false
     },
     IsisNumber: {
       type: DataTypes.STRING,
