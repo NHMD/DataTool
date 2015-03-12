@@ -172,7 +172,6 @@ console.log("AGGR :"+ JSON.stringify(aggregation));
 
 	.spread(function(result, db, collectionName, model, rankMappings) {
 		
-		console.log("REEEES :"+ JSON.stringify(result));
 
 		var collection = db.collection("mapped_" + model + "_" + collectionName);
 
@@ -223,13 +222,11 @@ function findAndInsert(result, db, collectionName, model, rankMappings, mappings
 		return a.RankID > b.RankID;
 	});
 	// Attributes which are not associated with tree rank will be attached to the highest resoluted tree node, e.g. species if we have: Family, Genus, Species in the flat CSV:
-	console.log("****************  ********* "+JSON.stringify(nonRankMappings));
 	
 	for (var key in nonRankMappings) {
 		
 		mapped[mapped.length-1][nonRankMappings[key].fieldName] = result._id[key];
 	}
-	console.log("################################# "+JSON.stringify(mapped[mapped.length-1]))
 	
 	return Promise.reduce(mapped, function(previous, query) {
 
