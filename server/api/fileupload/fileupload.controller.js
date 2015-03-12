@@ -188,6 +188,14 @@ exports.aggr = function(req, res) {
 			fieldName: "Name",
 			tableName: "Taxon",
 			rankName: 	"Species"
+			},
+			"Author" :{
+			fieldName:"Author",
+			tableName: "Taxon"
+			}, 
+			"Dk navn": {
+			fieldName:"CommonName",
+			tableName: "Taxon"
 			}
 		},
 		{

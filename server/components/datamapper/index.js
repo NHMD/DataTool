@@ -122,10 +122,15 @@ exports.aggregateTreeAndPersist = function(collectionName, mappings, model, disc
 	var treeDefName = model + "TreeDefID";
 	var treeDefItemName = model + "TreeDefItemID"; // extracting Key field names for the relevant tree
 	var treeDef = model + "treedefitem";
-
+	
+	
+	var ranks = _.omit(mappings, function(value, key, object) {
+		return object["rankName"] !== undefined;
+});
+	
 	var where = {
-		Name: _.map(mappings, function(val, key) {
-			return mappings[key].rankName
+		Name: _.map(ranks, function(val, key) {
+			return ranks[key].rankName
 		})
 	};
 	where[treeDefName] = discipline[treeDefName];
@@ -148,9 +153,10 @@ exports.aggregateTreeAndPersist = function(collectionName, mappings, model, disc
 		var aggregation = {}
 
 		for (var key in mappings) {
-			if (rankMappings[mappings[key].rankName]) aggregation[key] = "$" + key;
+			//if (rankMappings[mappings[key].rankName]) aggregation[key] = "$" + key;
+			aggregation[key] = "$" + key;;
 		};
-
+console.log("AGGR :"+ JSON.stringify(aggregation));
 		return [MongoDB.connect(), aggregation, collectionName, rankMappings];
 	})
 
@@ -165,17 +171,21 @@ exports.aggregateTreeAndPersist = function(collectionName, mappings, model, disc
 	})
 
 	.spread(function(result, db, collectionName, model, rankMappings) {
-		//	console.log("XXxxxxxx"+ JSON.stringify(specifyModel.sequelize.Transaction));
+		
+		console.log("REEEES :"+ JSON.stringify(result));
 
 		var collection = db.collection("mapped_" + model + "_" + collectionName);
 
 		var instances = [];
 		var transaction = specifyModel.sequelize.transaction();
-
-
+		// Attributes which are not associated with tree rank will be attached to the highest resoluted tree node, e.g. species if we have: Family, Genus, Species in the flat CSV:
+		var nonRankMappings  = _.omit(mappings, function(value, key, object) {
+			
+		return object[key]["rankName"] !== undefined;
+});
 		for (var i = 0; i < result.length; i++) {
-			//console.log("Aggregated result"+JSON.stringify(result[i]));
-			instances.push(findAndInsert(result[i], db, collectionName, model, rankMappings, mappings, treeDefItemName, treeDefName, discipline, collection, transaction));
+			
+			instances.push(findAndInsert(result[i], db, collectionName, model, rankMappings, mappings, treeDefItemName, treeDefName, discipline, collection, transaction, nonRankMappings));
 
 
 		}
@@ -183,6 +193,8 @@ exports.aggregateTreeAndPersist = function(collectionName, mappings, model, disc
 	})
 		.
 	catch (function(err) {
+			console.log(err.message)
+			console.log(err.errors)
 		throw err;
 	});
 
@@ -190,11 +202,12 @@ exports.aggregateTreeAndPersist = function(collectionName, mappings, model, disc
 
 }
 
-function findAndInsert(result, db, collectionName, model, rankMappings, mappings, treeDefItemName, treeDefName, discipline, collection, transaction) {
+function findAndInsert(result, db, collectionName, model, rankMappings, mappings, treeDefItemName, treeDefName, discipline, collection, transaction, nonRankMappings) {
 
 	var mapped = [];
 	
 	for (var key in result._id) {
+		if(mappings[key].rankName){
 		var elm = {
 			RankID: rankMappings[mappings[key].rankName].RankID,
 			Name: result._id[key]
@@ -202,15 +215,22 @@ function findAndInsert(result, db, collectionName, model, rankMappings, mappings
 
 		elm[treeDefItemName] = rankMappings[mappings[key].rankName][treeDefItemName];
 		mapped.push(elm)
-
+	}
 		
 	};
 
 	mapped.sort(function(a, b) {
 		return a.RankID > b.RankID;
 	});
-
-
+	// Attributes which are not associated with tree rank will be attached to the highest resoluted tree node, e.g. species if we have: Family, Genus, Species in the flat CSV:
+	console.log("****************  ********* "+JSON.stringify(nonRankMappings));
+	
+	for (var key in nonRankMappings) {
+		
+		mapped[mapped.length-1][nonRankMappings[key].fieldName] = result._id[key];
+	}
+	console.log("################################# "+JSON.stringify(mapped[mapped.length-1]))
+	
 	return Promise.reduce(mapped, function(previous, query) {
 
 		if (previous !== 0) {
