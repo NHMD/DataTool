@@ -21,7 +21,7 @@ module.exports = {
 	database : 		'dinacollections-dev'
   },
 
-  seedDB: true,
+  seedDB: false,
   
   mysql: {
 	  database: 'specify',

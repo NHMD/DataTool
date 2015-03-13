@@ -1,13 +1,17 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-	.controller('CsvUploadCtrl', ['$scope', '$http', '$timeout', '$compile', 'FileUploader', 'Csvdataset',
-		function($scope, $http, $timeout, $compile, FileUploader, Csvdataset) {
+	.controller('CsvUploadCtrl', ['Auth','$scope', '$http', '$timeout', '$compile', 'FileUploader', 'Csvdataset', 'DataModel',
+		function(Auth, $scope, $http, $timeout, $compile, FileUploader, Csvdataset, DataModel) {
 		
+			$scope.datamodels = DataModel.get();
 			$scope.delimiters = [{value:",",label:"Comma ,"}, {value:";",label:"Semicolon ;"}, {value:":",label:"Colon :"}];
 			$scope.delimiter =$scope.delimiters[0].value;
 			var uploader = $scope.uploader = new FileUploader({
-				url: '/api/fileupload'
+				url: '/api/fileupload',
+				headers: {
+					Authorization: 'Bearer '+ Auth.getToken()
+				}
 			});
 			
 			

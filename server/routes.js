@@ -33,7 +33,7 @@ module.exports = function(app) {
 	app.use('/api/workbenchtemplates', require('./api/mysql/workbenchtemplate'));
 	
 	
-	app.use('/api/datamodel', require('./api/mysql/datamodel'));
+	app.use('/api/datamodels', require('./api/mysql/datamodel'));
 	//MongoDB
 //	app.use('/api/things', require('./api/mongo/thing'));
 	app.use('/api/users', require('./api/mongo/user'));

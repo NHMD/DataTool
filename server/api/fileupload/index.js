@@ -10,7 +10,7 @@ var uploaddir = config.tempuploaddir;
 var router = express.Router();
 
 
-router.post('/', [ multer({ dest: uploaddir }), controller.getFile]);
+router.post('/', [ multer({ dest: uploaddir }), auth.isAuthenticated() , controller.getFile]);
 //router.get('/collections/', controller.index);
 router.get('/collections/:collname', controller.find);
 router.get('/collections/:collname/aggregate', controller.aggr);

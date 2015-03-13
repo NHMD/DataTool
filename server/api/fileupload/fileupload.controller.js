@@ -11,6 +11,8 @@ var uploaddir = config.tempuploaddir;
 
 var datamapper = require('../../components/datamapper');
 
+
+
 function parseCSVFile(sourceFilePath, columns, onNewRecord, handleError, done, delimiter) {
 	var source = fs.createReadStream(sourceFilePath);
 
@@ -43,10 +45,9 @@ function parseCSVFile(sourceFilePath, columns, onNewRecord, handleError, done, d
 
 
 exports.getFile = function(req, res) {
-	console.log(req.files);
-	console.log(req.body +" ##### "+req.body.csvdelimiter);
+	
 	var csvdelimiter = (req.body.csvdelimiter) ? req.body.csvdelimiter : ",";
-	console.log("delimiter "+csvdelimiter);
+	
 	var filePath = req.files.file.path;
 	var collName = "csv_temp_" + req.files.file.name.split(".")[0];
 
@@ -74,6 +75,20 @@ exports.getFile = function(req, res) {
 				});
 
 			});
+		})
+		.then(function(){
+			req.user.csvimports.push({
+				  name: req.files.file.originalname,
+				  coollectionname: collName,
+				  active: true
+				});
+			req.user.save(function(err){
+					if(err) throw err;
+				});
+			
+				
+			
+			
 		})
 
 	}

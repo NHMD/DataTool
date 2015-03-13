@@ -4,6 +4,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var crypto = require('crypto');
 var authTypes = ['github', 'twitter', 'facebook', 'google'];
+var CsvImport = require('../csvimport/csvimport.schema');
 
 var UserSchema = new Schema({
   name: String,
@@ -12,6 +13,7 @@ var UserSchema = new Schema({
     type: String,
     default: 'Guest'
   },
+  csvimports : [CsvImport],
   specifyUserId: Number,
   specifyAgentIds: [],
   hashedPassword: String,
