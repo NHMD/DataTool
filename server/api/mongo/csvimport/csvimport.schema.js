@@ -4,6 +4,6 @@ var mongoose = require('mongoose'),
 
 module.exports = new Schema({
   name: String,
-  coollectionname: String,
+  collectionname: String,
   active: Boolean
 });

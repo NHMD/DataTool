@@ -71,7 +71,11 @@ exports.getFile = function(req, res) {
 
 
 				fs.unlink(filePath, function() {
-					res.send(200, {collection : collName});
+					res.send(200, {
+				  name: req.files.file.originalname,
+				  collectionname: collName,
+				  active: true
+				});
 				});
 
 			});
@@ -79,7 +83,7 @@ exports.getFile = function(req, res) {
 		.then(function(){
 			req.user.csvimports.push({
 				  name: req.files.file.originalname,
-				  coollectionname: collName,
+				  collectionname: collName,
 				  active: true
 				});
 			req.user.save(function(err){
@@ -110,7 +114,7 @@ exports.find = function(req, res) {
 			collection.stats(function(err, stats) {
 
 				res.send(200, {
-					name: req.params.collname,
+					collectionname: req.params.collname,
 					count: stats.count,
 					size: stats.size,
 					

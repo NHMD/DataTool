@@ -4,9 +4,44 @@ angular.module('specifyDataCleanerApp')
 	.controller('CsvUploadCtrl', ['Auth','$scope', '$http', '$timeout', '$compile', 'FileUploader', 'Csvdataset', 'DataModel',
 		function(Auth, $scope, $http, $timeout, $compile, FileUploader, Csvdataset, DataModel) {
 		
-			$scope.datamodels = DataModel.get();
+		
+			$scope.$watch(Auth.isLoggedIn, function(newval, oldval) {
+		
+				$scope.user = Auth.getCurrentUser();
+
+			})
+			
+			$scope.setCollection = function(collection){
+				
+				$scope.collection = Csvdataset.get({
+					collectionname: collection
+				});
+
+				$scope.data = Csvdataset.getData({
+					collectionname: collection
+				}).$promise.then(function(data) {
+					$scope.selectedCsv = collection;
+					$scope.data = data;
+					$scope.fields = [];
+					for (var field in data[0]){
+						if (data[0].hasOwnProperty(data[0])) {
+							$scope.fields.push(field);
+						}
+					}
+					$scope.isLoading = false;
+				});
+			}
+			
+			$scope.$watch('selectedCsv', function(newval, oldval) {
+				if(newval !== undefined && newval !== oldval){
+					$scope.data = [];
+					$scope.setCollection(newval);
+				}
+			});
+			
+			$scope.datamodels = DataModel.query();
 			$scope.delimiters = [{value:",",label:"Comma ,"}, {value:";",label:"Semicolon ;"}, {value:":",label:"Colon :"}];
-			$scope.delimiter =$scope.delimiters[0].value;
+		//	$scope.delimiter =$scope.delimiters[0].value;
 			var uploader = $scope.uploader = new FileUploader({
 				url: '/api/fileupload',
 				headers: {
@@ -30,14 +65,14 @@ angular.module('specifyDataCleanerApp')
 				console.info('onWhenAddingFileFailed', item, filter, options);
 			};
 			uploader.onAfterAddingFile = function(fileItem) {
-				
+				fileItem.delimiter  =$scope.delimiters[0].value;
 				console.info('onAfterAddingFile', fileItem);
 			};
 			uploader.onAfterAddingAll = function(addedFileItems) {
 				console.info('onAfterAddingAll', addedFileItems);
 			};
 			uploader.onBeforeUploadItem = function(item) {
-				item.formData.push({csvdelimiter : $scope.delimiter});
+				item.formData.push({csvdelimiter : item.delimiter});
 				console.info('onBeforeUploadItem', item);
 			};
 			uploader.onProgressItem = function(fileItem, progress) {
@@ -48,25 +83,8 @@ angular.module('specifyDataCleanerApp')
 			};
 			uploader.onSuccessItem = function(fileItem, response, status, headers) {
 				console.info('onSuccessItem', fileItem, response, status, headers);
-				$scope.collection = Csvdataset.get({
-					collectionname: response.collection
-				});
-
-				$scope.data = Csvdataset.getData({
-					collectionname: response.collection
-				}).$promise.then(function(data) {
-					
-					$scope.data = data;
-					$scope.fields = [];
-					for (var field in data[0]){
-						if (data[0].hasOwnProperty(data[0])) {
-							$scope.fields.push(field);
-						}
-					}
-					$scope.isLoading = false;
-				});
-
-
+				$scope.setCollection(response.collectionname);
+				$scope.user.csvimports.push(response);
 			};
 			uploader.onErrorItem = function(fileItem, response, status, headers) {
 				console.info('onErrorItem', fileItem, response, status, headers);
@@ -89,6 +107,8 @@ angular.module('specifyDataCleanerApp')
 				$scope.isLoading = true;
 
 				var pagination = tableState.pagination;
+				
+				
 
 				var offset = pagination.start || 0; // This is NOT the page number, but the index of item in the list that you want to use to display the table.
 				var limit = pagination.number || 100; // Number of entries showed per page.
@@ -96,9 +116,10 @@ angular.module('specifyDataCleanerApp')
 
 				if ($scope.collection !== undefined) {
 					$scope.collection.$promise.then(function() {
+						
 						tableState.pagination.numberOfPages = parseInt($scope.collection.count / limit);
 						$scope.data = Csvdataset.getData({
-							collectionname: $scope.collection.name,
+							collectionname: $scope.collection.collectionname,
 							offset: offset,
 							limit: limit
 						}).$promise.then(function(data) {
