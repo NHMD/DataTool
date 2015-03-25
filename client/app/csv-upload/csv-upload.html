@@ -1,7 +1,10 @@
 <div class="container-fluid" nv-file-drop="" uploader="uploader" filters="queueLimit, customFilter">
 	
 <div class="btn-group" role="group">
-<button type="button" class="btn btn-default" ng-show="user.csvimports && user.csvimports.length >0" ng-model="selectedCsv"  ng-options="imp.collectionname as imp.name for imp in user.csvimports" bs-select><button type="button" class="btn btn-default" data-animation="am-fade-and-slide-top" data-template="app/csv-upload/upload.modal.tmpl.html" bs-modal="modal"><i class="fa fa-cloud-upload"></i> Upload new dataset(s)
+<button type="button" class="btn btn-default" ng-show="user.csvimports && user.csvimports.length >0" ng-model="selectedCsv"  ng-options="imp.collectionname as imp.name for imp in user.csvimports" bs-select>
+	<button type="button" class="btn btn-default" data-animation="am-fade-and-slide-top" data-template="app/csv-upload/mapping.modal.tmpl.html" bs-modal="modal"><i class="fa fa-arrows-h"></i> Map selected dataset
+	</button>
+	<button type="button" class="btn btn-default" data-animation="am-fade-and-slide-top" data-template="app/csv-upload/upload.modal.tmpl.html" bs-modal="modal"><i class="fa fa-upload"></i> Upload new dataset(s)
 </button>
 		</div>		
 				<!-- Data Table -->

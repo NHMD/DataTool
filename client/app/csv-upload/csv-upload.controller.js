@@ -1,15 +1,45 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-	.controller('CsvUploadCtrl', ['Auth','$scope', '$http', '$timeout', '$compile', 'FileUploader', 'Csvdataset', 'DataModel',
-		function(Auth, $scope, $http, $timeout, $compile, FileUploader, Csvdataset, DataModel) {
+.filter('selectedCsvName', function() {
+  return function(userCsvImports, collectionName) {
+	  if(!collectionName){
+		  return "";
+	  };
+	return  userCsvImports.filter(function(e){
+		  return e.collectionName = collectionName;
+	  })[0].name;
+}
+})
+	.controller('CsvUploadCtrl', ['Auth','$scope', '$http', '$timeout', '$compile', 'FileUploader', 'Csvdataset', 'DataModel', 'Icons',
+		function(Auth, $scope, $http, $timeout, $compile, FileUploader, Csvdataset, DataModel, Icons) {
 		
-		
+			$scope.Icons = Icons;
+			
 			$scope.$watch(Auth.isLoggedIn, function(newval, oldval) {
 		
 				$scope.user = Auth.getCurrentUser();
 
 			})
+			
+		
+			$scope.getFieldsForModel = function(modelName){
+				
+				
+				if($scope.datasetMapping[modelName] && typeof $scope.datasetMapping[modelName].tableName.fields === 'object'){
+					
+					console.log($scope.datasetMapping[modelName])
+					return Object.keys($scope.datasetMapping[modelName].tableName.fields);
+					
+				}
+				else {
+					
+					return [];
+				}
+			}
+
+			
+			
 			
 			$scope.setCollection = function(collection){
 				
@@ -23,9 +53,11 @@ angular.module('specifyDataCleanerApp')
 					$scope.selectedCsv = collection;
 					$scope.data = data;
 					$scope.fields = [];
+					$scope.datasetMapping = {};
 					for (var field in data[0]){
-						if (data[0].hasOwnProperty(data[0])) {
+						if (data[0].hasOwnProperty(field)) {
 							$scope.fields.push(field);
+							$scope.datasetMapping[field] = {};
 						}
 					}
 					$scope.isLoading = false;
@@ -41,7 +73,7 @@ angular.module('specifyDataCleanerApp')
 			
 			$scope.datamodels = DataModel.query();
 			$scope.delimiters = [{value:",",label:"Comma ,"}, {value:";",label:"Semicolon ;"}, {value:":",label:"Colon :"}];
-		//	$scope.delimiter =$scope.delimiters[0].value;
+
 			var uploader = $scope.uploader = new FileUploader({
 				url: '/api/fileupload',
 				headers: {
