@@ -11,7 +11,7 @@
 <tbody>
 				 	<tr ng-hide="key === '_id'" ng-repeat="(key, value) in datasetMapping">
 						<td>{{key}}</td>
-						<td><img ng-if="datasetMapping[key]['tableName']['fields']" ng-src="{{ Icons.datamodel.get(datasetMapping[key]['tableName']['name']) }}" class="specify-icon-24 pull-right"></td><td><input type="text" class="form-control" ng-model="datasetMapping[key].tableName" ng-model-options="{allowInvalid:true}" ng-options="model as model.name for model in datamodels" placeholder="Enter table name" minLength="3" bs-typeahead></td>
+						<td><img ng-if="datasetMapping[key]['tableName']['fields']" ng-src="{{ Icons.datamodel.get(datasetMapping[key]['tableName']['name']) }}" class="specify-icon-24 pull-right"></td><td><input type="text" class="form-control" ng-model="datasetMapping[key].tableName" ng-model-options="{allowInvalid:true}" ng-options="model as model.name for model in datamodels | orderObjectBy" placeholder="Enter table name" minLength="3" bs-typeahead></td>
 						<td><button type="button" class="btn btn-default" ng-if="datasetMapping[key]['tableName']['fields']" ng-model="datasetMapping[key]['fieldName']"  ng-options="field for field in getFieldsForModel(key)" bs-select></td>
 				
 				 		
