@@ -22,13 +22,23 @@ exports.index = function(req, res) {
 		});
 	});
 
-	Promise.all(datamodels).then(function(datamodels) {
+	Promise.all(datamodels).then(function(datamodels){
+		
+		var treeDefPattern = /treedef/i ;
+		var treeDefItemPattern = /treedefitem/i ;
+		
+		_.each(datamodels, function(value, key, datamodels){
+			
+		})
+	})
+	.then(function(datamodels) {
 		return res.json(200, datamodels);
 	})
+	
 
 };
 
-// Get a single fields for a model
+// Get  fields for a model
 exports.show = function(req, res) {
 	console.log(JSON.stringify(req.params))
 	var model = req.params.model.charAt(0).toUpperCase() + req.params.model.slice(1);

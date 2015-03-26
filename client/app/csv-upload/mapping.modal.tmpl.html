@@ -11,30 +11,20 @@
 <tbody>
 				 	<tr ng-hide="key === '_id'" ng-repeat="(key, value) in datasetMapping">
 						<td>{{key}}</td>
-						<td><img ng-if="datasetMapping[key]['tableName']['fields']" ng-src="{{ Icons.datamodel.get(datasetMapping[key]['tableName']['name']) }}" class="specify-icon-24 pull-right"></td><td><input type="text" class="form-control" ng-model="datasetMapping[key].tableName" ng-model-options="{allowInvalid:true}" ng-options="model as model.name for model in datamodels | orderObjectBy" placeholder="Enter table name" minLength="3" bs-typeahead></td>
-						<td><button type="button" class="btn btn-default" ng-if="datasetMapping[key]['tableName']['fields']" ng-model="datasetMapping[key]['fieldName']"  ng-options="field for field in getFieldsForModel(key)" bs-select></td>
+						<td><img ng-if="datasetMapping[key]['tableName']['fields']" ng-src="{{ Icons.datamodel.get(datasetMapping[key]['tableName']) }}" class="specify-icon-24 pull-right"></td>
+						<td><input type="text" class="form-control" ng-model="datasetMapping[key].table" ng-model-options="{allowInvalid:true}" ng-options="model as model.name for model in datamodels | orderObjectBy" placeholder="Enter table name" minLength="3" bs-typeahead></td>
+						<td><button type="button" class="btn btn-default" ng-if="datasetMapping[key]['table']['fields']" ng-model="datasetMapping[key]['fieldName']"  ng-options="field for field in getFieldsForModel(key)" bs-select></td>
 				
 				 		
 				 	</tr>
 				</tbody>
-						<!--	
-					  <tr ng-repeat="wtmi in workbenchtemplatemappingitems">
-						  <td ><img ng-src="{{ Icons.datamodel.get(wtmi.TableName) }}" class="specify-icon-16"> {{wtmi.TableName}}.{{wtmi.FieldName}}</td>
-						  <td><input type="checkbox" ng-model="wtmi.CarryForward"></td>
-					  </tr>
-					  
-				-->
+					
 					</table>
-				<!--	<p ng-bind-html="content">{{modal.content}}</p>
-					<pre>2 + 3 = 5</pre>
-					<h4>Popover in a modal</h4>
-					<p>This <a href="#" role="button" class="btn btn-default popover-test ng-scope" data-title="A Title" data-content="And here's some amazing content. It's very engaging. right?" bs-popover="">button</a> should trigger a popover on click.</p>
-					<h4>Tooltips in a modal</h4><p><a href="#" class="tooltip-test ng-scope" data-title="Tooltip" bs-tooltip="">This link</a> and <a href="#" class="tooltip-test ng-scope" data-title="Tooltip" bs-tooltip="">that link</a> should have tooltips on hover.</p>
-				</div>-->
+			
 				<div class="modal-footer"><div class="col-md-6 taxon-footer-txt">
 				</div>
 					<div class="col-md-6">
-					<button type="button" class="btn btn-danger" ng-click="$hide()"> <i class="fa fa-times"></i> Close</button> 
+					<button type="button" class="btn btn-success" ng-click="saveMapping()"> <i class="fa fa-save"></i> Save mapping</button> <button type="button" class="btn btn-danger" ng-click="$hide()"> <i class="fa fa-times"></i> Close</button> 
 					</div>
 				</div>
 			</div>

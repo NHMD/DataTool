@@ -26,10 +26,10 @@ angular.module('specifyDataCleanerApp')
 			$scope.getFieldsForModel = function(modelName){
 				
 				
-				if($scope.datasetMapping[modelName] && typeof $scope.datasetMapping[modelName].tableName.fields === 'object'){
+				if($scope.datasetMapping[modelName] && typeof $scope.datasetMapping[modelName].table.fields === 'object'){
 					
-					console.log($scope.datasetMapping[modelName])
-					return Object.keys($scope.datasetMapping[modelName].tableName.fields);
+					
+					return Object.keys($scope.datasetMapping[modelName].table.fields);
 					
 				}
 				else {
@@ -39,7 +39,13 @@ angular.module('specifyDataCleanerApp')
 			}
 
 			
-			
+			$scope.saveMapping = function(){
+				
+				angular.forEach($scope.datasetMapping, function(value, key) {
+					if(value.table) $scope.datasetMapping[key].tableName = value.table.name;
+				});
+				console.log($scope.datasetMapping)
+			}
 			
 			$scope.setCollection = function(collection){
 				
