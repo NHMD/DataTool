@@ -23,13 +23,23 @@ exports.index = function(req, res) {
 	});
 
 	Promise.all(datamodels).then(function(datamodels){
-		
+		// Check if model is a treedef or treedefitem and attach to relevant tree table. E.g. attach Taxontreedefitem and taxontreedef to Taxon
 		var treeDefPattern = /treedef/i ;
-		var treeDefItemPattern = /treedefitem/i ;
 		
-		_.each(datamodels, function(value, key, datamodels){
+		for(var i=0; i<datamodels.length; i++){
 			
-		})
+			if(treeDefPattern.test(datamodels[i].name)){
+				
+				var treeTableName = datamodels[i].name.split('treedef')[0];
+				
+				var treeTable = datamodels.filter(function(e){ return e.name === treeTableName})[0];
+				
+				treeTable[datamodels[i].name] = datamodels[i];
+				
+				datamodels.splice(i, 1);
+			}
+		};
+		return datamodels;
 	})
 	.then(function(datamodels) {
 		return res.json(200, datamodels);
