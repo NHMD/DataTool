@@ -5,5 +5,6 @@ var mongoose = require('mongoose'),
 module.exports = new Schema({
   name: String,
   collectionname: String,
-  active: Boolean
+  active: Boolean,
+  mapping: [Schema.Types.Mixed]
 });

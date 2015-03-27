@@ -1,12 +1,11 @@
 'use strict';
 var models = require('../');
 var _ = require('lodash');
-//var Geographytreedefitem = require('./geographytreedefitem.model');
+var qp = require('../nestedQueryParser');
 
 // Get list of geographytreedefitems
 exports.index = function(req, res) {
-	var query = (req.query._query) ? {where: JSON.parse(req.query._query)} : undefined;
-
+	var query = (req.query) ? qp.parseQueryString(req.query) : undefined;
   models.Geographytreedefitem.findAll(query).then(function(geographytreedefitem){
   	return res.json(200, geographytreedefitem);	
   }).catch(function(err){

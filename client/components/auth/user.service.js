@@ -17,6 +17,14 @@ angular.module('specifyDataCleanerApp')
         params: {
           id:'me'
         }	
-      }
+      },
+		 saveCsvMapping : {
+		        method:'POST',
+		        params: {
+		         id: '@csvname'
+		        },
+		        url: '/api/users/me/csvimports/:csvname/mappings/',
+		        isArray: true
+		       }
 	  });
   });

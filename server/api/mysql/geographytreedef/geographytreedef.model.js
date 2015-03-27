@@ -2,8 +2,8 @@
 
 
 module.exports = function(sequelize, DataTypes) {
-  var Taxontreedef = sequelize.define("taxontreedef", {
-	TaxonTreeDefID: {
+  var Geographytreedef = sequelize.define("geographytreedef", {
+	GeographyTreeDefID: {
 		type: DataTypes.INTEGER,
 		primaryKey: true,
 		autoIncrement:true, 
@@ -30,7 +30,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
     },
     Remarks: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: true,
     },
     ModifiedByAgentID: {
@@ -43,7 +43,7 @@ module.exports = function(sequelize, DataTypes) {
     }
    
 }, {
-	tableName: 'taxontreedef',
+	tableName: 'geographytreedef',
 	timestamps: false,
 	freezeTableName: true,
 	classMethods: {
@@ -52,11 +52,11 @@ module.exports = function(sequelize, DataTypes) {
          
 		  
           models.Discipline
-  		  .belongsTo(models.Taxontreedef, {foreignKey : 'TaxonTreeDefID'});
+  		  .belongsTo(models.Geographytreedef, {foreignKey : 'GeographyTreeDefID'});
 		  
      
-      models.Taxontreedef
-		  .hasMany(models.Taxontreedefitem, {foreignKey : 'TaxonTreeDefID'}); 
+      models.Geographytreedef
+		  .hasMany(models.Geographytreedefitem, {foreignKey : 'GeographyTreeDefID'}); 
 		},
 	authorize: function(models, user) {
 		return sequelize.Promise.resolve("Access granted");
@@ -73,6 +73,6 @@ module.exports = function(sequelize, DataTypes) {
 	  
 	}
 });
-return Taxontreedef;
+return Geographytreedef;
 };
 

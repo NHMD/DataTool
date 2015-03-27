@@ -3,18 +3,19 @@
 		<div class="modal-content">
 			
 			<div class="modal-header"><button type="button" class="close" ng-click="$hide()">×</button>
-				 <h4 class="modal-title"><i class="fa fa-lg fa-arrows-h"></i> Map dataset</h4></div>
+				 <h4 class="modal-title"><span class="glyphicon glyphicon-transfer"></span> Map dataset</h4></div>
 				<div class="modal-body">
 					
 					<table class="table table-striped">
-<thead><tr><th>{{user.csvimports | selectedCsvName:selectedCsv}}</th><th></th><th>Specify table</th><th>Specify field</th></tr></thead>
+<thead><tr><th>{{collection.name}}</th><th></th><th>Specify table</th><th>Specify field</th><th></th></tr></thead>
 <tbody>
 				 	<tr ng-hide="key === '_id'" ng-repeat="(key, value) in datasetMapping">
 						<td>{{key}}</td>
-						<td><img ng-if="datasetMapping[key]['tableName']['fields']" ng-src="{{ Icons.datamodel.get(datasetMapping[key]['tableName']) }}" class="specify-icon-24 pull-right"></td>
+						<td><img ng-if="datasetMapping[key]['table']['fields']" ng-src="{{ Icons.datamodel.get(datasetMapping[key]['table']['name']) }}" class="specify-icon-24 pull-right"></td>
 						<td><input type="text" class="form-control" ng-model="datasetMapping[key].table" ng-model-options="{allowInvalid:true}" ng-options="model as model.name for model in datamodels | orderObjectBy" placeholder="Enter table name" minLength="3" bs-typeahead></td>
-						<td><button type="button" class="btn btn-default" ng-if="datasetMapping[key]['table']['fields']" ng-model="datasetMapping[key]['fieldName']"  ng-options="field for field in getFieldsForModel(key)" bs-select></td>
+						<td><button type="button" class="btn btn-default" ng-if="datasetMapping[key]['table']['fields']" ng-model="datasetMapping[key]['fieldName']"  ng-options="field for field in getFieldsForModel(key)" placeholder="Choose field" bs-select></td>
 				
+				<td><button type="button" class="btn btn-default" ng-if="tableIsTree(datasetMapping[key]['table']) && datasetMapping[key]['fieldName'] === 'Name'" ng-model="datasetMapping[key]['rankName']"  ng-options="treeDefItem.Name as treeDefItem.Name for treeDefItem in getTreeDefItems(datasetMapping[key]['table']['name'])" placeholder="Choose tree rank" bs-select></td>
 				 		
 				 	</tr>
 				</tbody>

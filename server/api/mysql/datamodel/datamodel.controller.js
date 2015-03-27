@@ -36,10 +36,13 @@ exports.index = function(req, res) {
 				
 				treeTable[datamodels[i].name] = datamodels[i];
 				
-				datamodels.splice(i, 1);
+				
 			}
+			// Filter out treedef and treedefitems for ui (they are now attached to their mother tree table)
 		};
-		return datamodels;
+		return datamodels.filter(function(e){
+			return !treeDefPattern.test(e.name);
+		});
 	})
 	.then(function(datamodels) {
 		return res.json(200, datamodels);

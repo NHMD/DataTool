@@ -2,23 +2,23 @@
 var models = require('../');
 var _ = require('lodash');
 
-//var Taxontreedefitem = require('./taxontreedefitem.model');
+//var Geographytreedef = require('./geographytreedefitem.model');
 
-// Get list of taxontreedefitems
+// Get list of geographytreedefitems
 exports.index = function(req, res) {
 	var query = (req.query._query) ? {where: JSON.parse(req.query._query)} : undefined;
 
-  models.Taxontreedefitem.findAll(query).then(function(taxontreedef){
-  	return res.json(200, taxontreedef);	
+  models.Geographytreedef.findAll(query).then(function(geographytreedef){
+  	return res.json(200, geographytreedef);	
   }).catch(function(err){
 	  handleError(res, err);
   });
 };
 
-// Get a single taxontreedefitem
+// Get a single geographytreedefitem
 exports.show = function(req, res) {
-  models.Taxontreedefitem.find(req.params.id).then(function(taxontreedef){
-  	return res.json(200, taxontreedef);	
+  models.Geographytreedef.find(req.params.id).then(function(geographytreedef){
+  	return res.json(200, geographytreedef);	
   }).catch(function(err){
 	  handleError(res, err);
   });

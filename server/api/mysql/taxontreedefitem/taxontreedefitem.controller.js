@@ -1,12 +1,12 @@
 'use strict';
 var models = require('../');
 var _ = require('lodash');
+var qp = require('../nestedQueryParser');
 //var Taxontreedefitem = require('./taxontreedefitem.model');
 
 // Get list of taxontreedefitems
 exports.index = function(req, res) {
-	var query = (req.query._query) ? {where: JSON.parse(req.query._query)} : undefined;
-
+var query = (req.query) ? qp.parseQueryString(req.query) : undefined;
   models.Taxontreedefitem.findAll(query).then(function(taxontreedefitem){
   	return res.json(200, taxontreedefitem);	
   }).catch(function(err){

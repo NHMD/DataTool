@@ -1,53 +1,92 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-.filter('selectedCsvName', function() {
-  return function(userCsvImports, collectionName) {
-	  if(!collectionName){
-		  return "";
-	  };
-	return  userCsvImports.filter(function(e){
-		  return e.collectionName = collectionName;
-	  })[0].name;
-}
-})
-	.controller('CsvUploadCtrl', ['Auth','$scope', '$http', '$timeout', '$compile', 'FileUploader', 'Csvdataset', 'DataModel', 'Icons',
-		function(Auth, $scope, $http, $timeout, $compile, FileUploader, Csvdataset, DataModel, Icons) {
-		
+	.filter('selectedCsvName', function() {
+		return function(userCsvImports, collectionName) {
+			if (!collectionName) {
+				return "";
+			};
+			return userCsvImports.filter(function(e) {
+				return e.collectionname = collectionName;
+			})[0].name;
+		}
+	})
+	.controller('CsvUploadCtrl', ['Auth', 'User', '$rootScope', '$scope', '$filter', '$http', '$timeout', '$compile', 'FileUploader', 'Csvdataset', 'DataModel', 'Icons', 'TaxonTreeDefItem', 'GeographyTreeDefItem',
+		function(Auth, User, $rootScope, $scope, $filter, $http, $timeout, $compile, FileUploader, Csvdataset, DataModel, Icons, TaxonTreeDefItem, GeographyTreeDefItem) {
+
+			$scope.treeResources = {
+				Taxon: TaxonTreeDefItem,
+				Geography: GeographyTreeDefItem
+			};
+
+
+
+			$scope.TreeDefItems = {};
+
+			$scope.getTreeDefItems = function(tree) {
+
+				if (!$scope.TreeDefItems[tree]) {
+					var treeDefIdName = tree + "TreeDefID";
+					var query = {
+						where: {}
+					};
+					query.where[treeDefIdName] = $rootScope.fields.selectedCollection.discipline[treeDefIdName];
+					$scope.TreeDefItems[tree] = $scope.treeResources[tree].query(query);
+				}
+				return $scope.TreeDefItems[tree];
+			};
+
 			$scope.Icons = Icons;
-			
+
 			$scope.$watch(Auth.isLoggedIn, function(newval, oldval) {
-		
+
 				$scope.user = Auth.getCurrentUser();
 
 			})
 			
-		
-			$scope.getFieldsForModel = function(modelName){
-				
-				
-				if($scope.datasetMapping[modelName] && typeof $scope.datasetMapping[modelName].table.fields === 'object'){
-					
-					
+
+			$scope.getFieldsForModel = function(modelName) {
+
+
+				if ($scope.datasetMapping[modelName] && typeof $scope.datasetMapping[modelName].table.fields === 'object') {
+
+
 					return Object.keys($scope.datasetMapping[modelName].table.fields);
-					
-				}
-				else {
-					
+
+				} else {
+
 					return [];
 				}
 			}
 
-			
-			$scope.saveMapping = function(){
-				
-				angular.forEach($scope.datasetMapping, function(value, key) {
-					if(value.table) $scope.datasetMapping[key].tableName = value.table.name;
-				});
-				console.log($scope.datasetMapping)
+			$scope.tableIsTree = function(table) {
+				if (!table) return false;
+				var treedefitemtable = table.name + "treedefitem";
+				return (table[treedefitemtable] !== undefined) ? true : false;
+
 			}
-			
-			$scope.setCollection = function(collection){
+
+
+
+
+			$scope.saveMapping = function() {
+
+				angular.forEach($scope.datasetMapping, function(value, key) {
+					if (value.table) {
+						$scope.datasetMapping[key].tableName = value.table.name;
+					}
+					
+				});
+
+				User.saveCsvMapping({
+					csvname: $scope.selectedCsv
+				}, $scope.datasetMapping);
+			}
+
+			$scope.setCollection = function(collection) {
+				
+				 $scope.datasetMapping = undefined;
+				
 				
 				$scope.collection = Csvdataset.get({
 					collectionname: collection
@@ -56,38 +95,64 @@ angular.module('specifyDataCleanerApp')
 				$scope.data = Csvdataset.getData({
 					collectionname: collection
 				}).$promise.then(function(data) {
-					$scope.selectedCsv = collection;
+					
+					//$scope.selectedCsv = collection;
 					$scope.data = data;
-					$scope.fields = [];
-					$scope.datasetMapping = {};
-					for (var field in data[0]){
-						if (data[0].hasOwnProperty(field)) {
-							$scope.fields.push(field);
-							$scope.datasetMapping[field] = {};
+					
+					var coll = $scope.user.csvimports.filter(function(e) {
+						return e.collectionname === collection;
+					})[0];
+					
+					if (coll.mapping && coll.mapping[0]) {
+						$scope.datasetMapping = coll.mapping[0];
+					} else {
+						
+						$scope.datasetMapping = {};
+						for (var field in data[0]) {
+							if (data[0].hasOwnProperty(field)) {
+								
+								$scope.datasetMapping[field] = {};
+							}
 						}
+						
 					}
+/**/
+
 					$scope.isLoading = false;
 				});
 			}
-			
+
 			$scope.$watch('selectedCsv', function(newval, oldval) {
-				if(newval !== undefined && newval !== oldval){
+				console.log(newval)
+				
+				if (newval !== undefined && newval !== oldval) {
 					$scope.data = [];
 					$scope.setCollection(newval);
 				}
+				
 			});
-			
+
 			$scope.datamodels = DataModel.query();
-			$scope.delimiters = [{value:",",label:"Comma ,"}, {value:";",label:"Semicolon ;"}, {value:":",label:"Colon :"}];
+
+			$scope.delimiters = [{
+				value: ",",
+				label: "Comma ,"
+			}, {
+				value: ";",
+				label: "Semicolon ;"
+			}, {
+				value: ":",
+				label: "Colon :"
+			}];
 
 			var uploader = $scope.uploader = new FileUploader({
 				url: '/api/fileupload',
 				headers: {
-					Authorization: 'Bearer '+ Auth.getToken()
+					Authorization: 'Bearer ' + Auth.getToken()
 				}
 			});
-			
-			
+
+
 			// FILTERS
 
 			uploader.filters.push({
@@ -103,14 +168,16 @@ angular.module('specifyDataCleanerApp')
 				console.info('onWhenAddingFileFailed', item, filter, options);
 			};
 			uploader.onAfterAddingFile = function(fileItem) {
-				fileItem.delimiter  =$scope.delimiters[0].value;
+				fileItem.delimiter = $scope.delimiters[0].value;
 				console.info('onAfterAddingFile', fileItem);
 			};
 			uploader.onAfterAddingAll = function(addedFileItems) {
 				console.info('onAfterAddingAll', addedFileItems);
 			};
 			uploader.onBeforeUploadItem = function(item) {
-				item.formData.push({csvdelimiter : item.delimiter});
+				item.formData.push({
+					csvdelimiter: item.delimiter
+				});
 				console.info('onBeforeUploadItem', item);
 			};
 			uploader.onProgressItem = function(fileItem, progress) {
@@ -145,8 +212,8 @@ angular.module('specifyDataCleanerApp')
 				$scope.isLoading = true;
 
 				var pagination = tableState.pagination;
-				
-				
+
+
 
 				var offset = pagination.start || 0; // This is NOT the page number, but the index of item in the list that you want to use to display the table.
 				var limit = pagination.number || 100; // Number of entries showed per page.
@@ -154,7 +221,7 @@ angular.module('specifyDataCleanerApp')
 
 				if ($scope.collection !== undefined) {
 					$scope.collection.$promise.then(function() {
-						
+
 						tableState.pagination.numberOfPages = parseInt($scope.collection.count / limit);
 						$scope.data = Csvdataset.getData({
 							collectionname: $scope.collection.collectionname,
