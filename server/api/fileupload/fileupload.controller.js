@@ -296,3 +296,20 @@ exports.saveCsvMapping = function(req, res, next) {
    
  
 };
+
+exports.saveSpecifyCollection = function(req, res, next) {
+  var user = req.user;
+
+    if (!user) return res.json(401);
+	console.log("REQ :"+req.params.collname)
+	var csvimport = user.csvimports.filter(function(e){ return e.collectionname === req.params.collname})[0];
+	csvimport.specifycollection = req.body;
+	console.log("USER: "+ user)
+	user.save(function(err){
+			if(err) throw err;
+			return res.json(201, csvimport.specifycollection);
+		});
+   
+ 
+};
+

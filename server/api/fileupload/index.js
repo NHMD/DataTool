@@ -18,4 +18,5 @@ router.get('/datasets/:collname/objects', controller.indexObjects);
 router.get('/datasets/:collname/objects/:id', controller.findObject);
 router.get('/datasets/:collname', controller.find);
 router.post('/datasets/:collname/mappings', auth.isAuthenticated(), controller.saveCsvMapping);
+router.post('/datasets/:collname/specifycollection', auth.isAuthenticated(), controller.saveSpecifyCollection);
 module.exports = router;

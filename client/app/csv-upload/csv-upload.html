@@ -4,7 +4,7 @@
 <button type="button" class="btn btn-default" ng-show="user.csvimports && user.csvimports.length >0" ng-model="selectedCsv" ng-options="imp.collectionname as imp.name for imp in user.csvimports" placeholder="Choose dataset" bs-select>
 	<button type="button" class="btn btn-default" ng-show="selectedCsv" data-animation="am-fade-and-slide-top" data-template="app/csv-upload/mapping.modal.tmpl.html" bs-modal="modal"><span class="glyphicon glyphicon-transfer"></span> Map selected dataset
 	</button>
-		<button type="button" class="btn btn-default" ng-show="datasetIsMapped()">
+		<button type="button" class="btn btn-default" ng-show="datasetIsMapped()" ng-click="pushToSpecify()">
   <i class="fa fa-reply fa-rotate-180"></i>
   <i class="fa fa-database"></i>
    Upload selected dataset to Specify

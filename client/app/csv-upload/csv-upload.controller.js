@@ -35,6 +35,13 @@ angular.module('specifyDataCleanerApp')
 			})
 			
 			$scope.pushToSpecify = function(){
+				
+				console.log($rootScope.fields.selectedCollection);
+				
+				Csvdataset.setSpecifyCollection({
+					collectionname: $scope.selectedCsv
+				}, $rootScope.fields.selectedCollection);
+			/*	
 			  $http.post('/someUrl', {msg:'hello word!'}).
 			    success(function(data, status, headers, config) {
 			      // this callback will be called asynchronously
@@ -44,6 +51,7 @@ angular.module('specifyDataCleanerApp')
 			      // called asynchronously if an error occurs
 			      // or server returns response with an error status.
 			    });
+				*/
 			};
 			
 			$scope.datasetIsMapped = function(){
@@ -51,7 +59,7 @@ angular.module('specifyDataCleanerApp')
 				var coll = $scope.user.csvimports.filter(function(e) {
 						return e.collectionname === $scope.selectedCsv;
 					})[0];
-					return coll.mapping.length > 0;
+					return coll.mapping !== undefined;
 			}
 
 			$scope.getFieldsForModel = function(modelName) {
@@ -112,8 +120,8 @@ angular.module('specifyDataCleanerApp')
 						return e.collectionname === collection;
 					})[0];
 					
-					if (coll.mapping && coll.mapping[0]) {
-						$scope.datasetMapping = coll.mapping[0];
+					if (coll.mapping && coll.mapping) {
+						$scope.datasetMapping = coll.mapping;
 					} else {
 						
 						$scope.datasetMapping = {};
