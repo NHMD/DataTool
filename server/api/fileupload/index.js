@@ -13,8 +13,9 @@ var router = express.Router();
 router.post('/', [ multer({ dest: uploaddir }), auth.isAuthenticated() , controller.getFile]);
 //router.get('/collections/', controller.index);
 
-router.get('/collections/:collname/aggregate', controller.aggr);
-router.get('/collections/:collname/objects', controller.indexObjects);
-router.get('/collections/:collname/objects/:id', controller.findObject);
-router.get('/collections/:collname', controller.find);
+router.get('/datasets/:collname/process', controller.process);
+router.get('/datasets/:collname/objects', controller.indexObjects);
+router.get('/datasets/:collname/objects/:id', controller.findObject);
+router.get('/datasets/:collname', controller.find);
+router.post('/datasets/:collname/mappings', auth.isAuthenticated(), controller.saveCsvMapping);
 module.exports = router;

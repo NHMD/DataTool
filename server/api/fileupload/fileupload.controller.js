@@ -168,7 +168,7 @@ MongoDB.connect().then(function(db){
 	})
 }
 
-exports.aggr = function(req, res) {
+exports.process = function(req, res) {
 
 	// Mappings will be posted from UI
 	var mappings = [
@@ -279,3 +279,20 @@ exports.aggr = function(req, res) {
 		*/
 	
 }
+
+
+exports.saveCsvMapping = function(req, res, next) {
+  var user = req.user;
+
+    if (!user) return res.json(401);
+	console.log("REQ :"+req.params.collname)
+	var csvimport = user.csvimports.filter(function(e){ return e.collectionname === req.params.collname})[0];
+	csvimport.mapping = req.body;
+	console.log("USER: "+ user)
+	user.save(function(err){
+			if(err) throw err;
+			return res.json(201, csvimport.mapping);
+		});
+   
+ 
+};

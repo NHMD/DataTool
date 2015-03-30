@@ -1,16 +1,6 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-	.filter('selectedCsvName', function() {
-		return function(userCsvImports, collectionName) {
-			if (!collectionName) {
-				return "";
-			};
-			return userCsvImports.filter(function(e) {
-				return e.collectionname = collectionName;
-			})[0].name;
-		}
-	})
 	.controller('CsvUploadCtrl', ['Auth', 'User', '$rootScope', '$scope', '$filter', '$http', '$timeout', '$compile', 'FileUploader', 'Csvdataset', 'DataModel', 'Icons', 'TaxonTreeDefItem', 'GeographyTreeDefItem',
 		function(Auth, User, $rootScope, $scope, $filter, $http, $timeout, $compile, FileUploader, Csvdataset, DataModel, Icons, TaxonTreeDefItem, GeographyTreeDefItem) {
 
@@ -44,6 +34,25 @@ angular.module('specifyDataCleanerApp')
 
 			})
 			
+			$scope.pushToSpecify = function(){
+			  $http.post('/someUrl', {msg:'hello word!'}).
+			    success(function(data, status, headers, config) {
+			      // this callback will be called asynchronously
+			      // when the response is available
+			    }).
+			    error(function(data, status, headers, config) {
+			      // called asynchronously if an error occurs
+			      // or server returns response with an error status.
+			    });
+			};
+			
+			$scope.datasetIsMapped = function(){
+				if(!$scope.selectedCsv) return false;
+				var coll = $scope.user.csvimports.filter(function(e) {
+						return e.collectionname === $scope.selectedCsv;
+					})[0];
+					return coll.mapping.length > 0;
+			}
 
 			$scope.getFieldsForModel = function(modelName) {
 
@@ -77,9 +86,9 @@ angular.module('specifyDataCleanerApp')
 					}
 					
 				});
-
-				User.saveCsvMapping({
-					csvname: $scope.selectedCsv
+				
+				Csvdataset.saveCsvMapping({
+					collectionname: $scope.selectedCsv
 				}, $scope.datasetMapping);
 			}
 

@@ -94,27 +94,6 @@ exports.me = function(req, res, next) {
 };
 
 
-/**
- * Get my info
- */
-exports.saveCsvMapping = function(req, res, next) {
-  var userId = req.user._id;
-  User.findOne({
-    _id: userId
-  }, '-salt -hashedPassword', function(err, user) { // don't ever give out the password or salt
-    if (err) return next(err);
-    if (!user) return res.json(401);
-	console.log("REQ :"+req.params.csvname)
-	var csvimport = user.csvimports.filter(function(e){ return e.collectionname === req.params.csvname})[0];
-	csvimport.mapping = req.body;
-	console.log("USER: "+ user)
-	user.save(function(err){
-			if(err) throw err;
-			return res.json(201, csvimport.mapping);
-		});
-   
-  });
-};
 
 /**
  * Authentication callback
