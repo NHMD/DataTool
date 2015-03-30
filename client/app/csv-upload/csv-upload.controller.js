@@ -40,7 +40,11 @@ angular.module('specifyDataCleanerApp')
 				
 				Csvdataset.setSpecifyCollection({
 					collectionname: $scope.selectedCsv
-				}, $rootScope.fields.selectedCollection);
+				}, $rootScope.fields.selectedCollection).$promise.then(function(){
+					return Csvdataset.process({
+						collectionname: $scope.selectedCsv
+					}, {});
+				});
 			/*	
 			  $http.post('/someUrl', {msg:'hello word!'}).
 			    success(function(data, status, headers, config) {

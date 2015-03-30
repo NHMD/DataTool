@@ -8,7 +8,7 @@ var parse = require('csv').parse;
 var Promise = require("bluebird");
 var MongoDB = require("../../components/datamapper/nativeMongoInstance");
 var uploaddir = config.tempuploaddir;
-
+var _ = require('lodash');
 var datamapper = require('../../components/datamapper');
 
 
@@ -169,7 +169,90 @@ MongoDB.connect().then(function(db){
 }
 
 exports.process = function(req, res) {
+	
+    var user = req.user;
 
+      if (!user) return res.json(401);
+	
+  	var csvimport = user.csvimports.filter(function(e){ return e.collectionname === req.params.collname})[0];
+	console.log("csvimport : "+csvimport)
+	if (!csvimport) return res.json(404);
+	var discipline = csvimport.specifycollection.discipline;
+
+	var sortedMappings = {};
+
+	_.each(csvimport.mapping , function(value, key){
+		if(key !== "_id"){
+			if(!sortedMappings[value.tableName]){
+			sortedMappings[value.tableName] = {}
+		};
+		sortedMappings[value.tableName][key] = value;
+	}
+	});
+
+	var promises = [];
+	
+	_.each(sortedMappings , function(value, key){
+		var promise = datamapper.aggregateTreeAndPersist(req.params.collname, value, key, discipline );
+		promises.push(promise);
+	});
+		
+		Promise.all(promises).then(function(){
+			res.send(200);
+		})
+		/*	
+		datamapper.aggregateTreeAndPersist(req.params.collname, mappings[0], 'Taxon', discipline ).then(function(inserted){
+		//	console.log(inserted);
+			res.send(200, inserted);
+		}).catch(function(err) {
+		        throw err;
+		    });	
+		
+	/*	
+	datamapper.aggregateAndPersist(req.params.collname, mappings[1], 'Agent' ).then(function(inserted){
+	//	console.log(inserted);
+		res.send(200, inserted);
+	}).catch(function(err) {
+	        throw err;
+	    });
+		*/
+	
+}
+
+
+exports.saveCsvMapping = function(req, res, next) {
+  var user = req.user;
+
+    if (!user) return res.json(401);
+	
+	var csvimport = user.csvimports.filter(function(e){ return e.collectionname === req.params.collname})[0];
+	csvimport.mapping = req.body;
+	
+	user.save(function(err){
+			if(err) throw err;
+			return res.json(201, csvimport.mapping);
+		});
+   
+ 
+};
+
+exports.saveSpecifyCollection = function(req, res, next) {
+  var user = req.user;
+
+    if (!user) return res.json(401);
+	
+	var csvimport = user.csvimports.filter(function(e){ return e.collectionname === req.params.collname})[0];
+	csvimport.specifycollection = req.body;
+	
+	user.save(function(err){
+			if(err) throw err;
+			return res.json(201, csvimport.specifycollection);
+		});
+   
+ 
+};
+
+/*
 	// Mappings will be posted from UI
 	var mappings = [
 		{
@@ -261,55 +344,4 @@ exports.process = function(req, res) {
 			fieldName: "MiddleInitial",
 			tableName: "Agent"
 		}}];
-		var discipline = {TaxonTreeDefID : 1}; // emulating a discipline which will have Taxon and Geography tree defs
-		datamapper.aggregateTreeAndPersist(req.params.collname, mappings[0], 'Taxon', discipline ).then(function(inserted){
-		//	console.log(inserted);
-			res.send(200, inserted);
-		}).catch(function(err) {
-		        throw err;
-		    });	
-		
-	/*	
-	datamapper.aggregateAndPersist(req.params.collname, mappings[1], 'Agent' ).then(function(inserted){
-	//	console.log(inserted);
-		res.send(200, inserted);
-	}).catch(function(err) {
-	        throw err;
-	    });
-		*/
-	
-}
-
-
-exports.saveCsvMapping = function(req, res, next) {
-  var user = req.user;
-
-    if (!user) return res.json(401);
-	console.log("REQ :"+req.params.collname)
-	var csvimport = user.csvimports.filter(function(e){ return e.collectionname === req.params.collname})[0];
-	csvimport.mapping = req.body;
-	console.log("USER: "+ user)
-	user.save(function(err){
-			if(err) throw err;
-			return res.json(201, csvimport.mapping);
-		});
-   
- 
-};
-
-exports.saveSpecifyCollection = function(req, res, next) {
-  var user = req.user;
-
-    if (!user) return res.json(401);
-	console.log("REQ :"+req.params.collname)
-	var csvimport = user.csvimports.filter(function(e){ return e.collectionname === req.params.collname})[0];
-	csvimport.specifycollection = req.body;
-	console.log("USER: "+ user)
-	user.save(function(err){
-			if(err) throw err;
-			return res.json(201, csvimport.specifycollection);
-		});
-   
- 
-};
-
+*/

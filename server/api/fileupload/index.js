@@ -13,7 +13,7 @@ var router = express.Router();
 router.post('/', [ multer({ dest: uploaddir }), auth.isAuthenticated() , controller.getFile]);
 //router.get('/collections/', controller.index);
 
-router.get('/datasets/:collname/process', controller.process);
+router.post('/datasets/:collname/process', auth.isAuthenticated(), controller.process);
 router.get('/datasets/:collname/objects', controller.indexObjects);
 router.get('/datasets/:collname/objects/:id', controller.findObject);
 router.get('/datasets/:collname', controller.find);

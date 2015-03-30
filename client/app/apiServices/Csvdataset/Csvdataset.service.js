@@ -34,5 +34,13 @@ angular.module('specifyDataCleanerApp')
 				url: '/api/fileupload/datasets/:collectionname/specifycollection/',
 				isArray: false
 			},
+			process: {
+				method: 'POST',
+				params: {
+					id: '@collectionname'
+				},
+				url: '/api/fileupload/datasets/:collectionname/process/',
+				isArray: false
+			},
 		});
 	});
