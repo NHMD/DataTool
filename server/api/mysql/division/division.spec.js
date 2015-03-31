@@ -1,14 +1,14 @@
 'use strict';
 
 var should = require('should');
-var app = require('../../../app');
+var app = require('../../app');
 var request = require('supertest');
 
-describe('GET /api/csvimports', function() {
+describe('GET /api/mysql/divisions', function() {
 
   it('should respond with JSON array', function(done) {
     request(app)
-      .get('/api/csvimports')
+      .get('/api/mysql/divisions')
       .expect(200)
       .expect('Content-Type', /json/)
       .end(function(err, res) {

@@ -1,13 +1,13 @@
-"use strict";
+'use strict';
 
 
 module.exports = function(sequelize, DataTypes) {
-	var Discipline = sequelize.define("discipline", {
+	var Division = sequelize.define("division", {
 		UserGroupScopeId: {
-			type: DataTypes.INTEGER,
+			type: DataTypes.INTEGER(11),
 			primaryKey: true,
 			autoIncrement: true,
-			allowNull: false
+			allowNull: false,
 		},
 		TimestampCreated: {
 			type: DataTypes.DATE,
@@ -29,19 +29,31 @@ module.exports = function(sequelize, DataTypes) {
 			type: DataTypes.INTEGER(11),
 			allowNull: true,
 		},
-		disciplineId: {
-			type: DataTypes.INTEGER(11),
-			allowNull: true,
-		},
-		IsPaleoContextEmbedded: {
-			type: DataTypes.BOOLEAN,
-			allowNull: false,
-		},
-		Name: {
+		Abbrev: {
 			type: DataTypes.STRING,
 			allowNull: true,
 		},
-		PaleoContextChildTable: {
+		AltName: {
+			type: DataTypes.STRING,
+			allowNull: true,
+		},
+		Description: {
+			type: DataTypes.TEXT,
+			allowNull: true,
+		},
+		DisciplineType: {
+			type: DataTypes.STRING,
+			allowNull: true,
+		},
+		divisionId: {
+			type: DataTypes.INTEGER(11),
+			allowNull: true,
+		},
+		IconURI: {
+			type: DataTypes.STRING,
+			allowNull: true,
+		},
+		Name: {
 			type: DataTypes.STRING,
 			allowNull: true,
 		},
@@ -49,56 +61,39 @@ module.exports = function(sequelize, DataTypes) {
 			type: DataTypes.STRING,
 			allowNull: true,
 		},
-		Type: {
+		Remarks: {
+			type: DataTypes.TEXT,
+			allowNull: true,
+		},
+		Uri: {
 			type: DataTypes.STRING,
 			allowNull: true,
 		},
-		TaxonTreeDefID: {
+		AddressID: {
 			type: DataTypes.INTEGER(11),
 			allowNull: true,
 		},
-		LithoStratTreeDefID: {
-			type: DataTypes.INTEGER(11),
-			allowNull: true,
-		},
-		DataTypeID: {
+		InstitutionID: {
 			type: DataTypes.INTEGER(11),
 			allowNull: false,
-		},
-		GeographyTreeDefID: {
-			type: DataTypes.INTEGER(11),
-			allowNull: false,
-		},
-		GeologicTimePeriodTreeDefID: {
-			type: DataTypes.INTEGER(11),
-			allowNull: false,
-		},
-		DivisionID: {
-			type: DataTypes.INTEGER(11),
-			allowNull: false,
-			references: "division",
-			referencesKey: "divisionId"
+			references: "institution",
+			referencesKey: "institutionId"
 		}
-
 	}, {
-		tableName: 'discipline',
+		tableName: 'division',
 		timestamps: false,
 		freezeTableName: true,
 		classMethods: {
 
 			associate: function(models) {
 
-				models.Discipline
-					.belongsTo(models.Division, {
-						foreignKey: 'DivisionID'
+				models.Division
+					.belongsTo(models.Institution, {
+						foreignKey: 'InstitutionID'
 					});
-			},
-			authorize: function(models, user) {
-				return sequelize.Promise.resolve("Access granted");
-
 			}
 
 		}
 	});
-	return Discipline;
+	return Division;
 };

@@ -53,7 +53,14 @@ exports.indexCollections = function(req, res) {
 						include: [{
 							model: models.Taxontreedefitem
 						}]
-					}]
+					},
+					{
+						model: models.Division,
+						include: [{
+							model: models.Institution
+						}]
+					}
+				]
 				}]
 			}]
 		}]

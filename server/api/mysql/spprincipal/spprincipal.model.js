@@ -46,7 +46,7 @@ module.exports = function(sequelize, DataTypes) {
     userGroupScopeID: {
       type: DataTypes.INTEGER(11),
       allowNull: true,
-		references: "collection", // notice the plural, it's the name of the table
+		references: "collection", 
 		referencesKey: "UserGroupScopeID"
     },
     ModifiedByAgentID: {
@@ -61,11 +61,12 @@ module.exports = function(sequelize, DataTypes) {
 	classMethods: {
 		
         associate: function(models) {
-        
+    		
   		models.Collection
   		  .hasOne(models.Spprincipal, {foreignKey: 'userGroupScopeID'});
   		models.Spprincipal
   		  .belongsTo(models.Collection, {foreignKey: 'UserGroupScopeID'});
+  		
 		
         }
 	  

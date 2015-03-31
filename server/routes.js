@@ -18,6 +18,7 @@ module.exports = function(app) {
 	app.use('/api/collectionobjects', require('./api/mysql/collectionobject'));
 	app.use('/api/collectingevents', require('./api/mysql/collectingevent'));
 	app.use('/api/collectors', require('./api/mysql/collector'));
+	app.use('/api/institutions', require('./api/mysql/institution'));
 	app.use('/api/localitys', require('./api/mysql/locality'));
 	app.use('/api/geographys', require('./api/mysql/geography'));
 	app.use('/api/geographytreedefitems', require('./api/mysql/geographytreedefitem'));
@@ -27,6 +28,8 @@ module.exports = function(app) {
 	app.use('/api/workbenches', require('./api/mysql/workbench'));
 	app.use('/api/workbenchrows', require('./api/mysql/workbenchrow'));
 	app.use('/api/specifyusers', require('./api/mysql/specifyuser'));
+	app.use('/api/storages', require('./api/mysql/storage'));
+	app.use('/api/storagetreedefitems', require('./api/mysql/storagetreedefitem'));
 	app.use('/api/agents', require('./api/mysql/agent'));
 	app.use('/api/workbenchdataitems', require('./api/mysql/workbenchdataitem'));
 	app.use('/api/workbenchtemplatemappingitems', require('./api/mysql/workbenchtemplatemappingitem'));

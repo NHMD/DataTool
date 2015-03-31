@@ -4,21 +4,21 @@
 
 'use strict';
 
-var Taxontreedefitem = require('./taxontreedef.model');
+var Geographytreedef = require('./geographytreedef.model');
 
 exports.register = function(socket) {
-  Taxontreedefitem.schema.post('save', function (doc) {
+  Geographytreedef.schema.post('save', function (doc) {
     onSave(socket, doc);
   });
-  Taxontreedefitem.schema.post('remove', function (doc) {
+  Geographytreedef.schema.post('remove', function (doc) {
     onRemove(socket, doc);
   });
 }
 
 function onSave(socket, doc, cb) {
-  socket.emit('taxontreedef:save', doc);
+  socket.emit('geographytreedef:save', doc);
 }
 
 function onRemove(socket, doc, cb) {
-  socket.emit('taxontreedef:remove', doc);
+  socket.emit('geographytreedef:remove', doc);
 }
