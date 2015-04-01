@@ -117,8 +117,9 @@ exports.aggregateAndPersist = function(collectionName, mappings, model) {
 }
 
 exports.aggregateTreeAndPersist = function(collectionName, mappings, model, discipline) {
-
-
+	
+	// flattenDsicipline is attaching the StorageTreeDef on same level as other trees
+	discipline = flattenDiscipline(discipline);
 	var treeDefName = model + "TreeDefID";
 	var treeDefItemName = model + "TreeDefItemID"; // extracting Key field names for the relevant tree
 	var treeDef = model + "treedefitem";
@@ -156,7 +157,7 @@ exports.aggregateTreeAndPersist = function(collectionName, mappings, model, disc
 			//if (rankMappings[mappings[key].rankName]) aggregation[key] = "$" + key;
 			aggregation[key] = "$" + key;;
 		};
-console.log("AGGR :"+ JSON.stringify(aggregation));
+
 		return [MongoDB.connect(), aggregation, collectionName, rankMappings];
 	})
 
@@ -257,5 +258,22 @@ function findAndInsert(result, db, collectionName, model, rankMappings, mappings
 		return collection.insertAsync(treenode.values, {});
 	})
 
+
+}
+
+function flattenDiscipline(discipline){
+	
+	var treeDefPattern = /TreeDefID/;
+	var flattenedDiscipline = {};
+	_.each(discipline, function(value, key){
+		if(treeDefPattern.test(key)){
+			flattenedDiscipline[key] = value;
+		}
+	})
+	if(discipline.division && discipline.division.institution && discipline.division.institution.StorageTreeDefID)	{
+		flattenedDiscipline.StorageTreeDefID = discipline.division.institution.StorageTreeDefID;
+	};
+	
+	return flattenedDiscipline;
 
 }
