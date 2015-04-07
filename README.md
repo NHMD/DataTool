@@ -49,6 +49,15 @@ npm install
 ```bash
 bower install
 ```
+
+## Load data for specify datamodels into mongo
+
+In the root directory (where package.json and bower.json are placed):
+
+```bash
+mongoimport -d dinacollections-dev --collection datamodels --file resources/datamodel.json -vvvvv --jsonArray
+```
+
 ## Run the application
 
 To run the application in dev mode:

@@ -42,6 +42,7 @@ module.exports = function(app) {
 	
 	app.use('/api/datamodels', require('./api/mysql/datamodel'));
 	//MongoDB
+	app.use('/api/specifymodels', require('./api/mongo/specifymodel'));
 //	app.use('/api/things', require('./api/mongo/thing'));
 	app.use('/api/users', require('./api/mongo/user'));
 	
