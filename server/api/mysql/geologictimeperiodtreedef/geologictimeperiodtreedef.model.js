@@ -2,8 +2,8 @@
 
 
 module.exports = function(sequelize, DataTypes) {
-  var Geographytreedefitem = sequelize.define("geographytreedefitem", {
-	GeographyTreeDefItemID: {
+  var Geologictimeperiodtreedef = sequelize.define("geologictimeperiodtreedef", {
+	GeologicTimePeriodTreeDefID: {
 		type: DataTypes.INTEGER,
 		primaryKey: true,
 		autoIncrement:true, 
@@ -21,68 +21,42 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER(11),
       allowNull: true,
     },
-    FullNameSeparator: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    IsEnforced: {
-      type: DataTypes.BOOLEAN,
-      allowNull: true,
-    },
-    IsInFullName: {
-      type: DataTypes.BOOLEAN,
+    FullNameDirection: {
+      type: DataTypes.INTEGER(11),
       allowNull: true,
     },
     Name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    RankID: {
-      type: DataTypes.INTEGER(11),
-      allowNull: false,
-    },
     Remarks: {
       type: DataTypes.TEXT,
-      allowNull: true,
-    },
-    TextAfter: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    TextBefore: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    Title: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    GeographyTreeDefID: {
-      type: DataTypes.INTEGER(11),
-      allowNull: false,
-    },
-    ModifiedByAgentID: {
-      type: DataTypes.INTEGER(11),
-      allowNull: true,
-    },
-    ParentItemID: {
-      type: DataTypes.INTEGER(11),
       allowNull: true,
     },
     CreatedByAgentID: {
       type: DataTypes.INTEGER(11),
       allowNull: true,
+    },
+    ModifiedByAgentID: {
+      type: DataTypes.INTEGER(11),
+      allowNull: true,
     }
    
 }, {
-	tableName: 'geographytreedefitem',
+	tableName: 'geologictimeperiodtreedef',
 	timestamps: false,
 	freezeTableName: true,
 	classMethods: {
 		
 		associate: function(models) {
-		
-
+         
+		  /*
+          models.Institution
+  		  .belongsTo(models.Geologictimeperiodtreedef, {foreignKey : 'StorageTreeDefID'});
+		  */
+     
+      models.Geologictimeperiodtreedef
+		  .hasMany(models.Geologictimeperiodtreedefitem, {foreignKey : 'GeologicTimePeriodTreeDefID'}); 
 		},
 	authorize: function(models, user) {
 		return sequelize.Promise.resolve("Access granted");
@@ -99,6 +73,6 @@ module.exports = function(sequelize, DataTypes) {
 	  
 	}
 });
-return Geographytreedefitem;
+return Geologictimeperiodtreedef;
 };
 

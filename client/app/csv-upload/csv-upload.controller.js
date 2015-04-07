@@ -1,12 +1,15 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-	.controller('CsvUploadCtrl', ['Auth', 'User', '$rootScope', '$scope', '$filter', '$http', '$timeout', '$compile', 'FileUploader', 'Csvdataset', 'DataModel', 'Icons', 'TaxonTreeDefItem', 'GeographyTreeDefItem',
-		function(Auth, User, $rootScope, $scope, $filter, $http, $timeout, $compile, FileUploader, Csvdataset, DataModel, Icons, TaxonTreeDefItem, GeographyTreeDefItem) {
+	.controller('CsvUploadCtrl', ['Auth', 'User', '$rootScope', '$scope', '$filter', '$http', '$timeout', '$compile', 'FileUploader', 'Csvdataset', 'DataModel', 'Icons', 'TaxonTreeDefItem', 'GeographyTreeDefItem','GeologicTimePeriodTreeDefItem', 'StorageTreeDefItem', 'LithostratTreeDefItem',
+		function(Auth, User, $rootScope, $scope, $filter, $http, $timeout, $compile, FileUploader, Csvdataset, DataModel, Icons, TaxonTreeDefItem, GeographyTreeDefItem, GeologicTimePeriodTreeDefItem, StorageTreeDefItem, LithostratTreeDefItem) {
 
 			$scope.treeResources = {
 				Taxon: TaxonTreeDefItem,
-				Geography: GeographyTreeDefItem
+				Geography: GeographyTreeDefItem,
+				Geologictimeperiod: GeologicTimePeriodTreeDefItem,
+				Storage :StorageTreeDefItem,
+				Lithostrat : LithostratTreeDefItem
 			};
 
 
@@ -45,17 +48,7 @@ angular.module('specifyDataCleanerApp')
 						collectionname: $scope.selectedCsv
 					}, {});
 				});
-			/*	
-			  $http.post('/someUrl', {msg:'hello word!'}).
-			    success(function(data, status, headers, config) {
-			      // this callback will be called asynchronously
-			      // when the response is available
-			    }).
-			    error(function(data, status, headers, config) {
-			      // called asynchronously if an error occurs
-			      // or server returns response with an error status.
-			    });
-				*/
+
 			};
 			
 			$scope.datasetIsMapped = function(){

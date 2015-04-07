@@ -1,7 +1,7 @@
 'use strict';
 
 var express = require('express');
-var controller = require('./geographytreedef.controller');
+var controller = require('./geologictimeperiodtreedefitem.controller');
 
 var router = express.Router();
 

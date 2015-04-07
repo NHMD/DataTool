@@ -22,6 +22,10 @@ module.exports = function(app) {
 	app.use('/api/localitys', require('./api/mysql/locality'));
 	app.use('/api/geographys', require('./api/mysql/geography'));
 	app.use('/api/geographytreedefitems', require('./api/mysql/geographytreedefitem'));
+	app.use('/api/geologictimeperiods', require('./api/mysql/geologictimeperiod'));
+	app.use('/api/geologictimeperiodtreedefitems', require('./api/mysql/geologictimeperiodtreedefitem'));
+	app.use('/api/lithostrats', require('./api/mysql/lithostrat'));
+	app.use('/api/lithostrattreedefitems', require('./api/mysql/lithostrattreedefitem'));
 	app.use('/api/preparations', require('./api/mysql/preparation'));
 	app.use('/api/taxons', require('./api/mysql/taxon'));
 	app.use('/api/taxontreedefitems', require('./api/mysql/taxontreedefitem'));

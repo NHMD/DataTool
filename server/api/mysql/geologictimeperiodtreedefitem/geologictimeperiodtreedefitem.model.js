@@ -2,8 +2,8 @@
 
 
 module.exports = function(sequelize, DataTypes) {
-  var Geographytreedefitem = sequelize.define("geographytreedefitem", {
-	GeographyTreeDefItemID: {
+  var Geologictimeperiodtreedefitem = sequelize.define("geologictimeperiodtreedefitem", {
+	GeologicTimePeriodTreeDefItemID: {
 		type: DataTypes.INTEGER,
 		primaryKey: true,
 		autoIncrement:true, 
@@ -57,25 +57,25 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    GeographyTreeDefID: {
+    ModifiedByAgentID: {
+      type: DataTypes.INTEGER(11),
+      allowNull: true,
+    },
+    GeologicTimePeriodTreeDefID: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
     },
-    ModifiedByAgentID: {
+    CreatedByAgentID: {
       type: DataTypes.INTEGER(11),
       allowNull: true,
     },
     ParentItemID: {
       type: DataTypes.INTEGER(11),
       allowNull: true,
-    },
-    CreatedByAgentID: {
-      type: DataTypes.INTEGER(11),
-      allowNull: true,
     }
    
 }, {
-	tableName: 'geographytreedefitem',
+	tableName: 'geologictimeperiodtreedefitem',
 	timestamps: false,
 	freezeTableName: true,
 	classMethods: {
@@ -99,6 +99,6 @@ module.exports = function(sequelize, DataTypes) {
 	  
 	}
 });
-return Geographytreedefitem;
+return Geologictimeperiodtreedefitem;
 };
 
