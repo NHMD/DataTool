@@ -61,8 +61,9 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true,
     },
     GUID: {
-      type: DataTypes.STRING,
-      allowNull: true,
+		type: DataTypes.UUID,
+		allowNull: true,
+		defaultValue: DataTypes.UUIDV1,
     },
     HighestChildNodeNumber: {
       type: DataTypes.INTEGER(11),

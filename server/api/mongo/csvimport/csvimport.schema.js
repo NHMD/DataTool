@@ -6,6 +6,8 @@ module.exports = new Schema({
 	name: String,
 	collectionname: String,
 	active: Boolean,
+	isTreeOnly: Boolean,
+	uploadedToSpecify: Boolean,
 	mapping: Schema.Types.Mixed,
 	specifycollection: Schema.Types.Mixed
 });

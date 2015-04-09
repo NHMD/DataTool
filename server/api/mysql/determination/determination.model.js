@@ -12,10 +12,12 @@ module.exports = function(sequelize, DataTypes) {
       TimestampCreated: {
         type: DataTypes.DATE,
         allowNull: false,
+		  defaultValue:	DataTypes.NOW
       },
       TimestampModified: {
         type: DataTypes.DATE,
-        allowNull: true,
+        allowNull: false,
+		  defaultValue:	DataTypes.NOW
       },
       Version: {
         type: DataTypes.INTEGER(11),
@@ -50,12 +52,14 @@ module.exports = function(sequelize, DataTypes) {
         allowNull: true,
       },
       GUID: {
-        type: DataTypes.STRING,
-        allowNull: true,
+		type: DataTypes.UUID,
+		allowNull: true,
+		defaultValue: DataTypes.UUIDV1,
       },
       IsCurrent: {
-        type: 'BIT(1)',
+        type: DataTypes.BOOLEAN,
         allowNull: false,
+		  defaultValue: 1
       },
       Method: {
         type: DataTypes.STRING,
@@ -102,11 +106,11 @@ module.exports = function(sequelize, DataTypes) {
         allowNull: true,
       },
       YesNo1: {
-        type: 'BIT(1)',
+        type: DataTypes.BOOLEAN,
         allowNull: true,
       },
       YesNo2: {
-        type: 'BIT(1)',
+        type: DataTypes.BOOLEAN,
         allowNull: true,
       },
       TaxonID: {
@@ -116,6 +120,8 @@ module.exports = function(sequelize, DataTypes) {
       DeterminerID: {
         type: DataTypes.INTEGER(11),
         allowNull: true,
+		references: "agent",
+		referencesKey: "AgentID"
       },
       CollectionObjectID: {
         type: DataTypes.INTEGER(11),
@@ -140,7 +146,19 @@ module.exports = function(sequelize, DataTypes) {
 	classMethods: {
 		
       associate: function(models) {
-       // Determination.hasMany(models.Workbenchtemplate)
+	
+	models.Determination
+		.belongsTo(models.Collectionobject, {
+			foreignKey: 'CollectionObjectID'
+		});
+		
+	models.Collectionobject.hasMany(models.Determination);
+		
+	models.Agent
+		.hasMany(models.Determination, {
+			foreignKey: 'DeterminerID'
+		});
+        
       }
 	  
 	}

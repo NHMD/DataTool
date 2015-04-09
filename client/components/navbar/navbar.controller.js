@@ -6,8 +6,8 @@ angular.module('specifyDataCleanerApp')
 			'title': 'Data sets',
 			'link': '/datasets'
 		}, {
-			'title': 'Csv upload',
-			'link': '/csv-upload'
+			'title': 'Tree upload',
+			'link': '/tree-upload'
 		}];
 
 		$scope.isCollapsed = true;

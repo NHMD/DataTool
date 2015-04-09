@@ -62,6 +62,103 @@ var mappings = {
 };
 */
 
+exports.insertIntoSpecify = function(collectionName, csvimport) {
+	
+	var mappings = csvimport.mapping;
+	
+	csvimport.specifycollection
+	
+	return MongoDB.connect()
+		.then(function(db) {
+			return db.collection(collectionName).findAsync(
+				
+			);
+		})
+		.then(function(result) {
+			
+		//	var instances = [];
+			result.each(function(err,elm){
+				if (err) {throw err};
+				
+				var instances = {};
+				
+				for (var key in elm) {
+					if(key !== "_id" && !isTree(mappings[key].tableName))
+					{
+						if(mappings[key].refTable && !instances[mappings[key].refTable]){
+							
+							instances[mappings[key].refTable] = {};
+							
+							instances[mappings[key].refTable][mappings[key].tableName] = {};
+						}
+						
+						else if(!mappings[key].refTable && mappings[key].tableName && !instances[mappings[key].tableName] ){
+							instances[mappings[key].tableName] = {}
+						};
+						
+						if(mappings[key].refTable){
+							instances[mappings[key].refTable][mappings[key].tableName][mappings[key].fieldName] = elm[key];
+						}
+						else {
+						instances[mappings[key].tableName][mappings[key].fieldName] = elm[key];
+					}
+						
+					} else if(key !== "_id" && isTree(mappings[key].tableName)){
+						
+						//TODO map a single taxon to the tree ???
+					};
+					
+		
+				};
+				specifyModel['Collection'].findOne({collectionId: csvimport.specifycollection.collectionId})
+				.then(function(collection){
+					console.log("XXXXXcollection")
+				//	var collectionObj = _.merge(instances['Collectionobject'], {CollectionMemberID: collection.collectionId, CollectionID: collection.collectionId})
+					return specifyModel['Collectionobject'].create(_.merge(instances['Collectionobject'], {CollectionMemberID: collection.collectionId, CollectionID: collection.collectionId}))
+				})
+				.then(function(collectionObject){
+					console.log("XXXXXcollectionObject"+JSON.stringify(collectionObject))
+					var det = _.merge(instances['Determination'],{CollectionMemberID: collectionObject.CollectionMemberID, CollectionObjectID : collectionObject.CollectionobjectID });
+					
+					console.log("#######   "+JSON.stringify(det))
+					return specifyModel['Determination'].create(det)
+				})
+				.then(function(determination){
+					console.log("XXXXXdetermination")
+					return [specifyModel['Agent'].create(instances['Determination']['Agent']), determination]
+				})
+				.spread(function(agent, determination){
+					console.log("XXXXXagent :")
+					return determination.addAgent(agent);
+				})
+				.then(function(){
+					console.log("###############################DONE##################")
+				})
+				.catch(function(err){
+					console.log(err.message);
+					throw err;
+				})
+			//	var collectionObject = specifyModel['Collectionobject'].build(instances['Collectionobject']);
+				
+			//	var determination = specifyModel['Determination'].build(instances['Determination']);
+				
+			//	console.log(JSON.stringify(determination))
+				
+			//	console.log(JSON.stringify(instances))
+				
+			})
+		
+			
+		//	return Promise.all(instances);
+		})
+		.
+	catch (function(err) {
+		throw err;
+	});
+
+}
+
+
 
 /*
  *
@@ -277,3 +374,11 @@ function flattenDiscipline(discipline){
 	return flattenedDiscipline;
 
 }
+
+function isTree(model) {
+	var treedefitem = model + "treedefitem";
+
+	return specifyModel[treedefitem] !== undefined;
+}
+
+exports.isTree = isTree;

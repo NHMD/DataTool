@@ -74,7 +74,7 @@ module.exports = function(sequelize, DataTypes) {
 			allowNull: true,
 		},
 		IsEmbeddedCollectingEvent: {
-			type: 'BIT(1)',
+			type: DataTypes.BOOLEAN,
 			allowNull: false,
 		},
 		IsaNumber: {

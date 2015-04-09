@@ -2,12 +2,14 @@
 var models = require('../');
 var _ = require('lodash');
 var Promise = require('bluebird');
-// Get list of agents
+var datamapper = require('../../../components/datamapper');
+
 exports.index = function(req, res) {
 
 	var modelNames = _.filter(Object.keys(models), function(str) {
 		return str !== 'sequelize' && str !== 'Sequelize';
 	});
+	
 
 	var datamodels = _.map(modelNames, function(modelName) {
 		return models[modelName].describe().then(function(fields) {
@@ -45,6 +47,11 @@ exports.index = function(req, res) {
 		});
 	})
 	.then(function(datamodels) {
+		if (req.query.treesOnly){
+		datamodels =	datamodels.filter(function(e){
+						return datamapper.isTree(e.name);
+					});
+		}
 		return res.json(200, datamodels);
 	})
 	

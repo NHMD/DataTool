@@ -26,6 +26,14 @@ angular.module('specifyDataCleanerApp')
 				url: '/api/fileupload/datasets/:collectionname/mappings/',
 				isArray: false
 			},
+			deleteCsvMapping: {
+				method: 'DELETE',
+				params: {
+					id: '@collectionname'
+				},
+				url: '/api/fileupload/datasets/:collectionname/mappings/',
+				isArray: false
+			},
 			setSpecifyCollection: {
 				method: 'POST',
 				params: {
@@ -40,6 +48,14 @@ angular.module('specifyDataCleanerApp')
 					id: '@collectionname'
 				},
 				url: '/api/fileupload/datasets/:collectionname/process/',
+				isArray: false
+			},
+			processtree: {
+				method: 'POST',
+				params: {
+					id: '@collectionname'
+				},
+				url: '/api/fileupload/datasets/:collectionname/processtree/',
 				isArray: false
 			},
 		});

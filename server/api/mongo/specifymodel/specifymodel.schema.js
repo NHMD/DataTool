@@ -18,7 +18,8 @@ var relationship = new Schema({
 	required: Boolean,
 	dependent: Boolean,
 	relatedModelName: String,
-	otherSideName: String
+	otherSideName: String,
+	column: String
 });
 
 var fieldAlias = new Schema({

@@ -12,14 +12,17 @@ module.exports = function(sequelize, DataTypes) {
       TimestampCreated: {
         type: DataTypes.DATE,
         allowNull: false,
+		  defaultValue:	DataTypes.NOW
       },
       TimestampModified: {
         type: DataTypes.DATE,
-        allowNull: true,
+        allowNull: false,
+		  defaultValue:	DataTypes.NOW
       },
       Version: {
         type: DataTypes.INTEGER(11),
         allowNull: true,
+		  defaultValue: 0
       },
       CollectionMemberID: {
         type: DataTypes.INTEGER(11),
@@ -66,8 +69,9 @@ module.exports = function(sequelize, DataTypes) {
         allowNull: true,
       },
       GUID: {
-        type: DataTypes.STRING,
-        allowNull: true,
+		type: DataTypes.UUID,
+		allowNull: true,
+		defaultValue: DataTypes.UUIDV1,
       },
       Integer1: {
         type: DataTypes.INTEGER(11),
@@ -228,6 +232,8 @@ module.exports = function(sequelize, DataTypes) {
       CollectionID: {
         type: DataTypes.INTEGER(11),
         allowNull: false,
+			references: "collection",
+			referencesKey: "collectionId"
       },
       VisibilitySetByID: {
         type: DataTypes.INTEGER(11),
@@ -248,7 +254,14 @@ module.exports = function(sequelize, DataTypes) {
 	classMethods: {
 		
       associate: function(models) {
-       // Collectionobject.hasMany(models.Workbenchtemplate)
+     
+		  
+		  
+	models.Collection
+		.hasMany(models.Collectionobject, {
+			foreignKey: 'CollectionId',
+			as: 'collectionobjects'
+		});
       }
 	  
 	}

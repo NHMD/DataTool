@@ -47,7 +47,7 @@ function parseCSVFile(sourceFilePath, columns, onNewRecord, handleError, done, d
 exports.getFile = function(req, res) {
 
 	var csvdelimiter = (req.body.csvdelimiter) ? req.body.csvdelimiter : ",";
-
+	var isTreeOnly = (req.body.isTreeOnly) ? req.body.isTreeOnly : false;
 	var filePath = req.files.file.path;
 	var collName = "csv_temp_" + req.files.file.name.split(".")[0];
 
@@ -84,7 +84,8 @@ exports.getFile = function(req, res) {
 				req.user.csvimports.push({
 					name: req.files.file.originalname,
 					collectionname: collName,
-					active: true
+					active: true,
+					isTreeOnly: isTreeOnly
 				});
 				req.user.save(function(err) {
 					if (err) throw err;
@@ -197,7 +198,7 @@ exports.process = function(req, res) {
 
 	_.each(sortedMappings, function(value, key) {
 		
-		if (isTree(key)) {
+		if (datamapper.isTree(key)) {
 			var promise = datamapper.aggregateTreeAndPersist(req.params.collname, value, key, discipline);
 			promises.push(promise);
 		} else {
@@ -229,6 +230,43 @@ exports.process = function(req, res) {
 }
 
 
+
+exports.processtree = function(req, res) {
+
+	var user = req.user;
+
+	if (!user) return res.json(401);
+
+	var csvimport = user.csvimports.filter(function(e) {
+		return e.collectionname === req.params.collname
+	})[0];
+	console.log("csvimport : " + csvimport)
+	if (!csvimport) return res.json(404);
+	var discipline = csvimport.specifycollection.discipline;
+
+	// Extract tablename from first entity in mapping
+	var modelName = csvimport.mapping[Object.keys(csvimport.mapping)[0]].tableName;
+	var mappings = _.omit(csvimport.mapping, function(value, key, object) {
+			return key === '_id';
+	});
+	
+	console.log("MAPPINGS "+JSON.stringify(mappings));
+	console.log("MODELNAME "+JSON.stringify(modelName));
+	
+	datamapper.aggregateTreeAndPersist(req.params.collname, mappings, modelName, discipline)
+	.then(function() {
+		csvimport.uploadedToSpecify = true;
+		user.save(function(err) {
+			if (err) throw err;
+			return res.send(200);
+		});
+		
+	})
+	
+}
+
+
+
 exports.saveCsvMapping = function(req, res, next) {
 	var user = req.user;
 
@@ -246,6 +284,25 @@ exports.saveCsvMapping = function(req, res, next) {
 
 
 };
+
+exports.deleteCsvMapping = function(req, res, next) {
+	var user = req.user;
+
+	if (!user) return res.json(401);
+
+	var csvimport = user.csvimports.filter(function(e) {
+		return e.collectionname === req.params.collname
+	})[0];
+	 csvimport.mapping = undefined;
+
+	user.save(function(err) {
+		if (err) throw err;
+		return res.json(204);
+	});
+
+
+};
+
 
 exports.saveSpecifyCollection = function(req, res, next) {
 	var user = req.user;
@@ -265,10 +322,26 @@ exports.saveSpecifyCollection = function(req, res, next) {
 
 };
 
-function isTree(model) {
-	var treedefitem = model + "treedefitem";
 
-	return specifyModel[treedefitem] !== undefined;
+
+// experimental
+
+exports.processToSp = function (req, res, next){
+	
+	var user = req.user;
+
+	if (!user) return res.json(401);
+
+	var csvimport = user.csvimports.filter(function(e) {
+		return e.collectionname === req.params.collname
+	})[0];
+	console.log("csvimport : " + csvimport)
+	if (!csvimport) return res.json(404);
+	
+	
+	datamapper.insertIntoSpecify(req.params.collname, csvimport).then(function(){return res.json(200); })
+	
+	
 }
 
 /*

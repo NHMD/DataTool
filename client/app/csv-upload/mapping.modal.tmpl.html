@@ -15,7 +15,11 @@
 						<td><input type="text" class="form-control" ng-model="datasetMapping[key].table" ng-model-options="{allowInvalid:true}" ng-options="model as model.name for model in datamodels | orderObjectBy" placeholder="Enter table name" minLength="3" bs-typeahead></td>
 						<td><button type="button" class="btn btn-default" ng-if="datasetMapping[key]['table']['fields']" ng-model="datasetMapping[key]['fieldName']"  ng-options="field for field in getFieldsForModel(key)" placeholder="Choose field" bs-select></td>
 				
-				<td><button type="button" class="btn btn-default" ng-if="tableIsTree(datasetMapping[key]['table']) && datasetMapping[key]['fieldName'] === 'Name'" ng-model="datasetMapping[key]['rankName']"  ng-options="treeDefItem.Name as treeDefItem.Name for treeDefItem in getTreeDefItems(datasetMapping[key]['table']['name'])" placeholder="Choose tree rank" bs-select></td>
+				<td><img ng-if="datasetMapping[key]['refTable']" ng-src="{{ Icons.datamodel.get(datasetMapping[key]['refTable']) }}" class="specify-icon-24 pull-right"></td>
+				
+				<td><button type="button" class="btn btn-default" ng-if="tableIsTree(datasetMapping[key]['table']) && datasetMapping[key]['fieldName'] === 'Name'" ng-model="datasetMapping[key]['rankName']"  ng-options="treeDefItem.Name as treeDefItem.Name for treeDefItem in getTreeDefItems(datasetMapping[key]['table']['name'])" placeholder="Choose tree rank" bs-select>
+				<button type="button" class="btn btn-default" ng-if="datasetMapping[key]['tableName'] === 'Agent'" ng-model="datasetMapping[key]['refTable']"  ng-options="table for table in ['Determination', 'Collector']" placeholder="Choose referencing table" bs-select>
+				</td>
 				 		
 				 	</tr>
 				</tbody>

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-	.controller('CsvUploadCtrl', ['Auth', 'User', '$rootScope', '$scope', '$filter', '$http', '$timeout', '$compile', 'FileUploader', 'Csvdataset', 'DataModel', 'Icons', 'TaxonTreeDefItem', 'GeographyTreeDefItem','GeologicTimePeriodTreeDefItem', 'StorageTreeDefItem', 'LithostratTreeDefItem',
+	.controller('CsvTreeUploadCtrl', ['Auth', 'User', '$rootScope', '$scope', '$filter', '$http', '$timeout', '$compile', 'FileUploader', 'Csvdataset', 'DataModel', 'Icons', 'TaxonTreeDefItem', 'GeographyTreeDefItem','GeologicTimePeriodTreeDefItem', 'StorageTreeDefItem', 'LithostratTreeDefItem',
 		function(Auth, User, $rootScope, $scope, $filter, $http, $timeout, $compile, FileUploader, Csvdataset, DataModel, Icons, TaxonTreeDefItem, GeographyTreeDefItem, GeologicTimePeriodTreeDefItem, StorageTreeDefItem, LithostratTreeDefItem) {
 
 			$scope.treeResources = {
@@ -11,8 +11,19 @@ angular.module('specifyDataCleanerApp')
 				Storage :StorageTreeDefItem,
 				Lithostrat : LithostratTreeDefItem
 			};
-
-
+			$scope.mapToTable;
+			$scope.$watch('mapToTable', function(newval, oldval){
+				
+				if(newval !== undefined &&  newval.fields !== undefined){
+					angular.forEach($scope.datasetMapping, function(value, key) {
+						
+							$scope.datasetMapping[key].table = newval;
+						
+					
+					});
+				}
+				
+			})
 
 			$scope.TreeDefItems = {};
 
@@ -44,9 +55,13 @@ angular.module('specifyDataCleanerApp')
 				Csvdataset.setSpecifyCollection({
 					collectionname: $scope.selectedCsv
 				}, $rootScope.fields.selectedCollection).$promise.then(function(){
-					return Csvdataset.process({
+					return Csvdataset.processtree({
 						collectionname: $scope.selectedCsv
-					}, {});
+					}, {}).$promise.then(
+						function(){
+							alert("The dataset was successfully saved to Specify")
+						}
+					);
 				});
 
 			};
@@ -59,13 +74,13 @@ angular.module('specifyDataCleanerApp')
 					return coll.mapping !== undefined;
 			}
 
-			$scope.getFieldsForModel = function(modelName) {
+			$scope.getFieldsForModel = function() {
 
 
-				if ($scope.datasetMapping[modelName] && typeof $scope.datasetMapping[modelName].table.fields === 'object') {
+				if ($scope.mapToTable && typeof $scope.mapToTable.fields === 'object') {
 
-
-					return Object.keys($scope.datasetMapping[modelName].table.fields);
+					
+					return Object.keys($scope.mapToTable.fields);
 
 				} else {
 
@@ -73,13 +88,13 @@ angular.module('specifyDataCleanerApp')
 				}
 			}
 
-			$scope.tableIsTree = function(table) {
-				if (!table) return false;
-				var treedefitemtable = table.name + "treedefitem";
-				return (table[treedefitemtable] !== undefined) ? true : false;
-
+			$scope.deleteCsvMapping = function(){
+				Csvdataset.deleteCsvMapping({
+					collectionname: $scope.selectedCsv
+				}).$promise.then(function(){
+					alert("The mapping was deleted")
+				});
 			}
-
 
 
 
@@ -94,7 +109,9 @@ angular.module('specifyDataCleanerApp')
 				
 				Csvdataset.saveCsvMapping({
 					collectionname: $scope.selectedCsv
-				}, $scope.datasetMapping);
+				}, $scope.datasetMapping).$promise.then(function(){
+					alert("The mapping was saved succesfully")
+				});
 			}
 
 			$scope.setCollection = function(collection) {
@@ -119,6 +136,10 @@ angular.module('specifyDataCleanerApp')
 					
 					if (coll.mapping && coll.mapping) {
 						$scope.datasetMapping = coll.mapping;
+						var firstProperty = Object.keys(coll.mapping)[0];
+						
+						$scope.mapToTable =  coll.mapping[firstProperty].table;
+						
 					} else {
 						
 						$scope.datasetMapping = {};
@@ -146,7 +167,7 @@ angular.module('specifyDataCleanerApp')
 				
 			});
 
-			$scope.datamodels = DataModel.query();
+			$scope.datamodels = DataModel.query({treesOnly: true});
 
 			$scope.delimiters = [{
 				value: ",",
@@ -191,7 +212,7 @@ angular.module('specifyDataCleanerApp')
 			uploader.onBeforeUploadItem = function(item) {
 				item.formData.push({
 					csvdelimiter: item.delimiter,
-					isTreeOnly: false
+					isTreeOnly: true
 				});
 				console.info('onBeforeUploadItem', item);
 			};
