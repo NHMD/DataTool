@@ -1,6 +1,6 @@
 'use strict';
 var models = require('../');
-
+var datamapper = require('../../../components/datamapper');
 //var Discipline = require('./discipline.model');
 
 // Get list of disciplines
@@ -24,6 +24,158 @@ exports.show = function(req, res) {
 };
 
 
+
+exports.showTree = function(req, res) {
+
+	if(!models[req.params.treemodel] || !datamapper.isTree(req.params.treemodel)){
+		return res.json(404);
+	};
+	var treeDefIDName = req.params.treemodel+ "TreeDefID";
+	var treeIDName = req.params.treemodel+"ID";
+	
+  models.Discipline.find(req.params.id)
+	.then(function(discipline){
+		var query = { where: {},
+		attributes: [ treeIDName,'ParentID', 'name'],
+		include: [{
+			model: models[req.params.treemodel],
+			attributes: [ treeIDName,'ParentID', 'name'],
+			as: "children",
+			include: [{
+				model: models[req.params.treemodel],
+				attributes: [ treeIDName,'ParentID', 'name'],
+				as: "children",
+				include: [{
+					model: models[req.params.treemodel],
+					attributes: [ treeIDName,'ParentID', 'name'],
+					as: "children",
+					include: [{
+						model: models[req.params.treemodel],
+						attributes: [ treeIDName,'ParentID', 'name'],
+						as: "children",
+						include: [{
+							model: models[req.params.treemodel],
+							attributes: [ treeIDName,'ParentID', 'name'],
+							as: "children",
+							include: [{
+								model: models[req.params.treemodel],
+								attributes: [ treeIDName,'ParentID', 'name'],
+								as: "children",
+								include: [{
+									model: models[req.params.treemodel],
+									attributes: [ treeIDName,'ParentID', 'name'],
+									as: "children",
+									include: [{
+										model: models[req.params.treemodel],
+										attributes: [ treeIDName,'ParentID', 'name'],
+										as: "children",
+										include: [{
+											model: models[req.params.treemodel],
+											attributes: [ treeIDName,'ParentID', 'name'],
+											as: "children",
+											include: [{
+												model: models[req.params.treemodel],
+												attributes: [ treeIDName,'ParentID', 'name'],
+												as: "children",
+												include: [{
+													model: models[req.params.treemodel],
+													attributes: [ treeIDName,'ParentID', 'name'],
+													as: "children",
+													include: [{
+														model: models[req.params.treemodel],
+														attributes: [ treeIDName,'ParentID', 'name'],
+														as: "children",
+														include: [{
+															model: models[req.params.treemodel],
+															attributes: [ treeIDName,'ParentID', 'name'],
+															as: "children",
+															include: [{
+																model: models[req.params.treemodel],
+																attributes: [ treeIDName,'ParentID', 'name'],
+																as: "children",
+																include: [{
+																	model: models[req.params.treemodel],
+																	attributes: [ treeIDName,'ParentID', 'name'],
+																	as: "children",
+																	include: [{
+																		model: models[req.params.treemodel],
+																		attributes: [ treeIDName,'ParentID', 'name'],
+																		as: "children"}
+																		]
+																}
+																	]
+															}
+																]
+														}
+															]
+													}
+														]
+												}
+													]
+											}
+												]
+										}
+											]
+									}
+										]
+								}
+									]
+							}
+								]
+						}
+							]
+					}
+						]
+				}
+					]
+			}
+				]
+		}
+			]
+	};
+		query.where[treeDefIDName] = discipline[treeDefIDName];
+		query.where['RankID'] = 0;
+  	return  models[req.params.treemodel].find(query)
+  })
+.then(function(root){
+	return res.json(200, root);	
+}).catch(function(err){
+	  handleError(res, err);
+  });
+	
+/*	
+  models.Discipline.find(req.params.id)
+	.then(function(discipline){
+		var query = { where: {},
+		attributes: [ treeIDName,'ParentID', 'name']
+	};
+		query.where[treeDefIDName] = discipline[treeDefIDName];
+		query.where['RankID'] = 0;
+  	return  [models[req.params.treemodel].find(query),discipline ]
+  })
+.spread(function(root, discipline){
+	var query = { where: {},
+	attributes: [ treeIDName,'ParentID', 'name']
+	};
+	query.where[treeDefIDName] = discipline[treeDefIDName];
+	query.where['ParentID'] = root[treeIDName];
+	console.log("root[treeIDName] "+root[treeIDName]);
+	console.log("query "+JSON.stringify(query));
+	return  [models[req.params.treemodel].findAll(query), root]
+})
+	.spread(function(children, root){
+		var r = root.get();
+		r.children =  children.map(function(e){return e.get()})
+		//root.children = children;
+		
+  	return res.json(200, r);	
+  }).catch(function(err){
+	  handleError(res, err);
+  });
+*/
+};
+
+
 function handleError(res, err) {
-  return res.send(500, err);
+  return res.send(500, err.message);
 }

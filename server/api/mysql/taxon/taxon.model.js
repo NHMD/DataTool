@@ -258,6 +258,11 @@ module.exports = function(sequelize, DataTypes) {
 					as: "Parent"
 				});
 			
+			models.Taxon
+				.hasMany(models.Taxon, {
+					foreignKey: "ParentID",
+					as: "children"
+				});
 				/*
 			models.Taxontreedefitem
 				.hasMany(models.Taxontreedefitemrow, {

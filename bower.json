@@ -20,7 +20,8 @@
     "angular-local-storage": "0.1.5",
     "moment": "~2.9.0",
     "ng-file-upload": "~3.0.7",
-    "angular-file-upload": "1.1.5"
+    "angular-file-upload": "1.1.5",
+	"d3" : "3.5.5"
   },
   "devDependencies": {
     "angular-mocks": ">=1.2.*",
