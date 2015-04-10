@@ -112,6 +112,11 @@ module.exports = function(sequelize, DataTypes) {
 					as: "Parent"
 				});
 			
+			models.Storage
+				.hasMany(models.Storage, {
+					foreignKey: "ParentID",
+					as: "children"
+				});
 				/*
 			models.Storagetreedefitem
 				.hasMany(models.Storagetreedefitemrow, {

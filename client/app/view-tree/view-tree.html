@@ -1,6 +1,9 @@
-<div id="tree-container">
-      <div id="footer">
-        d3.layout.tree
-        <div class="hint">click or option-click to expand or collapse</div>
-      </div>
-    </div>
+<div class="container-fluid">
+	<div class="col-md-12">
+	<button type="button" class="btn btn-default" ng-model="selectedModel"  ng-options="model as model.name for model in datamodels | orderObjectBy" placeholder="Choose tree" bs-select>
+</div>
+<div class="col-md-12">
+	<i ng-show="loading.isLoading" class="fa fa-spinner fa-spin fa-2x"></i>
+</div>	
+<div id="tree-container"> </div>
+</div>

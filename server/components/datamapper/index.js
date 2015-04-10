@@ -375,6 +375,8 @@ function flattenDiscipline(discipline){
 
 }
 
+exports.flattenDiscipline = flattenDiscipline;
+
 function isTree(model) {
 	var treedefitem = model + "treedefitem";
 

@@ -1,149 +1,167 @@
 'use strict';
 var models = require('../');
 var datamapper = require('../../../components/datamapper');
+
+var SpecifyModel = require('../../mongo/specifymodel/specifymodel.model');
+var Promise = require('bluebird');
+Promise.promisifyAll(SpecifyModel);
 //var Discipline = require('./discipline.model');
 
 // Get list of disciplines
 exports.index = function(req, res) {
-	var query = (req.query._query) ? {where: JSON.parse(req.query._query)} : undefined;
+	var query = (req.query._query) ? {
+		where: JSON.parse(req.query._query)
+	} : undefined;
 
-  models.Discipline.findAll(query).then(function(discipline){
-  	return res.json(200, discipline);	
-  }).catch(function(err){
-	  handleError(res, err);
-  });
+	models.Discipline.findAll(query).then(function(discipline) {
+		return res.json(200, discipline);
+	}).
+	catch (function(err) {
+		handleError(res, err);
+	});
 };
 
 // Get a single discipline
 exports.show = function(req, res) {
-  models.Discipline.find(req.params.id).then(function(discipline){
-  	return res.json(200, discipline);	
-  }).catch(function(err){
-	  handleError(res, err);
-  });
+	models.Discipline.find(req.params.id).then(function(discipline) {
+		return res.json(200, discipline);
+	}).
+	catch (function(err) {
+		handleError(res, err);
+	});
 };
 
 
 
 exports.showTree = function(req, res) {
 
-	if(!models[req.params.treemodel] || !datamapper.isTree(req.params.treemodel)){
+	if (!models[req.params.treemodel] || !datamapper.isTree(req.params.treemodel)) {
 		return res.json(404);
 	};
-	var treeDefIDName = req.params.treemodel+ "TreeDefID";
-	var treeIDName = req.params.treemodel+"ID";
-	
-  models.Discipline.find(req.params.id)
-	.then(function(discipline){
-		var query = { where: {},
-		attributes: [ treeIDName,'ParentID', 'name'],
-		include: [{
-			model: models[req.params.treemodel],
-			attributes: [ treeIDName,'ParentID', 'name'],
-			as: "children",
-			include: [{
-				model: models[req.params.treemodel],
-				attributes: [ treeIDName,'ParentID', 'name'],
-				as: "children",
+
+	SpecifyModel.findOne({
+		table: req.params.treemodel.toLowerCase()
+	}, function(err, m) {
+		if (err) {
+			return handleError(res, err);
+		}
+
+		
+		var treeIDName = m.idColumn;
+		var treeDefIDName = treeIDName.split("ID")[0] + "TreeDefID";
+
+
+		models.Discipline.find({
+
+			where: {
+				disciplineId: req.params.id
+			},
+			include: {
+				model: models.Division,
 				include: [{
-					model: models[req.params.treemodel],
-					attributes: [ treeIDName,'ParentID', 'name'],
-					as: "children",
+					model: models.Institution
+				}]
+			}
+		})
+			.then(function(discipline) {
+				discipline = datamapper.flattenDiscipline(discipline.get());
+				
+				var query = {
+					where: {},
+					attributes: [treeIDName, 'ParentID', 'name'],
 					include: [{
 						model: models[req.params.treemodel],
-						attributes: [ treeIDName,'ParentID', 'name'],
+						attributes: [treeIDName, 'ParentID', 'name'],
 						as: "children",
 						include: [{
 							model: models[req.params.treemodel],
-							attributes: [ treeIDName,'ParentID', 'name'],
+							attributes: [treeIDName, 'ParentID', 'name'],
 							as: "children",
 							include: [{
 								model: models[req.params.treemodel],
-								attributes: [ treeIDName,'ParentID', 'name'],
+								attributes: [treeIDName, 'ParentID', 'name'],
 								as: "children",
 								include: [{
 									model: models[req.params.treemodel],
-									attributes: [ treeIDName,'ParentID', 'name'],
+									attributes: [treeIDName, 'ParentID', 'name'],
 									as: "children",
 									include: [{
 										model: models[req.params.treemodel],
-										attributes: [ treeIDName,'ParentID', 'name'],
+										attributes: [treeIDName, 'ParentID', 'name'],
 										as: "children",
 										include: [{
 											model: models[req.params.treemodel],
-											attributes: [ treeIDName,'ParentID', 'name'],
+											attributes: [treeIDName, 'ParentID', 'name'],
 											as: "children",
 											include: [{
 												model: models[req.params.treemodel],
-												attributes: [ treeIDName,'ParentID', 'name'],
+												attributes: [treeIDName, 'ParentID', 'name'],
 												as: "children",
 												include: [{
 													model: models[req.params.treemodel],
-													attributes: [ treeIDName,'ParentID', 'name'],
+													attributes: [treeIDName, 'ParentID', 'name'],
 													as: "children",
 													include: [{
 														model: models[req.params.treemodel],
-														attributes: [ treeIDName,'ParentID', 'name'],
+														attributes: [treeIDName, 'ParentID', 'name'],
 														as: "children",
 														include: [{
 															model: models[req.params.treemodel],
-															attributes: [ treeIDName,'ParentID', 'name'],
+															attributes: [treeIDName, 'ParentID', 'name'],
 															as: "children",
 															include: [{
 																model: models[req.params.treemodel],
-																attributes: [ treeIDName,'ParentID', 'name'],
+																attributes: [treeIDName, 'ParentID', 'name'],
 																as: "children",
 																include: [{
 																	model: models[req.params.treemodel],
-																	attributes: [ treeIDName,'ParentID', 'name'],
+																	attributes: [treeIDName, 'ParentID', 'name'],
 																	as: "children",
 																	include: [{
 																		model: models[req.params.treemodel],
-																		attributes: [ treeIDName,'ParentID', 'name'],
-																		as: "children"}
-																		]
-																}
-																	]
-															}
-																]
-														}
-															]
-													}
-														]
-												}
-													]
-											}
-												]
-										}
-											]
-									}
-										]
-								}
-									]
-							}
-								]
-						}
-							]
-					}
-						]
-				}
-					]
-			}
-				]
-		}
-			]
-	};
-		query.where[treeDefIDName] = discipline[treeDefIDName];
-		query.where['RankID'] = 0;
-  	return  models[req.params.treemodel].find(query)
-  })
-.then(function(root){
-	return res.json(200, root);	
-}).catch(function(err){
-	  handleError(res, err);
-  });
-	
-/*	
+																		attributes: [treeIDName, 'ParentID', 'name'],
+																		as: "children",
+																		include: [{
+																			model: models[req.params.treemodel],
+																			attributes: [treeIDName, 'ParentID', 'name'],
+																			as: "children",
+																			include: [{
+																				model: models[req.params.treemodel],
+																				attributes: [treeIDName, 'ParentID', 'name'],
+																				as: "children",
+																				include: [{
+																					model: models[req.params.treemodel],
+																					attributes: [treeIDName, 'ParentID', 'name'],
+																					as: "children"
+																				}]
+																			}]
+																		}]
+																	}]
+																}]
+															}]
+														}]
+													}]
+												}]
+											}]
+										}]
+									}]
+								}]
+							}]
+						}]
+					}]
+				};
+				query.where[treeDefIDName] = discipline[treeDefIDName];
+				query.where['RankID'] = 0;
+				return models[req.params.treemodel].find(query)
+			})
+			.then(function(root) {
+				return res.json(200, root);
+			}).
+		catch (function(err) {
+			handleError(res, err);
+		});
+	});
+	/*	
   models.Discipline.find(req.params.id)
 	.then(function(discipline){
 		var query = { where: {},
@@ -177,5 +195,5 @@ exports.showTree = function(req, res) {
 
 
 function handleError(res, err) {
-  return res.send(500, err.message);
+	return res.send(500, err.message);
 }

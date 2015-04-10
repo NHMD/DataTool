@@ -3,7 +3,7 @@
 
 module.exports = function(sequelize, DataTypes) {
   var Geologictimeperiod = sequelize.define("geologictimeperiod", {
-	GeologictimeperiodID: {
+	GeologicTimePeriodID: {
 		type: DataTypes.INTEGER,
 		primaryKey: true,
 		autoIncrement:true, 
@@ -123,7 +123,11 @@ module.exports = function(sequelize, DataTypes) {
 					foreignKey: "ParentID",
 					as: "Parent"
 				});
-			
+			models.Geologictimeperiod
+				.hasMany(models.Geologictimeperiod, {
+					foreignKey: "ParentID",
+					as: "children"
+				});
 				/*
 			models.Geologictimeperiodtreedefitem
 				.hasMany(models.Geologictimeperiodtreedefitemrow, {
@@ -154,7 +158,7 @@ module.exports = function(sequelize, DataTypes) {
 	    showParents: function(models) {
 	      return 	models.Geologictimeperiod.find({
 		where: {
-			GeologictimeperiodID: this.ParentID
+			GeologicTimePeriodID: this.ParentID
 		},
 		include: [{
 			model: models.Geologictimeperiod,

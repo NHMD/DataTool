@@ -144,7 +144,11 @@ module.exports = function(sequelize, DataTypes) {
 					foreignKey: "ParentID",
 					as: "Parent"
 				});
-			
+			models.Geography
+				.hasMany(models.Geography, {
+					foreignKey: "ParentID",
+					as: "children"
+				});
 				/*
 			models.Geographytreedefitem
 				.hasMany(models.Geographytreedefitemrow, {

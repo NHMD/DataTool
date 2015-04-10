@@ -1,12 +1,35 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-	.controller('ViewTreeCtrl', ['Auth', 'User', '$rootScope', '$scope', '$filter',    'Icons', 
-		function(Auth, User, $rootScope, $scope, $filter,  Icons) {
+	.controller('ViewTreeCtrl', ['Auth', 'User', '$rootScope', '$scope', '$filter',    'Icons', 'DataModel',
+		function(Auth, User, $rootScope, $scope, $filter,  Icons, DataModel) {
 			
-			// Get JSON data
-		var	treeJSON = d3.json("/api/disciplines/3/trees/Taxon", function(error, treeData) {
-
+				$scope.datamodels = DataModel.query({treesOnly: true});
+				
+				$scope.loading = {isLoading : false};
+				$scope.$watch('selectedModel', function(newval, oldval){
+					
+					if(newval !== undefined && newval !== oldval){
+						var url = "/api/disciplines/"+$rootScope.fields.selectedCollection.discipline.disciplineId+"/trees/"+newval.name; 
+				 d3.select("svg")
+				        .remove();
+						$scope.loading = {isLoading : true};
+						$scope.showTree(url);
+					}
+				})
+				
+			//	$rootScope.fields.selectedCollection.discipline.disciplineId;
+				
+		//	var taxonUrl = "/api/disciplines/3/trees/Taxon";
+			
+			$scope.showTree = function(url){
+				
+				
+				loading.isLoading = false;
+					// Get JSON data
+		var treeJSON = d3.json(url, function(error, treeData) {
+				
+				
 			    // Calculate total nodes, max label length
 			    var totalNodes = 0;
 			    var maxLabelLength = 0;
@@ -374,7 +397,7 @@ angular.module('specifyDataCleanerApp')
 			      var  scale = zoomListener.scale();
 			      var  x = -source.y0;
 			      var  y = -source.x0;
-			        x = x * scale + viewerWidth / 4;
+			        x = x * scale + viewerWidth / 2;
 			        y = y * scale + viewerHeight / 4;
 			        d3.select('g').transition()
 			            .duration(duration)
@@ -404,6 +427,12 @@ angular.module('specifyDataCleanerApp')
 				  root.children.forEach(toggleAll);
 			    update(root);
 			    centerNode(root);
+				
 			});
+			
+		};
+		// End $scope.showTree
+		
+	//	$scope.showTree(taxonUrl);
 
 	}]);

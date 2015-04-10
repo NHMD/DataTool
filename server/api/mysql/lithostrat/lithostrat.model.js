@@ -115,7 +115,11 @@ module.exports = function(sequelize, DataTypes) {
 					foreignKey: "ParentID",
 					as: "Parent"
 				});
-			
+			models.Lithostrat
+				.hasMany(models.Lithostrat, {
+					foreignKey: "ParentID",
+					as: "children"
+				});
 				/*
 			models.Lithostrattreedefitem
 				.hasMany(models.Lithostrattreedefitemrow, {
@@ -146,7 +150,7 @@ module.exports = function(sequelize, DataTypes) {
 	    showParents: function(models) {
 	      return 	models.Lithostrat.find({
 		where: {
-			LithostratID: this.ParentID
+			LithoStratID: this.ParentID
 		},
 		include: [{
 			model: models.Lithostrat,
