@@ -133,7 +133,7 @@ angular.module('specifyDataCleanerApp')
        * @return {Boolean}
        */
       isAdmin: function() {
-        return currentUser.role === 'admin';
+        return currentUser.role === 'Manager';
       },
 
       /**
