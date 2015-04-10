@@ -27,12 +27,12 @@
     "socket.io": "^1.0.6",
     "socket.io-client": "^1.0.6",
     "socketio-jwt": "^2.0.2",
-	"mysql": "2.5.3",
-	"sequelize":"2.0.0-rc7",
-	"multer":"0.1.8",
-	"csv": "0.4.1",
-	"mongodb": "1.4.31",
-	"bluebird": "2.9.13"
+    "mysql": "2.5.3",
+    "sequelize": "2.0.0-rc7",
+    "multer": "0.1.8",
+    "csv": "0.4.1",
+    "mongodb": "1.4.31",
+    "bluebird": "2.9.13"
   },
   "devDependencies": {
     "grunt": "~0.4.4",
@@ -96,5 +96,15 @@
     "test": "grunt test",
     "update-webdriver": "node node_modules/grunt-protractor-runner/node_modules/protractor/bin/webdriver-manager update"
   },
-  "private": true
+  "private": true,
+  "description": "> A web based tool for cleaning, manipulating and entering natural history collection data in a Specify/MySQL database",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NHMD/DataTool"
+  },
+  "author": "",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/NHMD/DataTool/issues"
+  }
 }

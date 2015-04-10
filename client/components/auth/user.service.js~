@@ -17,10 +17,6 @@ angular.module('specifyDataCleanerApp')
         params: {
           id:'me'
         }	
-      },
-      update: {
-        method: 'PUT'
       }
-
 	  });
   });

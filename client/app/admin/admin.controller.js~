@@ -38,11 +38,7 @@ angular.module('specifyDataCleanerApp')
 	$scope.updatePassword = function() {
 		$scope.currentUser.password = document.querySelector('#new-password').value;
 		console.log($scope.currentUser);
-		//$scope.currentUser.update();
-		User.update(
-			{id : $scope.currentUser._id },
-			$scope.currentUser
-		);
+		$scope.currentUser.update();
 		/*
 		User.changePassword(
 			{ id: $scope.currentUser._id }, 

@@ -6,7 +6,7 @@ var auth = require('../../../auth/auth.service');
 
 var router = express.Router();
 
-router.get('/', auth.isAuthenticated(), controller.index);
+router.get('/' , /*auth.isAuthenticated(),*/ controller.index);
 router.get('/:id',  auth.isAuthenticated(), controller.show);
 
 router.get('/me/collections', auth.isAuthenticated(), controller.indexCollections);

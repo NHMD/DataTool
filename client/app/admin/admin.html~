@@ -47,7 +47,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr ng-repeat="specifyuser in displayedSpecifyusers" ng-if="!isDataToolUser(specifyuser.specifyUserId)">
+			<tr ng-repeat="specifyuser in displayedSpecifyusers" ng-if="isDataToolUser(specifyuser.specifyUserId)">
 				<td>{{ specifyuser.name }}</td>
 				<td>{{ specifyuser.usertype }}</td>
 				<td>{{ specifyuser.email }}</td>
