@@ -1,9 +1,9 @@
 <div class="container-fluid">
 	<div class="col-md-12">
-	<button type="button" class="btn btn-default" ng-model="selectedModel"  ng-options="model as model.name for model in datamodels | orderObjectBy" placeholder="Choose tree" bs-select>
+	<button type="button" class="btn btn-default" ng-model="selectedModel"  data-html="1" ng-options="model as model.label for model in datamodels | orderObjectBy" placeholder="Choose tree" bs-select>
 </div>
-<div class="col-md-12">
-	<i ng-show="loading.isLoading" class="fa fa-spinner fa-spin fa-2x"></i>
+<div class="col-md-2 col-md-offset-6">
+	<i ng-show="loading" class="fa fa-spinner fa-spin fa-5x"></i>
 </div>	
 <div id="tree-container"> </div>
 </div>

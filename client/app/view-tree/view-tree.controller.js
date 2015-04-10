@@ -1,19 +1,29 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-	.controller('ViewTreeCtrl', ['Auth', 'User', '$rootScope', '$scope', '$filter',    'Icons', 'DataModel',
+	.controller('ViewTreeCtrl', ['Auth', 'User', '$rootScope', '$scope', '$filter', 'Icons', 'DataModel',
 		function(Auth, User, $rootScope, $scope, $filter,  Icons, DataModel) {
 			
 				$scope.datamodels = DataModel.query({treesOnly: true});
 				
-				$scope.loading = {isLoading : false};
+				$scope.datamodels.$promise.then(function(){
+					
+					angular.forEach($scope.datamodels, function(value, key){
+						
+						var label = '<img src="'+Icons.datamodel.get(value.name)+'" class="specify-icon-24"> '+ value.name;
+						value.label = label;
+					})
+					
+				});
+				
+				$scope.loading = false;
 				$scope.$watch('selectedModel', function(newval, oldval){
 					
 					if(newval !== undefined && newval !== oldval){
 						var url = "/api/disciplines/"+$rootScope.fields.selectedCollection.discipline.disciplineId+"/trees/"+newval.name; 
 				 d3.select("svg")
 				        .remove();
-						$scope.loading = {isLoading : true};
+						$scope.loading = true;
 						$scope.showTree(url);
 					}
 				})
@@ -25,10 +35,13 @@ angular.module('specifyDataCleanerApp')
 			$scope.showTree = function(url){
 				
 				
-				loading.isLoading = false;
+				
 					// Get JSON data
 		var treeJSON = d3.json(url, function(error, treeData) {
 				
+			$scope.$apply(function(){
+			            $scope.loading = false;
+			        });
 				
 			    // Calculate total nodes, max label length
 			    var totalNodes = 0;
