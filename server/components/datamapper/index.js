@@ -5,6 +5,7 @@ var config = require('../../config/environment');
 var specifyModel = require('../../api/mysql');
 
 //var ObjectID = require('mongodb').ObjectID;
+var SpecifyModelDescription = require('../../api/mongo/specifymodel/specifymodel.model');
 
 var Promise = require("bluebird");
 var MongoDB = require("./nativeMongoInstance");
@@ -217,14 +218,23 @@ exports.aggregateTreeAndPersist = function(collectionName, mappings, model, disc
 	
 	// flattenDsicipline is attaching the StorageTreeDef on same level as other trees
 	discipline = flattenDiscipline(discipline);
-	var treeDefName = model + "TreeDefID";
-	var treeDefItemName = model + "TreeDefItemID"; // extracting Key field names for the relevant tree
+
 	var treeDef = model + "treedefitem";
 	
+	return SpecifyModelDescription.findOne({
+		table: model.toLowerCase()
+	}).exec().then(function(m){
+				
+		//-----------------
+		var treeIDName = m.idColumn;
+		var mdlName = treeIDName.split("ID")[0];
+		var treeDefName = mdlName + "TreeDefID";
+		var treeDefItemName = mdlName + "TreeDefItemID"; 
+		//----------------------------------------------------------	
 	
 	var ranks = _.omit(mappings, function(value, key, object) {
 		return object["rankName"] !== undefined;
-});
+		});
 	
 	var where = {
 		Name: _.map(ranks, function(val, key) {
@@ -295,7 +305,7 @@ exports.aggregateTreeAndPersist = function(collectionName, mappings, model, disc
 		throw err;
 	});
 
-
+});
 
 }
 

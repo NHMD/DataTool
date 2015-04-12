@@ -3,8 +3,8 @@ var models = require('../');
 var datamapper = require('../../../components/datamapper');
 
 var SpecifyModel = require('../../mongo/specifymodel/specifymodel.model');
-var Promise = require('bluebird');
-Promise.promisifyAll(SpecifyModel);
+
+
 //var Discipline = require('./discipline.model');
 
 // Get list of disciplines
