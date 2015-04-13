@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-	.controller('CsvTreeUploadCtrl', ['Auth', 'User', '$rootScope', '$scope', '$filter', '$http', '$timeout', '$compile', 'FileUploader', 'Csvdataset', 'DataModel', 'Icons', 'TaxonTreeDefItem', 'GeographyTreeDefItem','GeologicTimePeriodTreeDefItem', 'StorageTreeDefItem', 'LithostratTreeDefItem',
-		function(Auth, User, $rootScope, $scope, $filter, $http, $timeout, $compile, FileUploader, Csvdataset, DataModel, Icons, TaxonTreeDefItem, GeographyTreeDefItem, GeologicTimePeriodTreeDefItem, StorageTreeDefItem, LithostratTreeDefItem) {
+	.controller('CsvTreeUploadCtrl', ['Auth', 'User', '$rootScope', '$scope', '$filter', '$http', '$location','$timeout', '$compile', 'FileUploader', 'Csvdataset', 'DataModel', 'Icons', 'TaxonTreeDefItem', 'GeographyTreeDefItem','GeologicTimePeriodTreeDefItem', 'StorageTreeDefItem', 'LithostratTreeDefItem',
+		function(Auth, User, $rootScope, $scope, $filter, $http, $location, $timeout, $compile, FileUploader, Csvdataset, DataModel, Icons, TaxonTreeDefItem, GeographyTreeDefItem, GeologicTimePeriodTreeDefItem, StorageTreeDefItem, LithostratTreeDefItem) {
 
 			$scope.treeResources = {
 				Taxon: TaxonTreeDefItem,
@@ -50,8 +50,6 @@ angular.module('specifyDataCleanerApp')
 			
 			$scope.pushToSpecify = function(){
 				
-				console.log($rootScope.fields.selectedCollection);
-				
 				Csvdataset.setSpecifyCollection({
 					collectionname: $scope.selectedCsv
 				}, $rootScope.fields.selectedCollection).$promise.then(function(){
@@ -59,7 +57,16 @@ angular.module('specifyDataCleanerApp')
 						collectionname: $scope.selectedCsv
 					}, {}).$promise.then(
 						function(){
-							alert("The dataset was successfully saved to Specify")
+							
+							var coll = $scope.user.csvimports.filter(function(e) {
+								return e.collectionname === $scope.selectedCsv;
+							})[0];
+							coll.uploadedToSpecify = true;
+							
+							if(confirm("The dataset "+coll.name+" was successfully saved to Specify. View tree?")){
+								
+								$location.path("/view-tree/"+$scope.mapToTable.name);
+							}
 						}
 					);
 				});
@@ -73,7 +80,28 @@ angular.module('specifyDataCleanerApp')
 					})[0];
 					return coll.mapping !== undefined;
 			}
-
+			$scope.datasetIsUploadedToSpecify = function(){
+				if(!$scope.selectedCsv) return false;
+				var coll = $scope.user.csvimports.filter(function(e) {
+						return e.collectionname === $scope.selectedCsv;
+					})[0];
+					return coll.uploadedToSpecify;
+			}
+			
+			$scope.deleteDataset = function(){
+				var coll = $scope.user.csvimports.filter(function(e) {
+					return e.collectionname === $scope.selectedCsv;
+				})[0];
+				if(confirm("Do you want to delete "+coll.name+" ?")){
+					
+					Csvdataset.delete({collectionname: $scope.selectedCsv}).$promise.then(function(){
+						
+						alert("The dataset was deleted successfully.")
+					})
+					
+				}
+			};
+			
 			$scope.getFieldsForModel = function() {
 
 
@@ -109,7 +137,12 @@ angular.module('specifyDataCleanerApp')
 				
 				Csvdataset.saveCsvMapping({
 					collectionname: $scope.selectedCsv
-				}, $scope.datasetMapping).$promise.then(function(){
+				}, $scope.datasetMapping).$promise.then(function(mapping){
+					
+					var coll = $scope.user.csvimports.filter(function(e) {
+						return e.collectionname === $scope.selectedCsv;
+					})[0];
+					coll.mapping = mapping;
 					alert("The mapping was saved succesfully")
 				});
 			}
@@ -127,7 +160,7 @@ angular.module('specifyDataCleanerApp')
 					collectionname: collection
 				}).$promise.then(function(data) {
 					
-					//$scope.selectedCsv = collection;
+					
 					$scope.data = data;
 					
 					var coll = $scope.user.csvimports.filter(function(e) {
@@ -224,8 +257,10 @@ angular.module('specifyDataCleanerApp')
 			};
 			uploader.onSuccessItem = function(fileItem, response, status, headers) {
 				console.info('onSuccessItem', fileItem, response, status, headers);
-				$scope.setCollection(response.collectionname);
+				//$scope.setCollection(response.collectionname);
+				
 				$scope.user.csvimports.push(response);
+				$scope.selectedCsv = response.collectionname;
 			};
 			uploader.onErrorItem = function(fileItem, response, status, headers) {
 				console.info('onErrorItem', fileItem, response, status, headers);

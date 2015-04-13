@@ -275,13 +275,13 @@ exports.aggregateTreeAndPersist = function(collectionName, mappings, model, disc
 					"_id": aggregation
 				}
 			}]
-		), db, collectionName, model, rankMappings]
+		), model, rankMappings]
 	})
 
-	.spread(function(result, db, collectionName, model, rankMappings) {
+	.spread(function(result, model, rankMappings) {
 		
 
-		var collection = db.collection("mapped_" + model + "_" + collectionName);
+	
 
 		var instances = [];
 		var transaction = specifyModel.sequelize.transaction();
@@ -292,7 +292,7 @@ exports.aggregateTreeAndPersist = function(collectionName, mappings, model, disc
 });
 		for (var i = 0; i < result.length; i++) {
 			
-			instances.push(findAndInsert(result[i], db, collectionName, model, rankMappings, mappings, treeDefItemName, treeDefName, discipline, collection, transaction, nonRankMappings));
+			instances.push(findAndInsert(result[i], model, rankMappings, mappings, treeDefItemName, treeDefName, discipline, transaction, nonRankMappings));
 
 
 		}
@@ -309,7 +309,7 @@ exports.aggregateTreeAndPersist = function(collectionName, mappings, model, disc
 
 }
 
-function findAndInsert(result, db, collectionName, model, rankMappings, mappings, treeDefItemName, treeDefName, discipline, collection, transaction, nonRankMappings) {
+function findAndInsert(result, model, rankMappings, mappings, treeDefItemName, treeDefName, discipline, transaction, nonRankMappings) {
 
 	var mapped = [];
 	
@@ -361,9 +361,7 @@ function findAndInsert(result, db, collectionName, model, rankMappings, mappings
 		});;
 
 
-	}, 0).then(function(treenode) {
-		return collection.insertAsync(treenode.values, {});
-	})
+	}, 0);
 
 
 }

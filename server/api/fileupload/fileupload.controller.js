@@ -70,25 +70,24 @@ exports.getFile = function(req, res) {
 				if (err) throw err;
 
 
-				fs.unlink(filePath, function() {
-					res.send(200, {
-						name: req.files.file.originalname,
-						collectionname: collName,
-						active: true
-					});
-				});
+				fs.unlink(filePath);
 
 			});
 		})
 			.then(function() {
-				req.user.csvimports.push({
+				var imported = {
 					name: req.files.file.originalname,
 					collectionname: collName,
 					active: true,
+					uploadedToSpecify: false,
 					isTreeOnly: isTreeOnly
-				});
+				};
+				req.user.csvimports.push(imported);
 				req.user.save(function(err) {
 					if (err) throw err;
+					
+					res.send(200, imported);
+					
 				});
 
 
@@ -179,7 +178,7 @@ exports.process = function(req, res) {
 	var csvimport = user.csvimports.filter(function(e) {
 		return e.collectionname === req.params.collname
 	})[0];
-	console.log("csvimport : " + csvimport)
+	
 	if (!csvimport) return res.json(404);
 	var discipline = csvimport.specifycollection.discipline;
 
@@ -250,9 +249,6 @@ exports.processtree = function(req, res) {
 			return key === '_id';
 	});
 	
-	console.log("MAPPINGS "+JSON.stringify(mappings));
-	console.log("MODELNAME "+JSON.stringify(modelName));
-	
 	datamapper.aggregateTreeAndPersist(req.params.collname, mappings, modelName, discipline)
 	.then(function() {
 		csvimport.uploadedToSpecify = true;
@@ -299,6 +295,37 @@ exports.deleteCsvMapping = function(req, res, next) {
 		if (err) throw err;
 		return res.json(204);
 	});
+
+
+};
+
+exports.deleteCsv = function(req, res, next) {
+	var user = req.user;
+
+	if (!user) return res.json(401);
+
+	var csvimport = user.csvimports.filter(function(e) {
+		return e.collectionname === req.params.collname
+	})[0];
+	
+	 if (!csvimport) return res.json(403);
+	
+  	MongoDB.connect().then(function( db) {
+		
+		return db.dropCollection(req.params.collname);
+
+  	}).then(function( collection) {
+		
+		user.csvimports = _.without(user.csvimports, _.findWhere(user.csvimports, {collectionname: req.params.collname}));
+		user.save(function(err) {
+			if (err) throw err;
+			return res.json(204);
+		});
+
+  	}).catch(function(err){
+  		console.log(err.message);
+		return res.json(500, err.message);
+  	})
 
 
 };

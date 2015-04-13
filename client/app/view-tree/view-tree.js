@@ -3,7 +3,7 @@
 angular.module('specifyDataCleanerApp')
   .config(function ($routeProvider) {
     $routeProvider
-      .when('/view-tree', {
+      .when('/view-tree/:treename?', {
         templateUrl: 'app/view-tree/view-tree.html',
         controller: 'ViewTreeCtrl'
       });

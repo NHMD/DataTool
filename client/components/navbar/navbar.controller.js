@@ -8,7 +8,11 @@ angular.module('specifyDataCleanerApp')
 		}, {
 			'title': 'Tree upload',
 			'link': '/tree-upload'
+		}, {
+			'title': 'View trees',
+			'link': '/view-tree'
 		}];
+
 
 		$scope.isCollapsed = true;
 		$scope.isLoggedIn = Auth.isLoggedIn;
@@ -39,7 +43,7 @@ angular.module('specifyDataCleanerApp')
 				});
 
 		})
-
+		// Watch this one to see which collection we are working on, i.e. $rootScope.$watch('fields.selectedCollection', function(newval, oldval){ do stuff when collection has been chosen})
 		$rootScope.fields = {
 			selectedCollection: undefined
 		};
