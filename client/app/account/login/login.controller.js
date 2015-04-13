@@ -1,11 +1,25 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-  .controller('LoginCtrl', function ($scope, Auth, $location, $window) {
+  .controller('LoginCtrl', function ($scope, Auth, $location, $window, $cookies, $cookieStore) {
     $scope.user = {};
     $scope.errors = {};
 
+	var rememberMe = $cookieStore.get('rememberMe');
+	if (rememberMe) {
+		$scope.user.email = rememberMe.m;
+		$scope.user.password = rememberMe.p;
+		$scope.user.rememberMe = true;
+	}
+	
     $scope.login = function(form) {
+
+		if ($scope.user.rememberMe) {
+			$cookieStore.put('rememberMe', { 'm' : $scope.user.email, 'p' : $scope.user.password} );
+		} else {
+			$cookieStore.remove('rememberMe');
+		}
+
       $scope.submitted = true;
 
       if(form.$valid) {
