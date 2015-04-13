@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-  .controller('LoginCtrl', function ($scope, Auth, $location, $window, $cookies, $cookieStore) {
+  .controller('LoginCtrl', function ($scope, Auth, $location, $window, $cookieStore) {
     $scope.user = {};
     $scope.errors = {};
 
