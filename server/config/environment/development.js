@@ -21,12 +21,12 @@ module.exports = {
 	database : 		'dinacollections-dev'
   },
 
-  seedDB: true,
+  seedDB: false,
   
   mysql: {
 	  database: 'specify',
-	  username: 'root',
-	  password: 'zoo'
+	  username: 'specifyit',
+	  password: 'pass'
   },
   tempuploaddir: '../uploads/'
   
