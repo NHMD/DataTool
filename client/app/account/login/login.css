@@ -21,3 +21,8 @@
   background-color: #fafafa;
   border-color: #ccc;
 }
+label.rememberMe {
+	vertical-align: middle;
+	font-weight: normal;
+}
+

@@ -11,13 +11,18 @@
         <div class="form-group">
           <label>Email</label>
 
-          <input type="email" name="email" class="form-control" ng-model="user.email" required>
+          <input type="email" name="email" class="form-control" ng-model="user.email" required autofocus>
         </div>
 
         <div class="form-group">
           <label>Password</label>
 
           <input type="password" name="password" class="form-control" ng-model="user.password" required>
+
+			<span class="pull-right small">
+				<input type="checkbox" id="rememberMe" ng-checked="user.rememberMe" ng-model="user.rememberMe">
+				<label for="rememberMe" class="rememberMe">Remember me</label>
+			</span>
         </div>
 
         <div class="form-group has-error">

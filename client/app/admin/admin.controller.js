@@ -1,10 +1,5 @@
 'use strict';
 
-//https://github.com/bermi/password-generator
-//npm install password-generator
-//service
-//var generatePassword = require('password-generator');
-
 angular.module('specifyDataCleanerApp')
   .controller('AdminCtrl', ['$scope', '$http', '$modal', 'Auth', 'User', 'SpecifyUser', 
 				function ($scope, $http, $modal, Auth, User, SpecifyUser) {
@@ -21,7 +16,6 @@ angular.module('specifyDataCleanerApp')
 		});
 	};
 
-	//$scope.showPassword = false;
 	$scope.currentUser = null;
 
 	$scope.editPasswordModal = $modal({
@@ -37,19 +31,10 @@ angular.module('specifyDataCleanerApp')
 
 	$scope.updatePassword = function() {
 		$scope.currentUser.password = document.querySelector('#new-password').value;
-		console.log($scope.currentUser);
-		//$scope.currentUser.update();
 		User.update(
 			{id : $scope.currentUser._id },
 			$scope.currentUser
 		);
-		/*
-		User.changePassword(
-			{ id: $scope.currentUser._id }, 
-			{ oldPassword: '', newPassword: $scope.currentUser.password },
-			function() { }
-		);
-		*/
  	}
 
 	//specifyusers
