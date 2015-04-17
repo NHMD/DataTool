@@ -9,8 +9,7 @@
         <div class="form-group">
           <label>Current Password</label>
 
-          <input type="password" name="password" class="form-control" ng-model="user.oldPassword"
-                 mongoose-error/>
+          <input type="password" name="password" class="form-control" ng-model="user.oldPassword" mongoose-error autofocus/>
           <p class="help-block" ng-show="form.password.$error.mongoose">
               {{ errors.other }}
           </p>
