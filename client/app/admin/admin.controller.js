@@ -54,7 +54,6 @@ angular.module('specifyDataCleanerApp')
 		
 	SpecifyUser.query().$promise.then(function(specifyusers) {
 		angular.forEach(specifyusers, function(specifyuser) {
-			console.log(specifyuser);
 			$scope.specifyusers.push({
 				specifyUserId : specifyuser.SpecifyUserID,
 				name : specifyuser.Name || '',

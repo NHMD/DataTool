@@ -1,40 +1,49 @@
 <div class="container-fluid">		
-        <div class="row main-content">
-			
-          <div class="col-lg-12 col-md-12">
+	<div class="row main-content">
+		<div class="col-lg-12 col-md-12">
 			<div class="col-md-3">
 	  			<form class="form-inline" role="form">
 	  	  			<div class="form-group">
 	  				    <label>Dataset:
-	  				    <input type="text" 
-	  							class="form-control" 
-	  							ng-model="selectedWorkbench" 
-	  							ng-options="wb.Name for wb in workbenches" 
-	  							placeholder="Find dataset" 
-	  							limit="20"
-	  							bs-typeahead="workbenches"></label>
-					
+	  					    <input type="text" 
+									class="form-control" 
+	  								ng-model="selectedWorkbench" 
+	  								ng-options="wb.Name for wb in workbenches" 
+	  								placeholder="Find dataset" 
+	  								limit="20"
+	  								bs-typeahead="workbenches"/>
+						</label>
 	  				</div>
 	  			</form>
 			</div>
 			<div class="col-md-2">
 				<!-- Start Taxon browser controller -->		
 				<div ng-controller="TaxonbrowserCtrl" >
-					
-				<button type="button" class="btn btn-default"  ng-click="taxonModal.show()"><img ng-src="{{Icons.datamodel.get('taxon')}}" class="specify-icon-16"> Taxon browser
-
-				</button>
-			</div>
-			<!-- End Taxon browser controller -->
+					<button type="button" class="btn btn-default" ng-click="taxonModal.show()">
+						<img ng-src="{{Icons.datamodel.get('taxon')}}" class="specify-icon-16">Taxon browser
+					</button>
+				</div>
+				<!-- End Taxon browser controller -->
 			</div>
 			<div class="col-md-4">
 				<button type="button" class="btn btn-default"  ng-click="carryForwardModal.show()"  ng-show="workbenchtemplatemappingitems"><img ng-src="{{Icons.default.get('carryforward20x20')}}" class="specify-icon-16"> Carry forward
-
 				</button>
 				
 				<button type="button" class="btn btn-default"  ng-click="showcolumnsModal.show()"  ng-show="workbenchtemplatemappingitems"><i class="fa fa-eye-slash fa-lg"></i> Hide columns
-
 				</button>
+
+				<!-- start dataset / workbench user interactions --->
+				<span class="pull-right" ng-show="workbenchtemplatemappingitems">
+					<button class="btn btn-default">
+						<i class="fa fa-list-ol fa-lg"></i>
+						History
+					</button>
+					<button class="btn btn-default">
+						<i class="fa fa-user fa-lg"></i>
+						Handover ownership to ...
+					</button>
+				</span>
+				<!-- end dataset / workbench user interactions --->
 			</div>
   			
 			  <h3 class="col-md-12" ng-show="mappedRows.length">Showing dataset: {{ selectedWorkbench.Name }} ({{mappedRows.length}} rows)</h3>
@@ -46,13 +55,14 @@
 							<input st-search="CellData" placeholder="Search dataset" class="input-sm form-control" type="search"/>
 						</th></tr>
 				<tr>
-				<th st-ratio="40"><button class="btn btn-default" ng-click="addRowToGrid(true)"><i class="fa fa-plus"></i> row</button> 
-								
-										<!-- Start Data Form controller -->		
-										<div class="pull-right">
-										<button class="btn btn-default" ng-click="DataFormService.openDataForm()"><i class="fa fa-plus"></i>  form</button>
-									</div>
-								<!-- End Data Form  controller --></th>
+				<th st-ratio="40">
+					<button class="btn btn-default" ng-click="addRowToGrid(true)"><i class="fa fa-plus"></i> row</button> 
+						<!-- Start Data Form controller -->		
+						<div class="pull-right">
+							<button class="btn btn-default" ng-click="DataFormService.openDataForm()"><i class="fa fa-plus"></i>  form</button>
+						</div>
+						<!-- End Data Form  controller -->
+					</th>
 					<th lr-drag-src="headers" lr-drop-target="headers" st-sort="getters.{{wtmi.FieldName}}" ng-repeat="wtmi in workbenchtemplatemappingitems" ng-show="!showHideWorkBenchTemplate[wtmi.WorkbenchTemplateID][wtmi.WorkbenchTemplateMappingItemID]">
 						<img ng-src="{{ Icons.datamodel.get(wtmi.TableName) }}" class="specify-icon-16"> {{wtmi.FieldName}}
 					</th>

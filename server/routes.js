@@ -38,13 +38,16 @@ module.exports = function(app) {
 	app.use('/api/workbenchdataitems', require('./api/mysql/workbenchdataitem'));
 	app.use('/api/workbenchtemplatemappingitems', require('./api/mysql/workbenchtemplatemappingitem'));
 	app.use('/api/workbenchtemplates', require('./api/mysql/workbenchtemplate'));
-	
-	
+
 	app.use('/api/datamodels', require('./api/mysql/datamodel'));
 	//MongoDB
 	app.use('/api/specifymodels', require('./api/mongo/specifymodel'));
 //	app.use('/api/things', require('./api/mongo/thing'));
 	app.use('/api/users', require('./api/mongo/user'));
+	//17.04.2015
+	app.use('/api/historys', require('./api/mongo/history'));	
+	//17.04.2015
+
 	
 	// File upload
 	app.use('/api/fileupload',  require('./api/fileupload'));

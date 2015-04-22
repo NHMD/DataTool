@@ -1,14 +1,13 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-	.controller('DatasetsCtrl', ['$rootScope', '$scope', '$modal', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench', 'hotkeys', 'Icons', 'TaxonTreeDefItem', 'TaxonBrowserService','$timeout','Auth','localStorageService', 'DataFormService',
-		function($rootScope, $scope, $modal, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons, TaxonTreeDefItem, TaxonBrowserService, $timeout,  Auth, localStorageService, DataFormService) {
+	.controller('DatasetsCtrl', ['$rootScope', '$scope', '$modal', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench', 'hotkeys', 'Icons', 'TaxonTreeDefItem', 'TaxonBrowserService','$timeout','Auth','localStorageService', 'DataFormService', 'History',
+		function($rootScope, $scope, $modal, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons, TaxonTreeDefItem, TaxonBrowserService, $timeout,  Auth, localStorageService, DataFormService, History) {
 
 			$scope.Icons = Icons;
 			$scope.workbenches = Workbench.query();
 			$scope.DataFormService = DataFormService;
 			
-
 			$scope.$watch('selectedWorkbench', function(newval, oldval) {
 				if (newval && typeof newval === 'object' && newval !== oldval) {
 
@@ -114,18 +113,14 @@ angular.module('specifyDataCleanerApp')
 			};
 
 			$scope.deleteRow = function(row, idx) {
-
 				WorkbenchRow.remove({
 					id: row.WorkbenchRowID
 				}).$promise.then(function() {
 					$scope.mappedRows.splice($scope.mappedRows.indexOf(row), 1);
 				});
-
-
 			};
 
 			$scope.carryForward = function(rowNumber, workbenchTemplateMappingItem) {
-
 				if (!workbenchTemplateMappingItem.CarryForward) {
 					return "";
 				} else if (workbenchTemplateMappingItem.CarryForward) {
@@ -133,8 +128,6 @@ angular.module('specifyDataCleanerApp')
 					($scope.mappedRows[$scope.mappedRows.length - 1][workbenchTemplateMappingItem.WorkbenchTemplateMappingItemID]) ? $scope.mappedRows[$scope.mappedRows.length - 1][workbenchTemplateMappingItem.WorkbenchTemplateMappingItemID].CellData : "";
 					return forwardValue;
 				};
-
-
 			};
 
 			$scope.addRowToGrid = function(openInGrid) {
