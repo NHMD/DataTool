@@ -25,7 +25,7 @@
 				</div>
 				<!-- End Taxon browser controller -->
 			</div>
-			<div class="col-md-4">
+			<div class="col-md-7">
 				<button type="button" class="btn btn-default"  ng-click="carryForwardModal.show()"  ng-show="workbenchtemplatemappingitems"><img ng-src="{{Icons.default.get('carryforward20x20')}}" class="specify-icon-16"> Carry forward
 				</button>
 				
@@ -38,9 +38,9 @@
 						<i class="fa fa-list-ol fa-lg"></i>
 						History
 					</button>
-					<button class="btn btn-default">
+					<button class="btn btn-default" ng-click="changeownerClick()">
 						<i class="fa fa-user fa-lg"></i>
-						Handover ownership to ...
+						Change ownership
 					</button>
 				</span>
 				<!-- end dataset / workbench user interactions --->
@@ -104,8 +104,8 @@
 							<td st-ratio="12">
 								<button class="btn btn-default" ng-click="addRowToGrid(true)"><i class="fa fa-plus"></i> row</button> 
 								
-										<!-- Start Data Form controller -->		
-										<div ng-controller="DataFormCtrl" class="pull-right">
+								<!-- Start Data Form controller -->		
+									<div ng-controller="DataFormCtrl" class="pull-right">
 										<button class="btn btn-default" ng-click="DataFormService.openDataForm()"><i class="fa fa-plus"></i>  form</button>
 									</div>
 								<!-- End Data Form  controller -->

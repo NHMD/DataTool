@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-	.controller('DatasetsCtrl', ['$rootScope', '$scope', '$modal', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench', 'hotkeys', 'Icons', 'TaxonTreeDefItem', 'TaxonBrowserService','$timeout','Auth','localStorageService', 'DataFormService', 'History',
-		function($rootScope, $scope, $modal, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons, TaxonTreeDefItem, TaxonBrowserService, $timeout,  Auth, localStorageService, DataFormService, History) {
+	.controller('DatasetsCtrl', ['$rootScope', '$scope', '$modal', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench', 'hotkeys', 'Icons', 'TaxonTreeDefItem', 'TaxonBrowserService','$timeout','Auth','localStorageService', 'DataFormService', 'History', 'User',
+		function($rootScope, $scope, $modal, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons, TaxonTreeDefItem, TaxonBrowserService, $timeout,  Auth, localStorageService, DataFormService, History, User) {
 
 			$scope.Icons = Icons;
 			$scope.workbenches = Workbench.query();
@@ -263,44 +263,70 @@ angular.module('specifyDataCleanerApp')
 					}
 				})
 				
-				$scope.carryForwardModal = $modal({
-					scope: $scope,
-					template: 'app/datasets/carryforward.modal.tpl.html',
-					show: false,
-					prefixEvent: "carryforwardmodal"
-				});
+			$scope.carryForwardModal = $modal({
+				scope: $scope,
+				template: 'app/datasets/carryforward.modal.tpl.html',
+				show: false,
+				prefixEvent: "carryforwardmodal"
+			});
 				
-				$scope.showcolumnsModal = $modal({
-					scope: $scope,
-					template: 'app/datasets/showcolumns.modal.tpl.html',
-					show: false,
-					prefixEvent: "showcolumnsmodal"
-				});
+			$scope.showcolumnsModal = $modal({
+				scope: $scope,
+				template: 'app/datasets/showcolumns.modal.tpl.html',
+				show: false,
+				prefixEvent: "showcolumnsmodal"
+			});
 				
 				
-				$scope.saveTableSettingsForWorkbench = function() {
-					
+			$scope.saveTableSettingsForWorkbench = function() {
+			}
+				
+				
+			// used for updating carry forward
+			$scope.updateWorkBenchtemplateMappingitems = function(){			
+				for(var i=0; i < $scope.workbenchtemplatemappingitems.length; i++){
+					$scope.workbenchtemplatemappingitems[i].$update();
 				}
+			};
 				
-				
-				// used for updating carry forward
-				$scope.updateWorkBenchtemplateMappingitems = function(){			
-					for(var i=0; i < $scope.workbenchtemplatemappingitems.length; i++){
-						$scope.workbenchtemplatemappingitems[i].$update();
-					}
-				};
-				
-				// Not pretty but we don´t want a click to focus an input field to also select the row
-				$scope.stopClickFromBubbleUp = function(){
-					$timeout(
+			// Not pretty but we don´t want a click to focus an input field to also select the row
+			$scope.stopClickFromBubbleUp = function(){
+				$timeout(
 					function(){
 						$("input.editable-input").click(function(e){
 							e.stopPropagation();
 						})
 					},
-					100);	
-					}
+				100);	
+			}
 
-		}
+			//dataset ownership
+			$scope.changeownerModal = $modal({
+				scope: $scope,
+				template: 'app/datasets/changeowner.modal.html',
+				show: false
+			});	
 
+			$scope.changeOwnership = function() {
+				var newUserId = $scope.changeownerData.newUserId;
+				if (newUserId !== undefined && newUserId !== $scope.changeownerData.currentUserId) {
+					$scope.selectedWorkbench.SpecifyUserID = parseInt(newUserId);
+					Workbench.update($scope.selectedWorkbench);
+					//console.log($scope.selectedWorkbench);
+					//console.log(newUserId);
+				}
+			}
+		
+			$scope.changeownerClick = function(user) {
+				$scope.changeownerData = {
+					name : $scope.selectedWorkbench.Name,
+					users : User.query(),
+					currentUserId : Auth.getCurrentUser().specifyUserId,
+					newUserId : undefined
+				}				
+				$scope.changeownerModal.show();
+			};
+
+
+		}			
 	]);
