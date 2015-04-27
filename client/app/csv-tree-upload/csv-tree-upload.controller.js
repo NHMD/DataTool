@@ -50,6 +50,10 @@ angular.module('specifyDataCleanerApp')
 			
 			$scope.pushToSpecify = function(){
 				
+				
+					$scope.upLoading = true;
+		
+				
 				Csvdataset.setSpecifyCollection({
 					collectionname: $scope.selectedCsv
 				}, $rootScope.fields.selectedCollection).$promise.then(function(){
@@ -57,7 +61,9 @@ angular.module('specifyDataCleanerApp')
 						collectionname: $scope.selectedCsv
 					}, {}).$promise.then(
 						function(){
-							
+					
+								$scope.upLoading = false;
+						
 							var coll = $scope.user.csvimports.filter(function(e) {
 								return e.collectionname === $scope.selectedCsv;
 							})[0];
@@ -89,6 +95,7 @@ angular.module('specifyDataCleanerApp')
 			}
 			
 			$scope.deleteDataset = function(){
+				
 				var coll = $scope.user.csvimports.filter(function(e) {
 					return e.collectionname === $scope.selectedCsv;
 				})[0];
@@ -96,6 +103,12 @@ angular.module('specifyDataCleanerApp')
 					
 					Csvdataset.delete({collectionname: $scope.selectedCsv}).$promise.then(function(){
 						
+					$scope.user.csvimports = $scope.user.csvimports.filter(function(e) {
+											
+											return e.collectionname !== $scope.selectedCsv;
+										});
+										$scope.selectedCsv = undefined;		
+										$scope.data = undefined;
 						alert("The dataset was deleted successfully.")
 					})
 					

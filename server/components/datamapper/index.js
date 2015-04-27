@@ -244,7 +244,8 @@ exports.aggregateTreeAndPersist = function(collectionName, mappings, model, disc
 	where[treeDefName] = discipline[treeDefName];
 
 	return specifyModel[treeDef].findAll({
-		where: where
+		where: where,
+		order: 'RankID ASC'
 	})
 
 	.then(function(treedefitems) {
@@ -265,39 +266,61 @@ exports.aggregateTreeAndPersist = function(collectionName, mappings, model, disc
 			aggregation[key] = "$" + key;;
 		};
 
-		return [MongoDB.connect(), aggregation, collectionName, rankMappings];
+		// Used to create a dummy tree item to prevent Ophants
+		var rootWhere = {};
+		rootWhere[treeDefName] = discipline[treeDefName];
+		rootWhere['RankID'] = 0;
+		var treeRoot = specifyModel[model].findOne({where: rootWhere})
+		var secondLevelTReeDefItem = treedefitems[1];
+		
+		return [MongoDB.connect(), aggregation, collectionName, rankMappings, treeRoot, secondLevelTReeDefItem];
 	})
-
-	.spread(function(db, aggregation, collectionName, rankMappings) {
+	
+	
+	.spread(function(db, aggregation, collectionName, rankMappings, treeRoot, secondLevelTReeDefItem) {
+		
+		var dummyParent ={RankID: secondLevelTReeDefItem.RankID, ParentID: treeRoot[treeIDName], Name: 'IMPORTED' };
+		dummyParent[treeDefName] = treeRoot[treeDefName];
+		dummyParent[treeDefItemName] = secondLevelTReeDefItem[treeDefItemName];
 		return [db.collection(collectionName).aggregateAsync(
 			[{
 				"$group": {
 					"_id": aggregation
 				}
 			}]
-		), model, rankMappings]
+		), model, rankMappings, specifyModel[model].create(dummyParent) /* specifyModel.sequelize.transaction({isolationLevel : specifyModel.sequelize.Transaction.ISOLATION_LEVELS.READ_UNCOMMITTED})*/]
 	})
 
-	.spread(function(result, model, rankMappings) {
+	.spread(function(result, model, rankMappings, dummyParent) {
 		
 
 	
 
 		var instances = [];
-		var transaction = specifyModel.sequelize.transaction();
+		
 		// Attributes which are not associated with tree rank will be attached to the highest resoluted tree node, e.g. species if we have: Family, Genus, Species in the flat CSV:
 		var nonRankMappings  = _.omit(mappings, function(value, key, object) {
 			
 		return object[key]["rankName"] !== undefined;
 });
 		for (var i = 0; i < result.length; i++) {
-			
-			instances.push(findAndInsert(result[i], model, rankMappings, mappings, treeDefItemName, treeDefName, discipline, transaction, nonRankMappings));
+			instances.push(findAndInsert(result[i], model, rankMappings, mappings, treeDefItemName, treeDefName, discipline, nonRankMappings, dummyParent));
 
 
 		}
-		return Promise.all(instances);
-	})
+		return [Promise.all(instances), dummyParent];
+	}).spread(function(instances, dummyParent){
+		
+	return	[specifyModel[model].count({ where: {ParentID: dummyParent[treeIDName]}}), dummyParent]
+		
+	}).spread(function(c, dummyParent) {
+		if (c === 0){
+			return dummyParent.destroy();
+		}
+		else {
+			return true;
+		}
+		})
 		.
 	catch (function(err) {
 			console.log(err.message)
@@ -309,7 +332,7 @@ exports.aggregateTreeAndPersist = function(collectionName, mappings, model, disc
 
 }
 
-function findAndInsert(result, model, rankMappings, mappings, treeDefItemName, treeDefName, discipline, transaction, nonRankMappings) {
+function findAndInsert(result, model, rankMappings, mappings, treeDefItemName, treeDefName, discipline, nonRankMappings, dummyParent) {
 
 	var mapped = [];
 	
@@ -346,13 +369,37 @@ function findAndInsert(result, model, rankMappings, mappings, treeDefItemName, t
 		};
 
 		query[treeDefName] = discipline[treeDefName];
-
-		return specifyModel[model].findOrCreate({
-			transaction: transaction,
-			where: query
-		}).spread(function(treenode, inserted) {
-			return treenode;
+		var transaction = specifyModel.sequelize.transaction({isolationLevel : specifyModel.sequelize.Transaction.ISOLATION_LEVELS.SERIALIZABLE});
+		return transaction.then(function(t){
+			
+			return [specifyModel[model].findOrCreate({
+			
+				where: query
+			}, {transaction: t}), t]
+			
+			
 		})
+		.spread(function(treenodeInitialized, t) {
+			var treenode = treenodeInitialized[0];
+			var initialized = treenodeInitialized[1];
+			if(initialized){
+				console.log("initalized ******************* "+JSON.stringify(treenode.get()))
+				if(!treenode.ParentID){
+					treenode.ParentID = dummyParent[model + "ID"];
+				}
+				return [treenode.save({transaction: t}), t];
+			} else 
+			{
+				return [treenode, t];
+			}
+		
+		}).spread(function(treenode, t){
+			
+			t.commit();
+			return treenode;
+			
+		})
+		
 			.
 		catch (function(err) {
 			console.log(err.message)
