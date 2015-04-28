@@ -4,6 +4,18 @@ angular.module('specifyDataCleanerApp')
 	.controller('DatasetsCtrl', ['$rootScope', '$scope', '$modal', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench', 'hotkeys', 'Icons', 'TaxonTreeDefItem', 'TaxonBrowserService','$timeout','Auth','localStorageService', 'DataFormService', 'History', 'User',
 		function($rootScope, $scope, $modal, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons, TaxonTreeDefItem, TaxonBrowserService, $timeout,  Auth, localStorageService, DataFormService, History, User) {
 
+			//test
+			var test = History.save({	
+				workbenchId : 45,
+				name : 'test',
+				qwerty :'12345',
+				actions : []
+			});
+			console.log(test);
+			test.actions.push({ message : 'test' });
+			History.update(test);
+			//
+
 			$scope.Icons = Icons;
 			$scope.workbenches = Workbench.query();
 			$scope.DataFormService = DataFormService;
@@ -300,7 +312,7 @@ angular.module('specifyDataCleanerApp')
 				100);	
 			}
 
-			//dataset ownership
+			// ------ dataset ownership
 			$scope.changeownerModal = $modal({
 				scope: $scope,
 				template: 'app/datasets/changeowner.modal.html',
@@ -312,8 +324,6 @@ angular.module('specifyDataCleanerApp')
 				if (newUserId !== undefined && newUserId !== $scope.changeownerData.currentUserId) {
 					$scope.selectedWorkbench.SpecifyUserID = parseInt(newUserId);
 					Workbench.update($scope.selectedWorkbench);
-					//console.log($scope.selectedWorkbench);
-					//console.log(newUserId);
 				}
 			}
 		

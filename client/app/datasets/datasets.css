@@ -192,3 +192,15 @@ background-color: #eee;
 button.tax-btn-modal {
 	margin-left: 14px;
 }
+
+label.normal-font-weight {
+	font-weight: normal;
+	margin-bottom: 0px;
+}
+hr.modal-hr {
+	margin-top: 1px;
+	margin-bottom: 1px;
+}
+.no-padding {
+	padding: 0px;
+}

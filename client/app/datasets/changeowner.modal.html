@@ -3,7 +3,7 @@
 		<div class="modal-content">
 			
 			<div class="modal-header"><button type="button" class="close" ng-click="$hide()">×</button>
-				<h4 class="modal-title">Change ownership of <b>{{ changeownerData.name }}</b></h4>
+				<h4 class="modal-title">Change ownership of : <b>{{ changeownerData.name }}</b></h4>
 			</div>
 
 			<div class="modal-body">
@@ -20,18 +20,31 @@
 						</td>
 					</tr>
 				</table>
-				
-				<div class="modal-footer"><div class="col-md-6 taxon-footer-txt">
-					Select user to pass ownership to and click OK.</small>
-				</div>
 
-				<div class="col-md-6">
-					<button type="button" class="btn btn-success" ng-click="changeOwnership();$hide()"> <i class="fa fa-check"></i> OK</button> 
-					<button type="button" class="btn btn-danger" ng-click="$hide()"> <i class="fa fa-times"></i> Cancel</button> 
+<!--
+				<div class="control-group">
+					<hr class="modal-hr">
+					<label class="small normal-font-weight">Message</label>
+					<input class="form-control col-md-12" ng-model="changeownerData.message">
+				</div>
+-->
+				<div class="modal-footer no-padding">
+
+					<div class="col-md-8 taxon-footer-txt">
+						<label class="small normal-font-weight">Message to new owner :</label>
+						<input class="form-control col-md-8" ng-model="changeownerData.message" autofocus>
+						<!--Select user to pass ownership to and click OK.</small>-->
+					</div>
+					<div class="col-md-4 nopadding">
+						<br>
+						<button type="button" class="btn btn-success" ng-click="changeOwnership();$hide()"> <i class="fa fa-check"></i> OK</button> 
+						<button type="button" class="btn btn-danger" ng-click="$hide()"> <i class="fa fa-times"></i> Cancel</button> 
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
+
 
 

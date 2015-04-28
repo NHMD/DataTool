@@ -31,6 +31,7 @@ exports.show = function(req, res) {
 
 // Creates a new history in the DB.
 exports.create = function(req, res) {
+	console.log(req, res);
   History.create(req.body, function(err, history) {
     if(err) { return handleError(res, err); }
     return res.json(201, history);
@@ -62,6 +63,7 @@ exports.destroy = function(req, res) {
     });
   });
 };
+
 
 function handleError(res, err) {
   return res.send(500, err);

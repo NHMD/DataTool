@@ -2,12 +2,17 @@
 var mongoose = require('mongoose'),
 	Schema = mongoose.Schema;
 
-module.exports = new Schema({
-	name: String,
-	collectionname: String,
-	active: Boolean,
-	isTreeOnly: Boolean,
-	uploadedToSpecify: Boolean,
-	mapping: Schema.Types.Mixed,
-	specifycollection: Schema.Types.Mixed
+var historyAction = new Schema({
+	timestamp: Date,
+	fromUserId: Number,
+	toUserId: Number,
+	message : String
 });
+
+module.exports = new Schema({
+	workbenchId: Number,	//Workbench.WorkbenchID
+	name: String,			//Workbench.Name
+	actions : [historyAction]
+}, { collection: 'workbenchHistory' });
+	
+
