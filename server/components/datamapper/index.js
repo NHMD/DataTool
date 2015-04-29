@@ -181,8 +181,8 @@ exports.aggregateTreeAndPersist = function(collectionName, mappings, model, disc
 	return SpecifyModelDescription.findOne({
 		table: model.toLowerCase()
 	}).exec().then(function(m) {
-		
-		
+
+
 		var treeIDName = m.idColumn;
 		var mdlName = treeIDName.split("ID")[0];
 		var treeDefName = mdlName + "TreeDefID";
@@ -196,7 +196,7 @@ exports.aggregateTreeAndPersist = function(collectionName, mappings, model, disc
 		}
 
 		var ranks = _.omit(mappings, function(value, key, object) {
-		//	console.log("tredefitem ????? "+ JSON.stringify(object))
+			//	console.log("tredefitem ????? "+ JSON.stringify(object))
 			return object[key]["TreeDefItem"] === undefined;
 		});
 
@@ -205,12 +205,22 @@ exports.aggregateTreeAndPersist = function(collectionName, mappings, model, disc
 				mongoColumnName: key
 			});
 		});
-		
+
 		ranks.sort(function(a, b) {
 			return a.TreeDefItem.RankID - b.TreeDefItem.RankID;
 		});
 
-		
+		var secondaryFields = _.omit(mappings, function(value, key, object) {
+			//	console.log("tredefitem ????? "+ JSON.stringify(object))
+			return object[key]["TreeDefItem"] !== undefined;
+		});
+
+		secondaryFields = _.map(secondaryFields, function(value, key) {
+			return _.merge(_.omit(value, 'table'), {
+				mongoColumnName: key
+			});
+		});
+
 		var where = {};
 		where[treeDefNames.treeDefName] = discipline[treeDefNames.treeDefName];
 
@@ -250,12 +260,12 @@ exports.aggregateTreeAndPersist = function(collectionName, mappings, model, disc
 
 		.spread(function(db, dummyParent) {
 
-			aggregateTreeLevel(db, ranks, collectionName, treeDefNames, model, dummyParent)
+			aggregateTreeLevel(db, ranks, secondaryFields, collectionName, treeDefNames, model, dummyParent)
 
 		})
 			.
 		catch (function(err) {
-			
+
 			console.log(err.message)
 			throw err;
 		});
@@ -269,7 +279,7 @@ This function will take a sorted array of tree ranklevels and produce an array o
  
 */
 
-function getAggregationQuery(ranks) {
+function getAggregationQuery(ranks, secondaryFields) {
 
 	var retval = [];
 	var firstAggr = {
@@ -283,6 +293,14 @@ function getAggregationQuery(ranks) {
 
 
 	}
+
+	for (var i = 0; i < secondaryFields.length; i++) {
+
+		firstAggr.$group._id[secondaryFields[i].mongoColumnName] = "$" + secondaryFields[i].mongoColumnName;
+
+
+	}
+
 	retval.push(firstAggr);
 
 	for (var i = 1; i < ranks.length; i++) {
@@ -302,18 +320,22 @@ function getAggregationQuery(ranks) {
 
 			aggr.$group._id[ranks[j].mongoColumnName] = "$_id." + ranks[j].mongoColumnName;
 
-
-
-
 		}
+		// If we are at leaf level, add secondary (non tree rank) attributes such as taxon authors, venacular names etc
+		if (i === 1) {
+			for (var k = 0; k < secondaryFields.length; k++) {
+				aggr.$group[ranks[ranks.length - i].mongoColumnName].$addToSet[secondaryFields[k].mongoColumnName] = "$_id." + secondaryFields[k].mongoColumnName;
+			}
+		}
+
 		retval.push(aggr);
 	}
 	return retval;
 
 }
 
-function createTreeNode(node, parent, rankLevel, ranks, treeDefNames, model, dummyParent) {
-	
+function createTreeNode(node, parent, rankLevel, ranks, treeDefNames, model, dummyParent, secondaryFields) {
+
 	var name = (rankLevel === 0) ? node._id[ranks[rankLevel].mongoColumnName] : node[ranks[rankLevel].mongoColumnName];
 	var where = {
 		Name: name,
@@ -325,27 +347,34 @@ function createTreeNode(node, parent, rankLevel, ranks, treeDefNames, model, dum
 		where['ParentID'] = parent[treeDefNames.treeIDName];
 	}
 
-return	specifyModel[model].findOrCreate({
+	// If we are at leaf level, add all secondary attributes (non rank related)
+	if (rankLevel === ranks.length - 1) {
+		for (var i = 0; i < secondaryFields.length; i++) {
+			where[secondaryFields[i].fieldName] = node[secondaryFields[i].mongoColumnName];
+		}
+	}
+
+	return specifyModel[model].findOrCreate({
 		where: where
 	})
 		.spread(function(treenode, created) {
-		// If we are at the uppermost treelevel, check if parent exists, or use the dummy	
-			if(created && !treenode.ParentID){
+			// If we are at the uppermost treelevel, check if parent exists, or use the dummy	
+			if (created && !treenode.ParentID) {
 				treenode.ParentID = dummyParent[treeDefNames.treeIDName];
 				treenode.save();
 			}
-		// stop the recursion, leafs are reached
+			// stop the recursion, leafs are reached
 			if (rankLevel === ranks.length - 1) {
-			
+
 				return treenode;
-			} 
+			}
 			// continue to next tree level
 			else {
 				var children = node[ranks[rankLevel + 1].mongoColumnName];
 				if (children) {
 					for (var i = 0; i < children.length; i++) {
 
-						createTreeNode(children[i], treenode, rankLevel + 1, ranks, treeDefNames, model, dummyParent);
+						createTreeNode(children[i], treenode, rankLevel + 1, ranks, treeDefNames, model, dummyParent, secondaryFields);
 					}
 				}
 			}
@@ -355,34 +384,35 @@ return	specifyModel[model].findOrCreate({
 
 }
 
-function aggregateTreeLevel(db, ranks, collectionName, treeDefNames, model, dummyParent) {
+function aggregateTreeLevel(db, ranks, secondaryFields, collectionName, treeDefNames, model, dummyParent) {
 
-	var aggregationQuery = getAggregationQuery(ranks);
+	var aggregationQuery = getAggregationQuery(ranks, secondaryFields);
 
 	return db.collection(collectionName).aggregateAsync(aggregationQuery, {
-                                     allowDiskUse: true
-                                   })
+		allowDiskUse: true
+	})
 		.then(function(result) {
 			var promises = [];
 			for (var i = 0; i < result.length; i++) {
-				promises.push(createTreeNode(result[i], dummyParent, 0, ranks, treeDefNames, model, dummyParent));
+				promises.push(createTreeNode(result[i], dummyParent, 0, ranks, treeDefNames, model, dummyParent, secondaryFields));
 			}
-			
+
 			return Promise.all(promises)
-		}).then(function(){
+		}).then(function() {
 			return specifyModel[model].findOne({
-					where: {ParentID : dummyParent[treeDefNames.treeIDName] }
-				})
-		}).then(function(treenode){
-			if(!treenode){
+				where: {
+					ParentID: dummyParent[treeDefNames.treeIDName]
+				}
+			})
+		}).then(function(treenode) {
+			if (!treenode) {
 				dummyParent.destroy();
 			}
 		}).
-		catch (function(err) {
-			console.log("!!!!!!!!!!!!!!!!!!!!!!")
-			console.log(err.message)
-			throw err;
-		});
+	catch (function(err) {
+		console.log(err.message)
+		throw err;
+	});
 
 
 }
