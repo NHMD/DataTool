@@ -26,7 +26,7 @@
 				
 				
 				
-				<td><button type="button" class="btn btn-default" ng-if="datasetMapping[key]['fieldName'] === 'Name'" ng-model="datasetMapping[key]['rankName']"  ng-options="treeDefItem.Name as treeDefItem.Name for treeDefItem in getTreeDefItems(datasetMapping[key]['table']['name'])" placeholder="Choose tree rank" bs-select>
+				<td><button type="button" class="btn btn-default" ng-if="datasetMapping[key]['fieldName'] === 'Name'" ng-model="datasetMapping[key]['TreeDefItem']"  ng-options="treeDefItem as treeDefItem.Name for treeDefItem in getTreeDefItems(datasetMapping[key]['table']['name'])" placeholder="Choose tree rank" bs-select>
 				
 				</td>
 				 		
