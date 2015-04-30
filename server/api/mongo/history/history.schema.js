@@ -6,7 +6,8 @@ var historyAction = new Schema({
 	timestamp: Date,
 	fromUserId: Number,
 	toUserId: Number,
-	message : String
+	message : String,
+	confirmed : Boolean
 });
 
 module.exports = new Schema({

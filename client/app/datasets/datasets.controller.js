@@ -1,20 +1,8 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-	.controller('DatasetsCtrl', ['$rootScope', '$scope', '$modal', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench', 'hotkeys', 'Icons', 'TaxonTreeDefItem', 'TaxonBrowserService','$timeout','Auth','localStorageService', 'DataFormService', 'History', 'User',
-		function($rootScope, $scope, $modal, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons, TaxonTreeDefItem, TaxonBrowserService, $timeout,  Auth, localStorageService, DataFormService, History, User) {
-
-			//test
-			var test = History.save({	
-				workbenchId : 45,
-				name : 'test',
-				qwerty :'12345',
-				actions : []
-			});
-			console.log(test);
-			test.actions.push({ message : 'test' });
-			History.update(test);
-			//
+	.controller('DatasetsCtrl', ['$route', '$rootScope', '$scope', '$modal', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench', 'hotkeys', 'Icons', 'TaxonTreeDefItem', 'TaxonBrowserService','$timeout','Auth','localStorageService', 'DataFormService', 'History', 'User',
+		function($route, $rootScope, $scope, $modal, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons, TaxonTreeDefItem, TaxonBrowserService, $timeout,  Auth, localStorageService, DataFormService, History, User) {
 
 			$scope.Icons = Icons;
 			$scope.workbenches = Workbench.query();
@@ -74,9 +62,8 @@ angular.module('specifyDataCleanerApp')
 						
 						TaxonBrowserService.selectedDetermination = (TaxonBrowserService.determinations.length) ? TaxonBrowserService.determinations[0]: undefined;
 					});
-
-
 				}
+
 			});
 
 			$scope.mapRows = function() {
@@ -143,7 +130,7 @@ angular.module('specifyDataCleanerApp')
 			};
 
 			$scope.addRowToGrid = function(openInGrid) {
-			return	WorkbenchRow.save({
+				return	WorkbenchRow.save({
 					"WorkbenchID": $scope.selectedWorkbench.WorkbenchID
 				}).
 				$promise.then(function(workbenchrow) {
@@ -202,7 +189,6 @@ angular.module('specifyDataCleanerApp')
 			TaxonBrowserService.selectCallbacks.push($scope.addTaxonToSelectedRows);
 			
 			$scope.addTaxonToRow = function(row) {
-
 				if (TaxonBrowserService.selectedTaxon === undefined || TaxonBrowserService.selectedTaxon.constructor.name !== 'Resource') return;
 				for (var key in $scope.taxonMappings) {
 					if($scope.taxonMappings[key].determinationNumber === TaxonBrowserService.selectedDetermination){
@@ -312,18 +298,54 @@ angular.module('specifyDataCleanerApp')
 				100);	
 			}
 
-			// ------ dataset ownership
+			// ------ workbench ownership / history events
 			$scope.changeownerModal = $modal({
 				scope: $scope,
 				template: 'app/datasets/changeowner.modal.html',
 				show: false
 			});	
 
+			$scope.createWorkbenchHistoryEvent = function(toUser, message) {
+				var action = {
+					timestamp : Date.now(),
+					fromUserId : Auth.getCurrentUser().specifyUserId, 
+					toUserId : toUser,
+					message : message,
+					confirmed : false
+				}
+				History.query().$promise.then(function(histories) {
+					var saved = false;
+					angular.forEach(histories, function(history) {
+						if (!saved && history.workbenchId == $scope.selectedWorkbench.WorkbenchID) {
+							history.actions.push(action);
+							History.update(	{id : history._id }, history);
+							saved = true;
+						}
+					}).$promise.then(function() {
+						if (!saved) {
+							//no history recorded, create history for workbench
+							History.save({	
+								workbenchId : $scope.selectedWorkbench.WorkbenchID,
+								name : $scope.selectedWorkbench.Name,
+								actions : [action]
+							});
+						}		
+					});
+				}).then(function() {
+					//reset selectedWorckbench
+					//found $route.reload() to be much more convenient than relying on the change of watches
+					$route.reload();
+				});
+			}
+
 			$scope.changeOwnership = function() {
-				var newUserId = $scope.changeownerData.newUserId;
+				var newUserId = $scope.changeownerData.newUserId,
+					message = $scope.changeownerData.message;
+
 				if (newUserId !== undefined && newUserId !== $scope.changeownerData.currentUserId) {
 					$scope.selectedWorkbench.SpecifyUserID = parseInt(newUserId);
 					Workbench.update($scope.selectedWorkbench);
+					$scope.createWorkbenchHistoryEvent(newUserId, message);
 				}
 			}
 		
@@ -337,6 +359,49 @@ angular.module('specifyDataCleanerApp')
 				$scope.changeownerModal.show();
 			};
 
+			$scope.$watch('selectedWorkbench', function(newval, oldval) {
+				if (typeof newval == 'object') {
+					$scope.updateWorkbenchHistory(newval.WorkbenchID);
+				}
+			});
+
+			$scope.users = User.query();
+			$scope.getUserName = function(specifyUserId) {
+				for (var i=0;i<$scope.users.length;i++) {
+					if ($scope.users[i].specifyUserId == specifyUserId) {
+						return $scope.users[i].name;
+					}
+				}
+			}
+
+			$scope.updateWorkbenchHistory = function(workbenchId) {
+				var action,
+					items = [];				
+					
+				History.query().$promise.then(function(histories) {
+					angular.forEach(histories, function(history) {
+						if (history.workbenchId == workbenchId) {
+							for (var i=0;i<history.actions.length;i++) {
+								if (i>0) items.push({ divider : true });
+								action = history.actions[i];
+								items.push({
+									href : '#',
+									text : '<small>'+action.timestamp+'</small><br>'+
+										   '<span class="wb-from">'+$scope.getUserName(action.fromUserId)+'</span>'+
+										   '&nbsp;<i class="fa fa-share fa-fw wb-icon"></i>&nbsp;' +
+										   '<span class="wb-to">'+$scope.getUserName(action.toUserId)+'</span>'+
+										   '<br>'+
+										   '<small class="wb-message">'+action.message+'</small>'
+								});
+							}
+						}
+					});
+				}).then(function() {
+					if (items.length==0) items.push({ href : '#', text : 'No events recorded for this workbench' });
+					$scope.selectedWorkbenchHistory = items;
+				});
+					
+			}
 
 		}			
 	]);

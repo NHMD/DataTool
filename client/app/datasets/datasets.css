@@ -204,3 +204,23 @@ hr.modal-hr {
 .no-padding {
 	padding: 0px;
 }
+/* workbench history */
+.wb-icon {
+	color: gray;
+}
+.wb-message {
+	background-color: #ffc;;
+	padding : 4px;
+	min-width: 100%;
+	max-width: 100%;
+	line-height: 99%;
+	white-space : normal;
+	display: block;
+}
+.wb-from {
+	color : darkred;
+}
+.wb-to {
+	color : darkgreen;
+}
+
