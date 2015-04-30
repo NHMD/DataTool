@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-	.controller('DatasetsCtrl', ['$route', '$rootScope', '$scope', '$modal', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench', 'hotkeys', 'Icons', 'TaxonTreeDefItem', 'TaxonBrowserService','$timeout','Auth','localStorageService', 'DataFormService', 'History', 'User',
-		function($route, $rootScope, $scope, $modal, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons, TaxonTreeDefItem, TaxonBrowserService, $timeout,  Auth, localStorageService, DataFormService, History, User) {
+	.controller('DatasetsCtrl', ['$document', '$route', '$rootScope', '$scope', '$modal', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench', 'hotkeys', 'Icons', 'TaxonTreeDefItem', 'TaxonBrowserService','$timeout','Auth','localStorageService', 'DataFormService', 'History', 'User',
+		function($document, $route, $rootScope, $scope, $modal, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons, TaxonTreeDefItem, TaxonBrowserService, $timeout,  Auth, localStorageService, DataFormService, History, User) {
 
 			$scope.Icons = Icons;
 			$scope.workbenches = Workbench.query();
@@ -400,8 +400,43 @@ angular.module('specifyDataCleanerApp')
 					if (items.length==0) items.push({ href : '#', text : 'No events recorded for this workbench' });
 					$scope.selectedWorkbenchHistory = items;
 				});
-					
 			}
 
+			//user notification of newly transfered workbench(es)
+			$scope.notificationModal = $modal({
+				scope: $scope,
+				template: 'app/datasets/notification.modal.html',
+				show: false
+			});	
+
+			$document.ready(function() {
+				var actions;
+				$scope.notification = { workbenches : [] };
+				History.query().$promise.then(function(histories) {		
+					angular.forEach(histories, function(history) {
+						for (var i=0;i<history.actions.length;i++) {
+							if (!history.actions[i].confirmed && history.actions[i].toUserId == Auth.getCurrentUser().specifyUserId) {
+								$scope.notification.workbenches.push({
+									name : history.name,
+									from : $scope.getUserName(history.actions[i].fromUserId),
+									message : history.actions[i].message
+								});
+								//update the action (confirmed == "seen")
+								history.actions[i].confirmed = true;
+								History.update(	{id : history._id }, history);
+							}
+						}
+					}).$promise.then(function() {
+						$scope.notification.header = $scope.notification.workbenches.length > 0
+							? $scope.notification.workbenches.length == 1
+								? 'You have a new Workbench'
+								: 'You have '+$scope.notification.workbenches.length+' new workbenches'
+							: false;
+						if ($scope.notification.header) {
+							$scope.notificationModal.show();
+						}
+					});
+				});
+			});
 		}			
 	]);
