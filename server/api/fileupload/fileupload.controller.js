@@ -249,6 +249,7 @@ exports.processtree = function(req, res) {
 			return key === '_id';
 	});
 	
+
 	datamapper.aggregateTreeAndPersist(req.params.collname, mappings, modelName, discipline)
 	.then(function() {
 		csvimport.uploadedToSpecify = true;
@@ -258,7 +259,7 @@ exports.processtree = function(req, res) {
 		});
 		
 	})
-	
+
 }
 
 

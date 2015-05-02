@@ -254,13 +254,16 @@ exports.aggregateTreeAndPersist = function(collectionName, mappings, model, disc
 				return specifyModel[model].create(dummyParent);
 			})
 			.then(function(dummyParent) {
-
-				return [MongoDB.connect(), dummyParent]
+				var query = {
+					where: {}
+				};
+				query.where[treeDefName] = discipline[treeDefName];
+				return [MongoDB.connect(), dummyParent, specifyModel[model].count(query)]
 			})
 
-		.spread(function(db, dummyParent) {
-
-			aggregateTreeLevel(db, ranks, secondaryFields, collectionName, treeDefNames, model, dummyParent)
+		.spread(function(db, dummyParent, numTreeNodes) {
+			
+			return aggregateTreeLevel(db, ranks, secondaryFields, collectionName, treeDefNames, model, dummyParent, numTreeNodes)
 
 		})
 			.
@@ -334,7 +337,62 @@ function getAggregationQuery(ranks, secondaryFields) {
 
 }
 
-function createTreeNode(node, parent, rankLevel, ranks, treeDefNames, model, dummyParent, secondaryFields) {
+function createTreeNode(node, parent, rankLevel, ranks, treeDefNames, model, dummyParent, secondaryFields, t) {
+
+	var name = (rankLevel === 0) ? node._id[ranks[rankLevel].mongoColumnName] : node[ranks[rankLevel].mongoColumnName];
+	var where = {
+		Name: name,
+		RankID: ranks[rankLevel].TreeDefItem.RankID
+	};
+	where[treeDefNames.treeDefItemName] = ranks[rankLevel].TreeDefItem[treeDefNames.treeDefItemName];
+	where[treeDefNames.treeDefName] = ranks[rankLevel].TreeDefItem[treeDefNames.treeDefName];
+	if (parent !== dummyParent) {
+		where['ParentID'] = parent[treeDefNames.treeIDName];
+	}
+
+	// If we are at leaf level, add all secondary attributes (non rank related)
+	if (rankLevel === ranks.length - 1) {
+		for (var i = 0; i < secondaryFields.length; i++) {
+			where[secondaryFields[i].fieldName] = node[secondaryFields[i].mongoColumnName];
+		}
+	}
+
+	return specifyModel[model].create(
+		where, {
+			transaction: t
+		})
+		.then(function(treenode) {
+			// If we are at the uppermost treelevel, check if parent exists, or use the dummy	
+			if (!treenode.ParentID) {
+				treenode.ParentID = dummyParent[treeDefNames.treeIDName];
+				treenode.save({
+					transaction: t,
+					fields: ['ParentID']
+				});
+			}
+			// stop the recursion, leafs are reached
+			if (rankLevel === ranks.length - 1) {
+
+				return treenode;
+			}
+			// continue to next tree level
+			else {
+				var children = node[ranks[rankLevel + 1].mongoColumnName];
+				if (children) {
+					var promises = [];
+					for (var i = 0; i < children.length; i++) {
+
+						promises.push(createTreeNode(children[i], treenode, rankLevel + 1, ranks, treeDefNames, model, dummyParent, secondaryFields, t));
+					}
+					return Promise.all(promises)
+				}
+			}
+
+		});
+
+}
+
+function findOrCreateTreeNode(node, parent, rankLevel, ranks, treeDefNames, model, dummyParent, secondaryFields, t) {
 
 	var name = (rankLevel === 0) ? node._id[ranks[rankLevel].mongoColumnName] : node[ranks[rankLevel].mongoColumnName];
 	var where = {
@@ -356,12 +414,17 @@ function createTreeNode(node, parent, rankLevel, ranks, treeDefNames, model, dum
 
 	return specifyModel[model].findOrCreate({
 		where: where
+	}, {
+		transaction: t
 	})
 		.spread(function(treenode, created) {
 			// If we are at the uppermost treelevel, check if parent exists, or use the dummy	
 			if (created && !treenode.ParentID) {
 				treenode.ParentID = dummyParent[treeDefNames.treeIDName];
-				treenode.save();
+				treenode.save({
+					transaction: t,
+					fields: ['ParentID']
+				});
 			}
 			// stop the recursion, leafs are reached
 			if (rankLevel === ranks.length - 1) {
@@ -372,19 +435,20 @@ function createTreeNode(node, parent, rankLevel, ranks, treeDefNames, model, dum
 			else {
 				var children = node[ranks[rankLevel + 1].mongoColumnName];
 				if (children) {
+					var promises = [];
 					for (var i = 0; i < children.length; i++) {
 
-						createTreeNode(children[i], treenode, rankLevel + 1, ranks, treeDefNames, model, dummyParent, secondaryFields);
+						promises.push(findOrCreateTreeNode(children[i], treenode, rankLevel + 1, ranks, treeDefNames, model, dummyParent, secondaryFields, t));
 					}
+					return Promise.all(promises)
 				}
 			}
 
 		});
 
-
 }
 
-function aggregateTreeLevel(db, ranks, secondaryFields, collectionName, treeDefNames, model, dummyParent) {
+function aggregateTreeLevel(db, ranks, secondaryFields, collectionName, treeDefNames, model, dummyParent, numTreeNodes) {
 
 	var aggregationQuery = getAggregationQuery(ranks, secondaryFields);
 
@@ -392,26 +456,58 @@ function aggregateTreeLevel(db, ranks, secondaryFields, collectionName, treeDefN
 		allowDiskUse: true
 	})
 		.then(function(result) {
+			return [specifyModel.sequelize.transaction({
+				autocommit: false,
+				isolationLevel: specifyModel.sequelize.Transaction.ISOLATION_LEVELS.READ_COMMITTED
+			}), result]
+		})
+		.spread(function(t, result) {
 			var promises = [];
-			for (var i = 0; i < result.length; i++) {
-				promises.push(createTreeNode(result[i], dummyParent, 0, ranks, treeDefNames, model, dummyParent, secondaryFields));
+			// If there is exactly two treenodes before we start, we will create each node without checking if it exists. The two nodes will be the root and our dummyparent
+			if (numTreeNodes === 2) {
+				for (var i = 0; i < result.length; i++) {
+					promises.push(createTreeNode(result[i], dummyParent, 0, ranks, treeDefNames, model, dummyParent, secondaryFields, t));
+				}
+			}
+			// If there are more treenodes before we start, we should check if each node exists before we create it (will be much slower)
+			else {
+				for (var i = 0; i < result.length; i++) {
+					promises.push(findOrCreateTreeNode(result[i], dummyParent, 0, ranks, treeDefNames, model, dummyParent, secondaryFields, t));
+				}
 			}
 
-			return Promise.all(promises)
-		}).then(function() {
-			return specifyModel[model].findOne({
-				where: {
-					ParentID: dummyParent[treeDefNames.treeIDName]
-				}
-			})
-		}).then(function(treenode) {
-			if (!treenode) {
-				dummyParent.destroy();
+			return [Promise.all(promises), t]
+		})
+
+	.spread(function(all, t) {
+
+		return specifyModel[model].findOne({
+			where: {
+				ParentID: dummyParent[treeDefNames.treeIDName]
 			}
-		}).
-	catch (function(err) {
-		console.log(err.message)
-		throw err;
+		}, {
+			transaction: t
+		})
+			.then(function(treenode) {
+				if (!treenode) {
+					return dummyParent.destroy({
+						transaction: t
+					}).then(function() {
+						return t.commit();
+					});
+				} else {
+					return t.commit();
+				}
+
+
+			}).
+		catch (function(err) {
+			t.rollback();
+			console.log(err.message)
+			throw err;
+		})
+
+
 	});
 
 
