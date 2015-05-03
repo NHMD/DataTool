@@ -262,7 +262,7 @@ exports.aggregateTreeAndPersist = function(collectionName, mappings, model, disc
 			})
 
 		.spread(function(db, dummyParent, numTreeNodes) {
-			
+
 			return aggregateTreeLevel(db, ranks, secondaryFields, collectionName, treeDefNames, model, dummyParent, numTreeNodes)
 
 		})
@@ -436,9 +436,17 @@ function findOrCreateTreeNode(node, parent, rankLevel, ranks, treeDefNames, mode
 				var children = node[ranks[rankLevel + 1].mongoColumnName];
 				if (children) {
 					var promises = [];
-					for (var i = 0; i < children.length; i++) {
+					// if we created the treenode just now, all children will be new treenodes and the select is uneccesary
+					if (created) {
+						for (var i = 0; i < children.length; i++) {
 
-						promises.push(findOrCreateTreeNode(children[i], treenode, rankLevel + 1, ranks, treeDefNames, model, dummyParent, secondaryFields, t));
+							promises.push(createTreeNode(children[i], treenode, rankLevel + 1, ranks, treeDefNames, model, dummyParent, secondaryFields, t));
+						}
+					} else {
+						for (var i = 0; i < children.length; i++) {
+
+							promises.push(findOrCreateTreeNode(children[i], treenode, rankLevel + 1, ranks, treeDefNames, model, dummyParent, secondaryFields, t));
+						}
 					}
 					return Promise.all(promises)
 				}
