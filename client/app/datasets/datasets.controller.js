@@ -97,7 +97,6 @@ angular.module('specifyDataCleanerApp')
 					};
 
 				} else if (item.CellData !== "" && item.CellData !== undefined) {
-
 					$scope.mappedRows[row.RowNumber][template.WorkbenchTemplateMappingItemID] = WorkbenchDataItem.save({
 						"WorkbenchRowID": row.WorkbenchRowID,
 						"RowNumber": row.RowNumber,
@@ -107,8 +106,6 @@ angular.module('specifyDataCleanerApp')
 					});
 
 				};
-
-
 			};
 
 			$scope.deleteRow = function(row, idx) {
@@ -165,12 +162,8 @@ angular.module('specifyDataCleanerApp')
 						}, "slow");
 					});
 					
-					
 					return row;
-
 				});
-
-
 			};
 
 			$scope.saveRow = function(row) {
@@ -220,11 +213,8 @@ angular.module('specifyDataCleanerApp')
 							}})
 						}
 					}
-					
 				}
-
 			};
-
 
 			hotkeys.bindTo($scope)
 				.add({
@@ -298,7 +288,7 @@ angular.module('specifyDataCleanerApp')
 				100);	
 			}
 
-			// ------ workbench ownership / history events
+			// ------ workbench ownership / history events --------
 			$scope.changeownerModal = $modal({
 				scope: $scope,
 				template: 'app/datasets/changeowner.modal.html',
@@ -323,7 +313,7 @@ angular.module('specifyDataCleanerApp')
 						}
 					}).$promise.then(function() {
 						if (!saved) {
-							//no history recorded, create history for workbench
+							//no earlier history recorded, create history for workbench
 							History.save({	
 								workbenchId : $scope.selectedWorkbench.WorkbenchID,
 								name : $scope.selectedWorkbench.Name,
@@ -332,8 +322,10 @@ angular.module('specifyDataCleanerApp')
 						}		
 					});
 				}).then(function() {
-					//reset selectedWorckbench
-					//found $route.reload() to be much more convenient than relying on the change of watches
+					/* using $route.reload because
+						1. cannot be sure the $watch chain not raising errors
+						2. we need $scope variables to be resetted anyway
+					*/
 					$route.reload();
 				});
 			}
@@ -365,14 +357,13 @@ angular.module('specifyDataCleanerApp')
 				}
 			});
 
-			$scope.users = User.query();
-			$scope.getUserName = function(specifyUserId) {
-				for (var i=0;i<$scope.users.length;i++) {
-					if ($scope.users[i].specifyUserId == specifyUserId) {
-						return $scope.users[i].name;
-					}
-				}
-			}
+			//create an easy accesible users lookup-array
+			$scope.users = [];
+			User.query().$promise.then(function(users) {	
+				angular.forEach(users, function(user) {
+					$scope.users[user.specifyUserId] = { name : user.name, email : user.email };
+				});
+			});
 
 			$scope.updateWorkbenchHistory = function(workbenchId) {
 				var action,
@@ -387,9 +378,9 @@ angular.module('specifyDataCleanerApp')
 								items.push({
 									href : '#',
 									text : '<small>'+action.timestamp+'</small><br>'+
-										   '<span class="wb-from">'+$scope.getUserName(action.fromUserId)+'</span>'+
+										   '<span class="wb-from">'+$scope.users[action.fromUserId].name+'</span>'+
 										   '&nbsp;<i class="fa fa-share fa-fw wb-icon"></i>&nbsp;' +
-										   '<span class="wb-to">'+$scope.getUserName(action.toUserId)+'</span>'+
+										   '<span class="wb-to">'+$scope.users[action.toUserId].name+'</span>'+
 										   '<br>'+
 										   '<small class="wb-message">'+action.message+'</small>'
 								});
@@ -402,7 +393,7 @@ angular.module('specifyDataCleanerApp')
 				});
 			}
 
-			//user notification of newly transfered workbench(es)
+			//user notification of newly assigned workbench(es)
 			$scope.notificationModal = $modal({
 				scope: $scope,
 				template: 'app/datasets/notification.modal.html',
@@ -410,15 +401,18 @@ angular.module('specifyDataCleanerApp')
 			});	
 
 			$document.ready(function() {
-				var actions;
+				var actions,
+					user;
 				$scope.notification = { workbenches : [] };
 				History.query().$promise.then(function(histories) {		
 					angular.forEach(histories, function(history) {
 						for (var i=0;i<history.actions.length;i++) {
 							if (!history.actions[i].confirmed && history.actions[i].toUserId == Auth.getCurrentUser().specifyUserId) {
+								user = $scope.users[history.actions[i].fromUserId];
+								//console.log(user, history);
 								$scope.notification.workbenches.push({
 									name : history.name,
-									from : $scope.getUserName(history.actions[i].fromUserId),
+									from : user.name+', '+user.email,
 									message : history.actions[i].message
 								});
 								//update the action (confirmed == "seen")
@@ -429,8 +423,8 @@ angular.module('specifyDataCleanerApp')
 					}).$promise.then(function() {
 						$scope.notification.header = $scope.notification.workbenches.length > 0
 							? $scope.notification.workbenches.length == 1
-								? 'You have a new Workbench'
-								: 'You have '+$scope.notification.workbenches.length+' new workbenches'
+								? 'You have a new workbench!'
+								: 'You have '+$scope.notification.workbenches.length+' new workbenches!'
 							: false;
 						if ($scope.notification.header) {
 							$scope.notificationModal.show();
@@ -439,4 +433,7 @@ angular.module('specifyDataCleanerApp')
 				});
 			});
 		}			
-	]);
+
+
+]);
+
