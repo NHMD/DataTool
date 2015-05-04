@@ -11,7 +11,7 @@
 
 **Dina Data Tool**
 
-* Node.js v0.10.x+
+* Node.js v0.11.x+
 * npm (which comes bundled with Node) v2.1.0+
 * git
 * MongoDB - Download and Install [MongoDB](http://www.mongodb.org/downloads) -  you'll need mongoDB to be installed and have the `mongod` process running. This is used as storage for the web application.
