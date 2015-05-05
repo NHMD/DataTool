@@ -1,18 +1,18 @@
 <div class="container-fluid">		
 	<div class="row main-content">
 		<div class="col-lg-12 col-md-12">
-			<div class="col-md-3">
+			<div class="col-md-6">
 	  			<form class="form-inline" role="form">
 	  	  			<div class="form-group">
-	  				    <label>Dataset:
-	  					    <input type="text" 
-									class="form-control" 
-	  								ng-model="selectedWorkbench" 
-	  								ng-options="wb.Name for wb in workbenches" 
-	  								placeholder="Find dataset" 
-	  								limit="20"
-	  								bs-typeahead="workbenches"/>
-						</label>
+	  				    <label for="workbench-picker">Dataset&nbsp;</label>
+						<input type="text" 
+							id="workbench-picker" 
+							class="form-control"
+							placeholder="Find dataset"
+							bs-dropdown="workbenchesPicklist"
+							ng-model="workbenchPickerValue" 
+							ng-change="workbenchPickerChange()"
+							ng-mousedown="workbenchPickerMouseDown()">
 	  				</div>
 	  			</form>
 			</div>
@@ -25,7 +25,7 @@
 				</div>
 				<!-- End Taxon browser controller -->
 			</div>
-			<div class="col-md-7">
+			<div class="col-md-4">
 				<button type="button" class="btn btn-default"  ng-click="carryForwardModal.show()"  ng-show="workbenchtemplatemappingitems"><img ng-src="{{Icons.default.get('carryforward20x20')}}" class="specify-icon-16"> Carry forward
 				</button>
 				
@@ -47,7 +47,7 @@
 				<!-- end dataset / workbench user interactions --->
 			</div>
   			
-			  <h3 class="col-md-12" ng-show="mappedRows.length">Showing dataset: {{ selectedWorkbench.Name }} ({{mappedRows.length}} rows)</h3>
+			  <h3 class="col-md-12" ng-show="mappedRows.length">Showing dataset:<b> {{ selectedWorkbench.Name }} </b> ({{mappedRows.length}} rows)</h3>
 			  <h3 class="col-md-12" ng-show="selectedWorkbench && !mappedRows.length"><i class="fa fa-spinner fa-spin"></i> Fetching data...</h3>
 
 		   <table ng-show="workbenchtemplatemappingitems"  st-table="rowCollection" st-safe-src="mappedRows" class="table table-striped dataset-table" >

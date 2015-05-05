@@ -1,13 +1,56 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-	.controller('DatasetsCtrl', ['$document', '$route', '$rootScope', '$scope', '$modal', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench', 'hotkeys', 'Icons', 'TaxonTreeDefItem', 'TaxonBrowserService','$timeout','Auth','localStorageService', 'DataFormService', 'History', 'User',
-		function($document, $route, $rootScope, $scope, $modal, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons, TaxonTreeDefItem, TaxonBrowserService, $timeout,  Auth, localStorageService, DataFormService, History, User) {
+	.controller('DatasetsCtrl', ['$document', '$route', '$rootScope', '$scope', '$modal', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench', 'hotkeys', 'Icons', 'TaxonTreeDefItem', 'TaxonBrowserService','$timeout','Auth','localStorageService', 'DataFormService', 'History', 'User', '$typeahead', 
+		function($document, $route, $rootScope, $scope, $modal, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons, TaxonTreeDefItem, TaxonBrowserService, $timeout,  Auth, localStorageService, DataFormService, History, User, $typeahead) {
 
 			$scope.Icons = Icons;
-			$scope.workbenches = Workbench.query();
 			$scope.DataFormService = DataFormService;
-			
+
+			//create an easy accesible users lookup-array
+			$scope.users = [];
+			User.query().$promise.then(function(users) {	
+				angular.forEach(users, function(user) {
+					$scope.users[user.specifyUserId] = { name : user.name, email : user.email };
+				});
+			});
+
+			//>>>>>> workbechPicker
+			$scope.workbenchPickerValue = '';
+			$scope.workbenchPicker = angular.element('#workbench-picker');
+			$scope.workbenchPickerChange = function() {
+				$scope.workbenchPickerFilter($scope.workbenchPicker.val());
+			}
+			$scope.workbenchPickerMouseDown = function() {
+				$scope.workbenchPickerValue = '';
+			}
+			$scope.workbenchPickerClick = function(workbenchId) {
+				angular.forEach($scope.workbenches, function(workbench) {
+					if (workbenchId == workbench.WorkbenchID) {
+						//$scope.workbenchPicker.val(workbench.Name);
+						$scope.selectedWorkbench = workbench;
+						$scope.workbenchPickerValue = workbench.Name;
+					}
+				});
+			}
+			$scope.workbenchPickerFilter = function(filter) {
+				filter = filter.toLowerCase();
+				var items = [];
+				angular.forEach($scope.workbenches, function(workbench) {
+					if (filter == '' || workbench.Name.toLowerCase().indexOf(filter) == 0) {
+						items.push({
+							click : 'workbenchPickerClick('+workbench.WorkbenchID+')',
+							text : workbench.Name
+						});
+					}
+				}).$promise.then($scope.workbenchesPicklist = items);
+			}
+			Workbench.query().$promise.then(function(workbenches) {
+				$scope.workbenches = workbenches;
+				$scope.workbenchPickerFilter('');
+			});
+			//<<<<<< workbenchPicker
+
 			$scope.$watch('selectedWorkbench', function(newval, oldval) {
 				if (newval && typeof newval === 'object' && newval !== oldval) {
 
@@ -289,6 +332,12 @@ angular.module('specifyDataCleanerApp')
 			}
 
 			// ------ workbench ownership / history events --------
+			$scope.myFilter =  function (filterFilter) {
+ 				 return function (items, searchValue) {
+				    return filterFilter(items, { value: searchValue });
+	 			 };
+			};
+
 			$scope.changeownerModal = $modal({
 				scope: $scope,
 				template: 'app/datasets/changeowner.modal.html',
@@ -357,14 +406,6 @@ angular.module('specifyDataCleanerApp')
 				}
 			});
 
-			//create an easy accesible users lookup-array
-			$scope.users = [];
-			User.query().$promise.then(function(users) {	
-				angular.forEach(users, function(user) {
-					$scope.users[user.specifyUserId] = { name : user.name, email : user.email };
-				});
-			});
-
 			$scope.updateWorkbenchHistory = function(workbenchId) {
 				var action,
 					items = [];				
@@ -409,7 +450,6 @@ angular.module('specifyDataCleanerApp')
 						for (var i=0;i<history.actions.length;i++) {
 							if (!history.actions[i].confirmed && history.actions[i].toUserId == Auth.getCurrentUser().specifyUserId) {
 								user = $scope.users[history.actions[i].fromUserId];
-								//console.log(user, history);
 								$scope.notification.workbenches.push({
 									name : history.name,
 									from : user.name+', '+user.email,
@@ -436,4 +476,5 @@ angular.module('specifyDataCleanerApp')
 
 
 ]);
+
 

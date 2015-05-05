@@ -209,7 +209,7 @@ hr.modal-hr {
 	color: gray;
 }
 .wb-message {
-	background-color: #ffc;;
+	background-color: #ffc;
 	padding : 4px;
 	min-width: 100%;
 	max-width: 100%;
@@ -223,4 +223,6 @@ hr.modal-hr {
 .wb-to {
 	color : darkgreen;
 }
-
+/* workbench-picker */
+#workbench-picker {
+}
