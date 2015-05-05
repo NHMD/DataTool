@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-	.controller('DatasetsCtrl', ['$document', '$route', '$rootScope', '$scope', '$modal', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench', 'hotkeys', 'Icons', 'TaxonTreeDefItem', 'TaxonBrowserService','$timeout','Auth','localStorageService', 'DataFormService', 'History', 'User', '$typeahead', 
-		function($document, $route, $rootScope, $scope, $modal, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons, TaxonTreeDefItem, TaxonBrowserService, $timeout,  Auth, localStorageService, DataFormService, History, User, $typeahead) {
+	.controller('DatasetsCtrl', ['$document', '$route', '$rootScope', '$scope', '$modal', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench', 'hotkeys', 'Icons', 'TaxonTreeDefItem', 'TaxonBrowserService','$timeout','Auth','localStorageService', 'DataFormService', 'History', 'User', 
+		function($document, $route, $rootScope, $scope, $modal, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons, TaxonTreeDefItem, TaxonBrowserService, $timeout,  Auth, localStorageService, DataFormService, History, User) {
 
 			$scope.Icons = Icons;
 			$scope.DataFormService = DataFormService;
@@ -27,7 +27,6 @@ angular.module('specifyDataCleanerApp')
 			$scope.workbenchPickerClick = function(workbenchId) {
 				angular.forEach($scope.workbenches, function(workbench) {
 					if (workbenchId == workbench.WorkbenchID) {
-						//$scope.workbenchPicker.val(workbench.Name);
 						$scope.selectedWorkbench = workbench;
 						$scope.workbenchPickerValue = workbench.Name;
 					}
@@ -332,12 +331,6 @@ angular.module('specifyDataCleanerApp')
 			}
 
 			// ------ workbench ownership / history events --------
-			$scope.myFilter =  function (filterFilter) {
- 				 return function (items, searchValue) {
-				    return filterFilter(items, { value: searchValue });
-	 			 };
-			};
-
 			$scope.changeownerModal = $modal({
 				scope: $scope,
 				template: 'app/datasets/changeowner.modal.html',
