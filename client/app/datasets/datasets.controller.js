@@ -7,7 +7,7 @@ angular.module('specifyDataCleanerApp')
 			$scope.Icons = Icons;
 			$scope.DataFormService = DataFormService;
 
-			//create an easy accesible users lookup-array
+			//create an easy accessible users lookup-array
 			$scope.users = [];
 			User.query().$promise.then(function(users) {	
 				angular.forEach(users, function(user) {
@@ -292,6 +292,14 @@ angular.module('specifyDataCleanerApp')
 
 					}
 				})
+				.add({
+					combo: 'f10',
+					description: 'Open dataset picker',
+					callback: function() {
+						$scope.workbenchPicker.click()
+					}
+				})
+
 				
 			$scope.carryForwardModal = $modal({
 				scope: $scope,
@@ -365,7 +373,7 @@ angular.module('specifyDataCleanerApp')
 					});
 				}).then(function() {
 					/* using $route.reload because
-						1. cannot be sure the $watch chain not raising errors
+						1. we cannot be sure the $watch chain not raises errors
 						2. we need $scope variables to be resetted anyway
 					*/
 					$route.reload();

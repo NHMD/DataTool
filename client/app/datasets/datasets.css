@@ -223,6 +223,7 @@ hr.modal-hr {
 .wb-to {
 	color : darkgreen;
 }
-/* workbench-picker */
-#workbench-picker {
+/* add pointer cursor to oagination buttons */
+.pagination li a {
+	cursor: pointer;
 }
