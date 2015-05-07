@@ -50,83 +50,72 @@
 			  <h3 class="col-md-12" ng-show="mappedRows.length">Showing dataset:<b> {{ selectedWorkbench.Name }} </b> ({{mappedRows.length}} rows)</h3>
 			  <h3 class="col-md-12" ng-show="selectedWorkbench && !mappedRows.length"><i class="fa fa-spinner fa-spin"></i> Fetching data...</h3>
 
-		   <table ng-show="workbenchtemplatemappingitems"  st-table="rowCollection" st-safe-src="mappedRows" class="table table-striped dataset-table" >
-		   	<thead>
-				<tr><th colspan="3">
-							<input st-search="CellData" placeholder="Search dataset" class="input-sm form-control" type="search"/>
-						</th></tr>
+			<table ng-show="workbenchtemplatemappingitems"  st-table="rowCollection" st-safe-src="mappedRows" class="table table-striped dataset-table" >
+			<thead>
 				<tr>
-				<th st-ratio="40">
-					<button class="btn btn-default" ng-click="addRowToGrid(true)"><i class="fa fa-plus"></i> row</button> 
+					<th colspan="3">
+						<input st-search="CellData" placeholder="Search dataset" class="input-sm form-control" type="search"/>
+					</th>
+				</tr>
+				<tr>
+					<th st-ratio="40">
+						<button class="btn btn-default" ng-click="addRowToGrid(true)"><i class="fa fa-plus"></i> row</button> 
 						<!-- Start Data Form controller -->		
-						<div class="pull-right">
-							<button class="btn btn-default" ng-click="DataFormService.openDataForm()"><i class="fa fa-plus"></i>  form</button>
-						</div>
+						<!-- <div class="pull-right"> -->
+						<button class="btn btn-default" ng-click="DataFormService.openDataForm()"><i class="fa fa-plus"></i>  form</button>
+						<!--</div>-->
 						<!-- End Data Form  controller -->
 					</th>
-					<th lr-drag-src="headers" lr-drop-target="headers" st-sort="getters.{{wtmi.FieldName}}" ng-repeat="wtmi in workbenchtemplatemappingitems" ng-show="!showHideWorkBenchTemplate[wtmi.WorkbenchTemplateID][wtmi.WorkbenchTemplateMappingItemID]">
-						<img ng-src="{{ Icons.datamodel.get(wtmi.TableName) }}" class="specify-icon-16"> {{wtmi.FieldName}}
+					<th lr-drag-src="headers" lr-drop-target="headers" st-sort="getters.{{wtmi.FieldName}}" ng-repeat="wtmi in workbenchtemplatemappingitems" ng-show="!showHideWorkBenchTemplate[wtmi.WorkbenchTemplateID][wtmi.WorkbenchTemplateMappingItemID]" title="{{wtmi.FieldName}}">
+						<img ng-src="{{ Icons.datamodel.get(wtmi.TableName) }}" class="specify-icon-16" title="{{wtmi.FieldName}}"> {{wtmi.FieldName}}
 					</th>
 				</tr>
 		   	</thead>
 		   	<tbody>
-		        
-		   	<tr st-select-row="row" st-select-mode="multiple" ng-repeat="row in rowCollection track by row.WorkbenchRowID" ng-if="row !== undefined" >
-				 <!-- form -->
-				<td style="white-space: nowrap" st-ratio="40">
-				       
-				        <form editable-form name="rowform" onshow="stopClickFromBubbleUp()" onbeforesave="saveRow(row)"  ng-show="rowform.$visible" class="form-buttons form-inline" shown="row.inserted === true">
-				          <button type="submit" ng-disabled="rowform.$waiting" ng-click="$event.stopPropagation();" class="btn btn-primary">
-				            save
-				          </button>
-				          <button type="button" ng-disabled="rowform.$waiting" ng-click="(row.inserted) ? deleteRow(row, $index) : rowform.$cancel(); $event.stopPropagation();" class="btn btn-default">
-				            cancel
-				          </button>
-				        </form>
-				        <div class="buttons" ng-show="!rowform.$visible">
-						<button class="btn btn-primary" ng-click="DataFormService.openDataForm(row); $event.stopPropagation();" ><i class="fa fa-list-alt fa-lg"></i></button>
-				          <button class="btn btn-primary" ng-click="rowform.$show(); $event.stopPropagation();"><i class="fa fa-edit fa-lg"></i></button>
-				          <button class="btn btn-danger" ng-click="deleteRow(row, $index); $event.stopPropagation();"><i class="fa fa-trash-o fa-lg"></i></button>
-				        </div>  
-				      </td>
-					  	 <!-- form end-->
-		   		<td ng-repeat="wtmi in workbenchtemplatemappingitems" ng-show="!showHideWorkBenchTemplate[wtmi.WorkbenchTemplateID][wtmi.WorkbenchTemplateMappingItemID]">
-
+				<tr st-select-row="row" st-select-mode="multiple" ng-repeat="row in rowCollection track by row.WorkbenchRowID" ng-if="row !== undefined" >
+					<!-- form -->
+					<td style="white-space: nowrap" st-ratio="40">
+						<form editable-form name="rowform" onshow="stopClickFromBubbleUp()" onbeforesave="saveRow(row)"  ng-show="rowform.$visible" class="form-buttons form-inline" shown="row.inserted === true">
+							<button type="submit" ng-disabled="rowform.$waiting" ng-click="$event.stopPropagation();" class="btn btn-primary">
+					            save
+							</button>
+							<button type="button" ng-disabled="rowform.$waiting" ng-click="(row.inserted) ? deleteRow(row, $index) : rowform.$cancel(); $event.stopPropagation();" class="btn btn-default">
+								cancel
+							</button>
+						</form>
+						<div class="buttons" ng-show="!rowform.$visible">
+							<button class="btn btn-primary" ng-click="DataFormService.openDataForm(row); $event.stopPropagation();" ><i class="fa fa-list-alt fa-lg"></i></button>
+							<button class="btn btn-primary" ng-click="rowform.$show(); $event.stopPropagation();"><i class="fa fa-edit fa-lg"></i></button>
+							<button class="btn btn-danger" ng-click="deleteRow(row, $index); $event.stopPropagation();"><i class="fa fa-trash-o fa-lg"></i></button>
+						</div>  
+					</td>
+					<!-- form end-->
+					<td ng-repeat="wtmi in workbenchtemplatemappingitems" ng-show="!showHideWorkBenchTemplate[wtmi.WorkbenchTemplateID][wtmi.WorkbenchTemplateMappingItemID]">
 						<span editable-text="row[wtmi.WorkbenchTemplateMappingItemID].CellData" e-name="{{wtmi.WorkbenchTemplateMappingItemID}}" e-form="rowform" onaftersave=" createOrUpdateWorkBenchDataItem(row, row[wtmi.WorkbenchTemplateMappingItemID], wtmi)">
-					
-						{{ row[wtmi.WorkbenchTemplateMappingItemID].CellData }}</span>
-				
-				</td>
-
-		   	</tr>
+							{{ row[wtmi.WorkbenchTemplateMappingItemID].CellData }}
+						</span>
+					</td>
+			   	</tr>
 		   	</tbody>
 			<tfoot>
-						<tr >
-							<td st-ratio="12">
-								<button class="btn btn-default" ng-click="addRowToGrid(true)"><i class="fa fa-plus"></i> row</button> 
-								
-								<!-- Start Data Form controller -->		
-									<div ng-controller="DataFormCtrl" class="pull-right">
-										<button class="btn btn-default" ng-click="DataFormService.openDataForm()"><i class="fa fa-plus"></i>  form</button>
-									</div>
-								<!-- End Data Form  controller -->
-								
-						</td>
-						
-							<td colspan="3" class="text-center">
-								<div st-pagination="" st-items-by-page="10" st-displayed-pages="7">
-								</div>
-							</td>
-						</tr>
-					</tfoot>
-		   </table>
-			 		
-                
-            </div>
-         
- 
-        </div>
-        <!-- /.row -->
+				<tr>
+					<td st-ratio="12">
+						<button class="btn btn-default" ng-click="addRowToGrid(true)"><i class="fa fa-plus"></i> row</button> 
+						<!-- Start Data Form controller -->		
+						<span ng-controller="DataFormCtrl" XXclass="pull-right">
+							<button class="btn btn-default" ng-click="DataFormService.openDataForm()"><i class="fa fa-plus"></i>  form</button>
+						</span>
+						<!-- End Data Form  controller -->
+					</td>
+					<td colspan="3" class="text-center">
+						<div st-pagination="" st-items-by-page="10" st-displayed-pages="7"></div>
+					</td>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+</div>
+<!-- /.row -->
 
 </div>
 

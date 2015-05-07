@@ -1,0 +1,30 @@
+<div class="modal ng-scope top am-fade-and-slide-top" tabindex="-1" role="dialog" style="display: block;">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header"><button type="button" class="close" ng-click="$hide()">×</button>
+				<h4 class="modal-title"><b>Reduced number of visible columns</b></h4>
+			</div>
+			<div class="modal-body">
+				In order to increase the readability of the dataset, <b>{{ columnsNotification.columnsHidden }}</b> columns have been automatically hidden.<br><br>
+				<span ng-show="columnsNotification.columnsEmpty != 0">
+					<li><b>{{ columnsNotification.columnsEmpty }}</b> columns hidden because they were completely empty. </li>
+				</span>
+				<span ng-show="columnsNotification.columnsBeyond != 0">
+					<li><b>{{ columnsNotification.columnsBeyond }}</b> columns hidden since they exceeded the view. </li>
+				</span>
+				<br>
+				At any time you can change the visibility of columns by clicking the "Hide columns"-button.
+				<br><br>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" ng-click="$hide();showcolumnsModal.show()"> 
+						<i class="fa fa-eye-slash"></i> Hide Columns
+					</button>
+					<button type="button" class="btn btn-success" ng-click="$hide()"> 
+						<i class="fa fa-check"></i> OK
+					</button>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

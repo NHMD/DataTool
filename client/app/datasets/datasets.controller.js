@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-	.controller('DatasetsCtrl', ['$document', '$route', '$rootScope', '$scope', '$modal', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench', 'hotkeys', 'Icons', 'TaxonTreeDefItem', 'TaxonBrowserService','$timeout','Auth','localStorageService', 'DataFormService', 'History', 'User', 
-		function($document, $route, $rootScope, $scope, $modal, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons, TaxonTreeDefItem, TaxonBrowserService, $timeout,  Auth, localStorageService, DataFormService, History, User) {
+	.controller('DatasetsCtrl', ['$document', '$route', '$rootScope', '$scope', '$modal', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench', 'hotkeys', 'Icons', 'TaxonTreeDefItem', 'TaxonBrowserService','$timeout','Auth','localStorageService', 'DataFormService', 'History', 'User', '$dropdown',
+		function($document, $route, $rootScope, $scope, $modal, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons, TaxonTreeDefItem, TaxonBrowserService, $timeout,  Auth, localStorageService, DataFormService, History, User, $dropdown) {
 
 			$scope.Icons = Icons;
 			$scope.DataFormService = DataFormService;
@@ -123,8 +123,81 @@ angular.module('specifyDataCleanerApp')
 				};
 
 				$scope.mappedRows = mappedRows;
-
+				$scope.reduceColumns();
 			};
+
+			/* 
+			   Reduce the initial number of visual columns in a dataset
+			   - if the number of columns exceeds 15 then
+			    * hide empty columns
+			    * trigger the hide/show columns modal
+  			*/
+			$scope.reduceColumns = function() {
+				var index,
+					columnHasData = [];
+
+				for (index in $scope.workbenchtemplatemappingitems) {
+					//include only columns, eg skip WorkbenchRowID, RowNumber and future additions
+					if (parseInt(index)>0) {
+						columnHasData[$scope.workbenchtemplatemappingitems[index].WorkbenchTemplateMappingItemID]=false;
+					}
+				}
+
+				if (columnHasData.length<15) return;
+
+				$scope.columnsNotification = {
+					columnsTotal : $scope.workbenchtemplatemappingitems.length,
+					columnsEmpty : 0,
+					columnsBeyond : 0,
+					columnsHidden : 0
+				}
+
+				angular.forEach($scope.mappedRows, function(mappedRow) {
+					for (index in columnHasData) {
+						if (!columnHasData[index]) {
+							if (typeof mappedRow[index] !== 'undefined') {
+								columnHasData[index]=true;
+							}
+						}
+					}
+				});
+
+				//ensure localStorageService.showHideWorkBenchTemplate[$scope.selectedWorkbench.WorkbenchTemplateID] exists
+				if(!$scope.showHideWorkBenchTemplate[$scope.selectedWorkbench.WorkbenchTemplateID]) {
+					$scope.showHideWorkBenchTemplate[$scope.selectedWorkbench.WorkbenchTemplateID] = {};
+				}
+			
+				//hide empty columns
+				for (index in $scope.workbenchtemplatemappingitems) {
+					var item = $scope.workbenchtemplatemappingitems[index];
+					if (!columnHasData[item.WorkbenchTemplateMappingItemID]) {
+						$scope.columnsNotification.columnsEmpty++;
+						$scope.showHideWorkBenchTemplate[$scope.selectedWorkbench.WorkbenchTemplateID][item.WorkbenchTemplateMappingItemID]=true;
+					}
+				}
+
+				//hide remaining columns beyond #15
+				var visibleTotal = 0;
+				for (index in $scope.workbenchtemplatemappingitems) {
+					var item = $scope.workbenchtemplatemappingitems[index];
+					if (!$scope.showHideWorkBenchTemplate[$scope.selectedWorkbench.WorkbenchTemplateID][item.WorkbenchTemplateMappingItemID]) {
+						visibleTotal++;
+						if (visibleTotal>15) {
+							$scope.showHideWorkBenchTemplate[$scope.selectedWorkbench.WorkbenchTemplateID][item.WorkbenchTemplateMappingItemID]=true;
+							$scope.columnsNotification.columnsBeyond++;
+						}
+					}
+				}
+
+				$scope.columnsNotification.columnsHidden = parseInt($scope.columnsNotification.columnsEmpty) + parseInt($scope.columnsNotification.columnsBeyond);
+				
+				$modal({
+					scope: $scope,
+					template: 'app/datasets/columnsNotification.modal.html',
+					show: true,
+					placement : 'center'
+				});
+			}
 
 			$scope.createOrUpdateWorkBenchDataItem = function(row, item, template) {
 
@@ -180,8 +253,6 @@ angular.module('specifyDataCleanerApp')
 					
 					if(openInGrid) row["inserted"] = true;
 					for (var i = 0; i < $scope.workbenchtemplatemappingitems.length; i++) {
-
-
 						row[$scope.workbenchtemplatemappingitems[i].WorkbenchTemplateMappingItemID] = new WorkbenchDataItem({
 							"CellData": $scope.carryForward(workbenchrow.RowNumber, $scope.workbenchtemplatemappingitems[i]),
 							"WorkbenchTemplateMappingItemID": $scope.workbenchtemplatemappingitems[i].WorkbenchTemplateMappingItemID,
@@ -193,10 +264,8 @@ angular.module('specifyDataCleanerApp')
 					};
 					$scope.mappedRows[workbenchrow.RowNumber] = row;
 					
-					
 					// timeout is needed to move the click trigger outside the current digest cycle
 					$timeout(function(){
-			
 						// had to use JQuery for these ones....
 						$("ul.pagination li:last a").trigger('click');
 						$("tbody").animate({
@@ -314,7 +383,6 @@ angular.module('specifyDataCleanerApp')
 				show: false,
 				prefixEvent: "showcolumnsmodal"
 			});
-				
 				
 			$scope.saveTableSettingsForWorkbench = function() {
 			}
