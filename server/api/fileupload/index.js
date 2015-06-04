@@ -18,6 +18,8 @@ router.post('/datasets/:collname/processtree', auth.isAuthenticated(), controlle
 router.post('/datasets/:collname/process', auth.isAuthenticated(), controller.process);
 router.get('/datasets/:collname/objects', controller.indexObjects);
 router.get('/datasets/:collname/objects/:id', controller.findObject);
+router.get('/datasets/:collname/fields', controller.getFields); //
+router.post('/datasets/:collname/actions', controller.updateObject); //
 router.get('/datasets/:collname', controller.find);
 router.post('/datasets/:collname/mappings', auth.isAuthenticated(), controller.saveCsvMapping);
 router.delete('/datasets/:collname', auth.isAuthenticated(), controller.deleteCsv);

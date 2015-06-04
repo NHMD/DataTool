@@ -7,8 +7,20 @@ angular.module('specifyDataCleanerApp')
 		return $resource('/api/fileupload/datasets/:collectionname', {
 			id: '@collectionname'
 		}, {
-			update: {
-				method: 'PUT' // this method issues a PUT request
+			getFields : {
+				method: 'GET',
+				params: {
+					id: '@collectionname'
+				},
+				url: '/api/fileupload/datasets/:collectionname/fields',
+				isArray: false
+			},
+			updateObject: {
+				method: 'POST', // this method issues a PUT request
+				params: {
+					id: '@collectionname'
+				},
+				url: '/api/fileupload/datasets/:collectionname/actions/'
 			},
 			getData: {
 				method: 'GET',

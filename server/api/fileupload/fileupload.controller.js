@@ -15,9 +15,7 @@ var specifyModel = require('../../api/mysql');
 
 function parseCSVFile(sourceFilePath, columns, onNewRecord, handleError, done, delimiter) {
 	var source = fs.createReadStream(sourceFilePath);
-
 	var linesRead = 0;
-
 	var parser = parse({
 		delimiter: delimiter,
 		columns: columns,
@@ -45,7 +43,6 @@ function parseCSVFile(sourceFilePath, columns, onNewRecord, handleError, done, d
 
 
 exports.getFile = function(req, res) {
-
 	var csvdelimiter = (req.body.csvdelimiter) ? req.body.csvdelimiter : ",";
 	var isTreeOnly = (req.body.isTreeOnly) ? req.body.isTreeOnly : false;
 	var filePath = req.files.file.path;
@@ -62,16 +59,11 @@ exports.getFile = function(req, res) {
 	}
 
 	function done(linesRead) {
-
 		MongoDB.connect().then(function(db) {
 			var collection = db.collection(collName);
 			collection.insert(rows, function(err, docs) {
-
 				if (err) throw err;
-
-
 				fs.unlink(filePath);
-
 			});
 		})
 			.then(function() {
@@ -85,56 +77,34 @@ exports.getFile = function(req, res) {
 				req.user.csvimports.push(imported);
 				req.user.save(function(err) {
 					if (err) throw err;
-					
 					res.send(200, imported);
-					
 				});
-
-
-
-
 			})
-
 	}
-
 	var columns = true;
 	parseCSVFile(filePath, columns, onNewRecord, onError, done, csvdelimiter);
-
 };
 
 exports.find = function(req, res) {
 	var limit = parseInt(req.query.limit) || 100;
 	var offset = parseInt(req.query.offset) || 0;
-
 	MongoDB.connect().then(function(db) {
-
 		db.collection(req.params.collname, function(err, collection) {
-
 			if (err) throw err;
 			collection.stats(function(err, stats) {
-
 				res.send(200, {
 					collectionname: req.params.collname,
 					count: stats.count,
 					size: stats.size,
-
 				});
-
-
 			});
 		});
-
 	})
 }
 
 exports.findObject = function(req, res) {
-
-
 	MongoDB.connect().then(function(db) {
-
 		db.collection(req.params.collname, function(err, collection) {
-
-
 			collection.find({
 				_id: MongoDB.ObjectID(req.params.id)
 			}).toArray(function(err, docs) {
@@ -143,45 +113,126 @@ exports.findObject = function(req, res) {
 				res.send(200, docs[0]);
 
 			});
-
 		});
-
 	})
+}
 
+//return an empty set of fields for the passed collection
+function returnEmptyFieldList(collection, res) {
+	collection.find({}).limit(1).toArray(function(err, docs) {
+		if (err) throw err;
+		for (var key in docs[0]) {
+			docs[0][key]='';
+		}
+		res.send(200, docs);
+	});
 }
 
 exports.indexObjects = function(req, res) {
-	var limit = parseInt(req.query.limit) || 100;
-	var offset = parseInt(req.query.offset) || 0;
+	var limit = parseInt(req.query.limit) || 100,
+		offset = parseInt(req.query.offset) || 0,
+		sort = parseInt(req.query.sort) || 1,
+		orderBy = req.query.orderBy || false,
+		filterParam = JSON.parse(req.query.filter),
+		filter = {};
+
+		for (var key in filterParam) {
+			//the key can be "enriched"	with backslashes and quotes
+			//we need a clean {'x': /x/} object
+			var trimmedKey = key.replace(/\W/g, '');
+			filter[trimmedKey]=new RegExp(filterParam[key].toString());
+		}
 
 	MongoDB.connect().then(function(db) {
 		db.collection(req.params.collname, function(err, collection) {
-
-			if (err) throw err;
-
-			collection.find({}).skip(offset).limit(limit).toArray(function(err, docs) {
-				res.send(200, docs);
-
-			});
-
+			//TODO the orderBy distinction should be refactored
+			if (orderBy) {
+				collection.find(filter).sort(orderBy, sort).skip(offset).limit(limit).toArray(function(err, docs) {
+					if (docs.length>0) {
+						res.send(200, docs);
+					} else {
+						returnEmptyFieldList(collection, res);
+					}
+				});
+			} else {
+				collection.find(filter).skip(offset).limit(limit).toArray(function(err, docs) {
+					if (docs.length>0) {
+						res.send(200, docs);
+					} else {
+						returnEmptyFieldList(collection, res);
+					}
+				});
+			}
 		});
-
 	})
 }
 
+//return array of fields for the collection
+exports.getFields = function(req, res) {
+	MongoDB.connect().then(function(db) {
+		db.collection(req.params.collname, function(err, collection) {
+			collection.find({}).limit(1).toArray(function(err, docs) {
+				if (err) throw err;
+				var fields = { fields : [] };
+				for (var key in docs[0]) {
+					fields.fields.push(key);
+				}
+				res.send(200, fields);
+			});
+		});
+	});
+}
+
+function searchReplace(collname, field, search, replace) {
+	MongoDB.connect().then(function(db) {
+		db.collection(collname, function(err, collection) {
+			collection.find( { field : _id }).toArray(function(err, docs) {
+				console.log(docs);
+			})
+		})
+	})
+}
+
+exports.updateObject = function(req, res) {
+	var action = req.body.action ? req.body.action : false,
+		collname = req.params.collname;
+	switch (action) {
+		case 'searchreplace' :
+			var field = req.body.field ? req.body.field : false,
+				search = req.body.search ? req.body.search : false,
+				replace = req.body.replace ? req.body.replace : false;
+			//an error should be raised if any of the above values are false
+			searchReplace(collname, field, search, replace);
+			break;
+
+		default :
+			break;
+	}
+}
+/*
+  if(req.body._id) { delete req.body._id; }
+  History.findById(req.params.id, function (err, thing) {
+    if (err) { return handleError(res, err); }
+    if(!thing) { return res.send(404); }
+    var updated = _.extend(thing, req.body);
+    updated.save(function (err) {
+      if (err) { return handleError(res, err); }
+      return res.json(200, thing);
+    });
+  });
+*/
+
+
+//---------------------------------------------
 exports.process = function(req, res) {
-
 	var user = req.user;
-
 	if (!user) return res.json(401);
-
 	var csvimport = user.csvimports.filter(function(e) {
 		return e.collectionname === req.params.collname
 	})[0];
 	
 	if (!csvimport) return res.json(404);
 	var discipline = csvimport.specifycollection.discipline;
-
 	var sortedMappings = {};
 
 	_.each(csvimport.mapping, function(value, key) {
@@ -196,7 +247,6 @@ exports.process = function(req, res) {
 	var promises = [];
 
 	_.each(sortedMappings, function(value, key) {
-		
 		if (datamapper.isTree(key)) {
 			var promise = datamapper.aggregateTreeAndPersist(req.params.collname, value, key, discipline);
 			promises.push(promise);
@@ -228,14 +278,9 @@ exports.process = function(req, res) {
 
 }
 
-
-
 exports.processtree = function(req, res) {
-
 	var user = req.user;
-
 	if (!user) return res.json(401);
-
 	var csvimport = user.csvimports.filter(function(e) {
 		return e.collectionname === req.params.collname
 	})[0];
@@ -249,7 +294,6 @@ exports.processtree = function(req, res) {
 			return key === '_id';
 	});
 	
-
 	datamapper.aggregateTreeAndPersist(req.params.collname, mappings, modelName, discipline)
 	.then(function() {
 		csvimport.uploadedToSpecify = true;
@@ -257,36 +301,25 @@ exports.processtree = function(req, res) {
 			if (err) throw err;
 			return res.send(200);
 		});
-		
 	})
-
 }
-
-
 
 exports.saveCsvMapping = function(req, res, next) {
 	var user = req.user;
-
 	if (!user) return res.json(401);
-
 	var csvimport = user.csvimports.filter(function(e) {
 		return e.collectionname === req.params.collname
 	})[0];
 	csvimport.mapping = req.body;
-
 	user.save(function(err) {
 		if (err) throw err;
 		return res.json(201, csvimport.mapping);
 	});
-
-
 };
 
 exports.deleteCsvMapping = function(req, res, next) {
 	var user = req.user;
-
 	if (!user) return res.json(401);
-
 	var csvimport = user.csvimports.filter(function(e) {
 		return e.collectionname === req.params.collname
 	})[0];
@@ -296,80 +329,56 @@ exports.deleteCsvMapping = function(req, res, next) {
 		if (err) throw err;
 		return res.json(204);
 	});
-
-
 };
 
 exports.deleteCsv = function(req, res, next) {
 	var user = req.user;
-
 	if (!user) return res.json(401);
-
 	var csvimport = user.csvimports.filter(function(e) {
 		return e.collectionname === req.params.collname
 	})[0];
 	
-	 if (!csvimport) return res.json(403);
+	if (!csvimport) return res.json(403);
 	
   	MongoDB.connect().then(function( db) {
-		
 		return db.dropCollection(req.params.collname);
-
   	}).then(function( collection) {
-		
 		user.csvimports = _.without(user.csvimports, _.findWhere(user.csvimports, {collectionname: req.params.collname}));
 		user.save(function(err) {
 			if (err) throw err;
 			return res.json(204);
 		});
-
   	}).catch(function(err){
   		console.log(err.message);
 		return res.json(500, err.message);
   	})
-
-
 };
 
 
 exports.saveSpecifyCollection = function(req, res, next) {
 	var user = req.user;
-
 	if (!user) return res.json(401);
-
 	var csvimport = user.csvimports.filter(function(e) {
 		return e.collectionname === req.params.collname
 	})[0];
 	csvimport.specifycollection = req.body;
-
 	user.save(function(err) {
 		if (err) throw err;
 		return res.json(201, csvimport.specifycollection);
 	});
-
-
 };
 
 
-
 // experimental
-
 exports.processToSp = function (req, res, next){
-	
 	var user = req.user;
-
 	if (!user) return res.json(401);
-
 	var csvimport = user.csvimports.filter(function(e) {
 		return e.collectionname === req.params.collname
 	})[0];
 	console.log("csvimport : " + csvimport)
 	if (!csvimport) return res.json(404);
-	
-	
 	datamapper.insertIntoSpecify(req.params.collname, csvimport).then(function(){return res.json(200); })
-	
-	
 }
 
 /*

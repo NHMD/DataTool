@@ -1,57 +1,75 @@
 <div class="container-fluid" nv-file-drop="" uploader="uploader" filters="queueLimit, customFilter">
-	
-<div class="btn-group col-md-10" role="group">
-<button type="button" class="btn btn-default" ng-show="user.csvimports && user.csvimports.length >0" ng-model="selectedCsv" ng-options="imp.collectionname as imp.name for imp in user.csvimports | filter: {isTreeOnly: true}" placeholder="Choose dataset" bs-select>
-	<button type="button" class="btn btn-default" ng-show="selectedCsv" data-animation="am-fade-and-slide-top" data-template="app/csv-tree-upload/mapping.modal.tmpl.html" bs-modal="modal"><span class="glyphicon glyphicon-transfer"></span> Map selected dataset
-	</button>
-		<button type="button" class="btn btn-default" ng-show="datasetIsMapped() && !datasetIsUploadedToSpecify()" ng-click="pushToSpecify()">
-  <i class="fa fa-reply fa-rotate-180"></i>
-  <i class="fa fa-database"></i>
-   Upload selected dataset to Specify
-	</button>
-	<button type="button" class="btn btn-default" data-animation="am-fade-and-slide-top" data-template="app/csv-tree-upload/upload.modal.tmpl.html" bs-modal="modal"><i class="fa fa-upload"></i> Upload new dataset(s) to workspace
-</button>
-		</div>	
-		<div class="col-md-1" >
-		  		<button type="button" class="btn btn-danger" ng-show="selectedCsv" ng-click="deleteDataset()">
-		    <i class="fa fa-trash"></i>
-		     Delete selected dataset
-		  	</button>
-		</div>	
-		<div class="col-md-2 col-md-offset-6">
-			<i ng-show="upLoading" class="fa fa-spinner fa-spin fa-5x"></i>
-		</div>
-				<!-- Data Table -->
 
-             <div class="col-md-12" style="margin-bottom: 40px">
-				 
-				 <table class="table table-striped" st-pipe="callServer" st-table="data" st-dataset-name="{{selectedCsv}}">
-				 	<thead>
-				 	<tr>
-						<th ng-repeat="(key, value) in data[0]" st-sort="key" ng-hide="key === '_id'">{{key}}</th>
-				
-				 		
-				 	</tr>
-				 	</thead>
-				 	<tbody >
-				 	<tr ng-repeat="row in data">
-				 		<td ng-repeat="(key, value) in row" ng-hide="key === '_id'">{{row[key]}}</td>
-				 	
-				 		
-				 	</tr>
-				 	</tbody>
-				 	<tbody ng-show="isLoading">
-				 	<tr>
-				 		<td colspan="4" class="text-center">Loading ... </td>
-				 	</tr>
-				 	</tbody>
-				 	<tfoot>
-				 	<tr>
-				 		<td class="text-center" st-pagination="" st-items-by-page="100" colspan="4">
-				 		</td>
-				 	</tr>
-				 	</tfoot>
-				 </table>
-				 
-				 
-			 </div>
+    <div class="btn-group col-md-6" role="group">
+        <button type="button" class="btn btn-default" ng-show="user.csvimports && user.csvimports.length >0" ng-model="selectedCsv" ng-options="imp.collectionname as imp.name for imp in user.csvimports | filter: {isTreeOnly: true}" placeholder="Choose dataset" bs-select>
+            <button type="button" class="btn btn-default" ng-show="selectedCsv" data-animation="am-fade-and-slide-top" data-template="app/csv-tree-upload/mapping.modal.tmpl.html" bs-modal="modal"><span class="glyphicon glyphicon-transfer"></span> Map selected dataset
+            </button>
+            <button type="button" class="btn btn-default" ng-show="datasetIsMapped() && !datasetIsUploadedToSpecify()" ng-click="pushToSpecify()">
+                <i class="fa fa-reply fa-rotate-180"></i>
+                <i class="fa fa-database"></i> Upload selected dataset to Specify
+            </button>
+            <button type="button" class="btn btn-default" data-animation="am-fade-and-slide-top" data-template="app/csv-tree-upload/upload.modal.tmpl.html" bs-modal="modal"><i class="fa fa-upload"></i> Upload new dataset(s) to workspace
+            </button>
+    </div>
+
+    <div class="col-md-4" ng-show="selectedCsv">
+		<form class="form-inline">
+			<button type="button" class="btn btn-default" bs-dropdown="editDropdown">
+				Edit&nbsp;&nbsp;<span class="caret"></span>
+			</button>
+			<select class="form-control" style="width:100px;clear:none;float:none;" ng-model="itemsByPage">
+				<option value="10">10 rows</option>
+				<option value="15">15 rows</option>
+				<option value="25">25 rows</option>
+				<option value="50">50 rows</option>
+				<option value="100">100 rows</option>
+			</select>
+		</form>
+    </div>
+
+    <div class="col-md-1">
+        <button type="button" class="btn btn-danger" ng-show="selectedCsv" ng-click="deleteDataset()">
+            <i class="fa fa-trash"></i> Delete selected dataset
+        </button>
+    </div>
+    <div class="col-md-2 col-md-offset-6">
+        <i ng-show="upLoading" class="fa fa-spinner fa-spin fa-5x"></i>
+    </div>
+    <!-- Data Table -->
+
+    <div class="col-md-12" style="margin-bottom: 40px">
+
+        <table class="table table-striped" st-pipe="callServer" st-table="data" st-dataset-name="{{selectedCsv}}">
+            <thead>
+                <tr>
+                    <th ng-repeat="(key, value) in data[0]" st-sort="{{ key }}" ng-hide="key === '_id'">
+                        {{ key }}
+                    </th>
+                </tr>
+                <tr>
+                    <th ng-repeat="(key, value) in data[0]" ng-hide="key === '_id'">
+						<input st-search="'{{ key }}'" class="form-control input-sm normal-text" type="search" id="search_{{ key }}"/>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="row in data">
+                    <td ng-repeat="(key, value) in row" ng-hide="key === '_id'">
+                        {{ row[key] }}
+                    </td>
+                </tr>
+            </tbody>
+            <tbody ng-show="isLoading">
+                <tr>
+                    <td colspan="4" class="text-center">Loading ... </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td class="text-center" st-pagination="" st-items-by-page="itemsByPage" ng-click="$event.stopPropagation()">
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+	</div>
+</div>

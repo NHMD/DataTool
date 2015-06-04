@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-	.controller('DatasetsCtrl', ['$document', '$route', '$rootScope', '$scope', '$modal', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench', 'hotkeys', 'Icons', 'TaxonTreeDefItem', 'TaxonBrowserService','$timeout','Auth','localStorageService', 'DataFormService', 'History', 'User', '$dropdown',
-		function($document, $route, $rootScope, $scope, $modal, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons, TaxonTreeDefItem, TaxonBrowserService, $timeout,  Auth, localStorageService, DataFormService, History, User, $dropdown) {
+	.controller('DatasetsCtrl', ['$document', '$route', '$rootScope', '$scope', '$modal', 'WorkbenchDataItem', 'WorkbenchTemplate', 'WorkbenchTemplateMappingItem', 'WorkbenchRow', 'Workbench', 'hotkeys', 'Icons', 'TaxonTreeDefItem', 'TaxonBrowserService','$timeout','Auth','localStorageService', 'DataFormService', 'History', 'User',
+		function($document, $route, $rootScope, $scope, $modal, WorkbenchDataItem, WorkbenchTemplate, WorkbenchTemplateMappingItem, WorkbenchRow, Workbench, hotkeys, Icons, TaxonTreeDefItem, TaxonBrowserService, $timeout,  Auth, localStorageService, DataFormService, History, User) {
 
 			$scope.Icons = Icons;
 			$scope.DataFormService = DataFormService;

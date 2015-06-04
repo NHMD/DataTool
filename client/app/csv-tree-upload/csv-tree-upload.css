@@ -2,4 +2,10 @@
 	border: dotted 3px lightgray; 
 	margin-top: 20px;
 }
-.nv-file-over { border: dotted 3px green; } /* Default class applied to drop zones on over */
+.nv-file-over { 
+	border: dotted 3px green; /* Default class applied to drop zones on over */
+} 
+.normal-text {
+	font-weight: normal;
+}
+
