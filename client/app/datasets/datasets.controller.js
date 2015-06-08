@@ -74,7 +74,6 @@ angular.module('specifyDataCleanerApp')
 							"id": $scope.selectedWorkbench.WorkbenchID
 						});
 
-
 						$scope.workbenchdataitems.$promise.then($scope.mapRows);
 						
 						// getters are used for sorting
@@ -84,9 +83,7 @@ angular.module('specifyDataCleanerApp')
 						
 						// a small map to identyfy if we have 1, 2 or 3 determinations on this row
 						TaxonBrowserService.determinations = [];
-
 						angular.forEach($scope.workbenchtemplatemappingitems, function(elm) {
-
 							var taxonname = elm.FieldName.toLowerCase().substring(0, elm.FieldName.length - 1)
 							if (TaxonBrowserService.taxonRanks[taxonname]) {
 								var determinationNumber = elm.FieldName.slice(-1);
@@ -96,12 +93,10 @@ angular.module('specifyDataCleanerApp')
 								};
 								TaxonBrowserService.determinations[parseInt(determinationNumber-1)] = determinationNumber;
 							};
-
 							$scope.getters[elm.FieldName] = function(row) {
 								return (row[elm.WorkbenchTemplateMappingItemID]) ? row[elm.WorkbenchTemplateMappingItemID].CellData : "";
 							}
 						});
-						
 						TaxonBrowserService.selectedDetermination = (TaxonBrowserService.determinations.length) ? TaxonBrowserService.determinations[0]: undefined;
 					});
 				}
@@ -111,17 +106,14 @@ angular.module('specifyDataCleanerApp')
 			$scope.mapRows = function() {
 				var mappedRows = [];
 				for (var i = 0; i < $scope.workbenchdataitems.length; i++) {
-
 					if (mappedRows[$scope.workbenchdataitems[i].RowNumber] === undefined) {
 						mappedRows[$scope.workbenchdataitems[i].RowNumber] = {
 							WorkbenchRowID: $scope.workbenchdataitems[i].WorkbenchRowID,
 							RowNumber: $scope.workbenchdataitems[i].RowNumber
 						};
 					};
-
 					mappedRows[$scope.workbenchdataitems[i].RowNumber][$scope.workbenchdataitems[i].WorkbenchTemplateMappingItemID] = $scope.workbenchdataitems[i];
 				};
-
 				$scope.mappedRows = mappedRows;
 				$scope.reduceColumns();
 			};
@@ -138,7 +130,8 @@ angular.module('specifyDataCleanerApp')
 
 				for (index in $scope.workbenchtemplatemappingitems) {
 					//include only columns, eg skip WorkbenchRowID, RowNumber and future additions
-					if (parseInt(index)>0) {
+					if (parseInt(index)>-1) {
+						console.log('index', index);
 						columnHasData[$scope.workbenchtemplatemappingitems[index].WorkbenchTemplateMappingItemID]=false;
 					}
 				}
@@ -146,10 +139,10 @@ angular.module('specifyDataCleanerApp')
 				if (columnHasData.length<15) return;
 
 				$scope.columnsNotification = {
-					columnsTotal : $scope.workbenchtemplatemappingitems.length,
-					columnsEmpty : 0,
-					columnsBeyond : 0,
-					columnsHidden : 0
+					columnsTotal: $scope.workbenchtemplatemappingitems.length,
+					columnsEmpty: 0,
+					columnsBeyond: 0,
+					columnsHidden: 0
 				}
 
 				angular.forEach($scope.mappedRows, function(mappedRow) {
@@ -168,7 +161,7 @@ angular.module('specifyDataCleanerApp')
 				}
 			
 				//hide empty columns
-				for (index in $scope.workbenchtemplatemappingitems) {
+				for (var index=0;index<$scope.workbenchtemplatemappingitems.length;index++) {
 					var item = $scope.workbenchtemplatemappingitems[index];
 					if (!columnHasData[item.WorkbenchTemplateMappingItemID]) {
 						$scope.columnsNotification.columnsEmpty++;
@@ -176,9 +169,10 @@ angular.module('specifyDataCleanerApp')
 					}
 				}
 
+
 				//hide remaining columns beyond #15
 				var visibleTotal = 0;
-				for (index in $scope.workbenchtemplatemappingitems) {
+				for (var index=0;index<$scope.workbenchtemplatemappingitems.length;index++) {
 					var item = $scope.workbenchtemplatemappingitems[index];
 					if (!$scope.showHideWorkBenchTemplate[$scope.selectedWorkbench.WorkbenchTemplateID][item.WorkbenchTemplateMappingItemID]) {
 						visibleTotal++;
