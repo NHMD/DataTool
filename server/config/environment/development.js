@@ -25,8 +25,8 @@ module.exports = {
   
   mysql: {
 	  database: 'specify',
-	  username: 'root',
-	  password: 'zoo'
+	  username: 'specifyit',
+	  password: 'pass'
   },
   tempuploaddir: '../uploads/'
   
