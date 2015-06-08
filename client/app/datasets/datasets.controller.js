@@ -309,7 +309,23 @@ angular.module('specifyDataCleanerApp')
 							
 						} else {
 							var p = TaxonBrowserService.taxonParent;
-							p.$promise.then(function(){while (p !== null && p !== undefined) {
+							
+							while (p !== null && p !== undefined) {
+							if (p.RankID === $scope.taxonMappings[key].RankID && $scope.taxonMappings[key].determinationNumber === TaxonBrowserService.selectedDetermination) {
+								
+								var item = (row[key] !== undefined) ? row[key] : {};
+								item.CellData = p.Name;
+								$scope.createOrUpdateWorkBenchDataItem(row, item, {
+									WorkbenchTemplateMappingItemID: key
+								});
+								break;
+
+							};
+							p = p.Parent;
+						}
+							/*
+							p.$promise.then(function(){
+								while (p !== null && p !== undefined) {
 								if (p.RankID === $scope.taxonMappings[key].RankID && $scope.taxonMappings[key].determinationNumber === TaxonBrowserService.selectedDetermination) {
 									
 									var item = (row[key] !== undefined) ? row[key] : {};
@@ -322,6 +338,7 @@ angular.module('specifyDataCleanerApp')
 								};
 								p = p.Parent;
 							}})
+							*/
 						}
 					}
 				}
