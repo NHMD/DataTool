@@ -277,7 +277,7 @@ angular.module('specifyDataCleanerApp')
 				}, 100);
 				$scope.searchReplace = { 
 					action: 'searchreplace',
-					field: '', //$scope.collectionFields.fields[0];
+					field: '', 
 					search: '', 
 					replace: '' 
 				};
@@ -312,8 +312,6 @@ angular.module('specifyDataCleanerApp')
 				};
 
 				var focused_element = document.activeElement.id;
-				console.log(focused_element);
-
 				if ($scope.collection !== undefined) {
 					$scope.collection.$promise.then(function() {
 						tableState.pagination.numberOfPages = parseInt($scope.collection.count / limit);
@@ -329,8 +327,9 @@ angular.module('specifyDataCleanerApp')
 							$scope.isLoading = false;
 							//set focus back to element that invoked the reload, i.e searchbox
 							if (focused_element !== '') {
-								console.log(angular.element('#'+focused_element));
-								angular.element('#'+focused_element).focus();
+								setTimeout(function() {
+									angular.element('#'+focused_element).focus();
+								}, 1);
 							}
 						});
 					})
