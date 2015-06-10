@@ -129,19 +129,19 @@ function returnEmptyFieldList(collection, res) {
 }
 
 exports.indexObjects = function(req, res) {
-	var limit = parseInt(req.query.limit) || 100,
-		offset = parseInt(req.query.offset) || 0,
-		sort = parseInt(req.query.sort) || 1,
-		orderBy = req.query.orderBy || false,
-		filterParam = JSON.parse(req.query.filter),
-		filter = {};
+	var limit = parseInt(req.query.limit) || 100;
+	var offset = parseInt(req.query.offset) || 0;
+	var	sort = parseInt(req.query.sort) || 1;
+	var	orderBy = req.query.orderBy || false;
+	var	filterParam = req.query.filter ? JSON.parse(req.query.filter) : {};
+	var filter = {};
 
-		for (var key in filterParam) {
-			//the key can be "enriched"	with backslashes and quotes
-			//we need a clean {'x': /x/} object
-			var trimmedKey = key.replace(/\W/g, '');
-			filter[trimmedKey]=new RegExp(filterParam[key].toString());
-		}
+	for (var key in filterParam) {
+		//the key can be "enriched"	with backslashes and quotes
+		//we need a clean {'x': /x/} object
+		var trimmedKey = key.replace(/\W/g, '');
+		filter[trimmedKey]=new RegExp(filterParam[key].toString());
+	}
 
 	MongoDB.connect().then(function(db) {
 		db.collection(req.params.collname, function(err, collection) {
