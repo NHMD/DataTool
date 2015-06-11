@@ -9,3 +9,31 @@
 	font-weight: normal;
 }
 
+
+/* 
+prevent the buttons / menu to be autosized
+there probably is a far better way to do this
+*/
+td.buttons {
+	max-width: 175px;
+	width: 175px;
+}
+ul.pagination li {
+	overflow: visible;
+	white-space: nowrap;
+}
+
+	
+/*
+ul.pagination {
+	float: left;
+	padding: 0px;
+}
+ul.pagination li  {
+	margin-top: 5px;
+}
+ul.pagination li a {
+	font-size: 80%;
+	padding: 4px 8px;
+}
+*/

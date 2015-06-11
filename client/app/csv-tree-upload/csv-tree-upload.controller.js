@@ -261,15 +261,30 @@ angular.module('specifyDataCleanerApp')
 				})
 
 			$scope.editDropdown = [
-				{ 
-					text : 'Search & Replace ..', 
-					click : function() {
+				{ text : 'Search & Replace ..', 
+				  click : function() {
 						 $scope.searchAndReplaceModal() 
-					} 
+				  } 
 				},
 				{ divider: true },
 				{ text : 'Hide / show columns', click : '#' }
 			];
+
+			$scope.editRowModal = function(row) {
+				$scope.editRow = row.toJSON();
+				$modal({
+					scope: $scope,
+					template: 'app/csv-tree-upload/editRow.modal.html',
+					show: true,
+					placement: 'center'
+				});
+			}				
+
+			$scope.editRowSave = function() {
+				console.log($scope.editRow);
+				$scope.editRow.action='update';
+				Csvdataset.updateObject({ collectionname: $scope.collection.collectionname }, $scope.editRow);
+			}
 
 			$scope.searchAndReplaceModal = function() {
 				$timeout(function() {

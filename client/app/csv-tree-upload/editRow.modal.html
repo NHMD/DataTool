@@ -1,0 +1,26 @@
+<div class="modal ng-scope top am-fade-and-slide-top" tabindex="-1" role="dialog" style="display: block;">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header"><h3>Edit row</h3></div>
+				<div class="modal-body">
+					<form class="form-horizontal">
+						<div class="form-group" ng-repeat="(key, value) in editRow" ng-hide="key === '_id'">
+							<label for="{{ key }}" class="col-sm-2 control-label">{{ key }}</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="{{ key }}" value="{{ value }}" ng-model="editRow[key]">
+							</div>
+						</div>
+					<form>
+				</form>			
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-success" ng-click="editRowSave(); $hide()">
+					<i class="fa fa-check"></i>&nbsp;OK
+				</button>
+				<button type="button" class="btn btn-danger" ng-click="$hide()">
+					<i class="fa fa-times"></i>&nbsp;Cancel
+				</button> 
+			</div>
+		</div>
+	</div>
+</div>

@@ -195,8 +195,21 @@ function searchReplace(collname, field, search, replace) {
 
 exports.updateObject = function(req, res) {
 	var action = req.body.action ? req.body.action : false,
-		collname = req.params.collname;
+		collname = req.params.collname,
+		object = req.body;
+
 	switch (action) {
+		case 'update' :
+			MongoDB.connect().then(function(db) {
+				db.collection(collname, function(err, collection) {
+					delete object.action;	
+					collection.save(object,  function (err, updated) {
+						console.log(err, updated);
+					})
+				})
+			})
+			break;
+
 		case 'searchreplace' :
 			var field = req.body.field ? req.body.field : false,
 				search = req.body.search ? req.body.search : false,
@@ -209,19 +222,6 @@ exports.updateObject = function(req, res) {
 			break;
 	}
 }
-/*
-  if(req.body._id) { delete req.body._id; }
-  History.findById(req.params.id, function (err, thing) {
-    if (err) { return handleError(res, err); }
-    if(!thing) { return res.send(404); }
-    var updated = _.extend(thing, req.body);
-    updated.save(function (err) {
-      if (err) { return handleError(res, err); }
-      return res.json(200, thing);
-    });
-  });
-*/
-
 
 //---------------------------------------------
 exports.process = function(req, res) {
