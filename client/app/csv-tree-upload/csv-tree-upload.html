@@ -14,9 +14,15 @@
 
     <div class="col-md-4" ng-show="selectedCsv">
 		<form class="form-inline">
+			<button type="button" class="btn btn-default" ng-click="searchAndReplaceModal();">
+				<i class="fa fa-sort-alpha-desc"></i> Search and replace
+			</button>
+
+			<!--
 			<button type="button" class="btn btn-default" bs-dropdown="editDropdown">
 				Edit&nbsp;&nbsp;<span class="caret"></span>
 			</button>
+			-->
 			<select class="form-control" style="width:100px;clear:none;float:none;" ng-model="itemsByPage">
 				<option value="10">10 rows</option>
 				<option value="15">15 rows</option>
@@ -62,7 +68,7 @@
 					<td class="buttons">
 						<button class="btn btn-primary" ng-click="editRowModal(row); $event.stopPropagation();" ><i class="fa fa-list-alt fa-lg"></i></button>
 						<button class="btn btn-primary" xng-click="rowform.$show(); $event.stopPropagation();"><i class="fa fa-edit fa-lg"></i></button>
-						<button class="btn btn-danger" xng-click="deleteRow(row, $index); $event.stopPropagation();"><i class="fa fa-trash-o fa-lg"></i></button>
+						<button class="btn btn-danger" ng-click="deleteRow(row); $event.stopPropagation();"><i class="fa fa-trash-o fa-lg"></i></button>
 					</td>  
                     <td ng-repeat="(key, value) in row" ng-hide="key === '_id'">
                         {{ row[key] }}

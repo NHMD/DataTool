@@ -23,17 +23,24 @@ ul.pagination li {
 	white-space: nowrap;
 }
 
-	
-/*
-ul.pagination {
-	float: left;
-	padding: 0px;
+/*****/
+select {
+	background-color: white;
+	color: #555;
+	border: 1px solid #ccc;
+	border-radius: 3px;
 }
-ul.pagination li  {
-	margin-top: 5px;
+input.small {
+	xfont-size: 80%;
+	height: 20px;
+	padding-top: 5px;
+	padding-left: 3px;
+	width: 120px;
+	border-radius: 2px;
 }
-ul.pagination li a {
-	font-size: 80%;
-	padding: 4px 8px;
+table.conditions tr td {
+	padding-right: 6px;
 }
-*/
+table.conditions tr td {
+	padding-top: 4px;
+}

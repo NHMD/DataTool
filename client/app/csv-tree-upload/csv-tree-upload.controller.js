@@ -140,8 +140,8 @@ angular.module('specifyDataCleanerApp')
 				Csvdataset.getFields({ 
 					collectionname: collection
 				}).$promise.then(function(data) {
-					console.log(data);
-					$scope.collectionFields = data;
+					$scope.collectionFields = data.fields;
+					console.log($scope.collectionFields);
 				});
 
 				//get collection data
@@ -255,20 +255,10 @@ angular.module('specifyDataCleanerApp')
 			/* edit */
 			hotkeys.bindTo($scope)
 				.add({
-					combo: 'alt+r',
+					combo: 'Ctrl-R',
 					description: 'Search and Replace',
 					callback: $scope.searchAndReplaceModal
 				})
-
-			$scope.editDropdown = [
-				{ text : 'Search & Replace ..', 
-				  click : function() {
-						 $scope.searchAndReplaceModal() 
-				  } 
-				},
-				{ divider: true },
-				{ text : 'Hide / show columns', click : '#' }
-			];
 
 			$scope.editRowModal = function(row) {
 				$scope.editRow = row.toJSON();
@@ -281,21 +271,54 @@ angular.module('specifyDataCleanerApp')
 			}				
 
 			$scope.editRowSave = function() {
-				console.log($scope.editRow);
-				$scope.editRow.action='update';
+				$scope.editRow.action = 'update';
 				Csvdataset.updateObject({ collectionname: $scope.collection.collectionname }, $scope.editRow);
 			}
 
-			$scope.searchAndReplaceModal = function() {
-				$timeout(function() {
-					angular.element('#columnName').focus()
-				}, 100);
+			$scope.deleteRow = function(row) {
+				if (confirm('Really delete row?')) {
+					row = row.toJSON();
+					row.action = 'delete';
+					Csvdataset.updateObject({ collectionname: $scope.collection.collectionname }, row).$promise.then(function() {
+						$scope.callServer();
+					});						
+				}
+			}
+
+			$scope.comparisonList = [
+				'equal to',
+				'different from',
+				'begins with',
+				'ends with',
+				'contains',
+				'not contains'
+			];
+
+			$scope.initSearchReplace = function() {
 				$scope.searchReplace = { 
 					action: 'searchreplace',
 					field: '', 
 					search: '', 
-					replace: '' 
-				};
+					replace: '',
+					replaceConditions: { conditions : [] }
+				}
+			}
+
+			$scope.addSearchReplaceCondition = function() {
+				$scope.searchReplace.replaceConditions.conditions.push({
+					field: '',
+					comparison: '',
+					text: ''
+				})
+			}
+
+			$scope.searchAndReplaceModal = function() {
+				$scope.initSearchReplace();					
+
+				$timeout(function() {
+					angular.element('#columnName').focus()
+				}, 100);
+
 				$modal({
 					scope: $scope,
 					template: 'app/csv-tree-upload/searchReplace.modal.html',
@@ -305,10 +328,8 @@ angular.module('specifyDataCleanerApp')
 			}
 
 			$scope.doSearchReplace = function() {
-				//$scope.searchReplace.action = 'searchreplace';
-				Csvdataset.updateObject(
-					{ collectionname: $scope.collection.collectionname }, $scope.searchReplace
-				);
+				Csvdataset.updateObject({ collectionname: $scope.collection.collectionname }, $scope.searchReplace);
+
 			}
 
 			/* table */
