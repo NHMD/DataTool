@@ -131,7 +131,6 @@ angular.module('specifyDataCleanerApp')
 				for (index in $scope.workbenchtemplatemappingitems) {
 					//include only columns, eg skip WorkbenchRowID, RowNumber and future additions
 					if (parseInt(index)>-1) {
-						console.log('index', index);
 						columnHasData[$scope.workbenchtemplatemappingitems[index].WorkbenchTemplateMappingItemID]=false;
 					}
 				}

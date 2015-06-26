@@ -9,3 +9,38 @@
 	font-weight: normal;
 }
 
+
+/* 
+prevent the buttons / menu to be autosized
+there probably is a far better way to do this
+*/
+td.buttons {
+	max-width: 175px;
+	width: 175px;
+}
+ul.pagination li {
+	overflow: visible;
+	white-space: nowrap;
+}
+
+/*****/
+select {
+	background-color: white;
+	color: #555;
+	border: 1px solid #ccc;
+	border-radius: 3px;
+}
+input.small {
+	xfont-size: 80%;
+	height: 20px;
+	padding-top: 5px;
+	padding-left: 3px;
+	width: 120px;
+	border-radius: 2px;
+}
+table.conditions tr td {
+	padding-right: 6px;
+}
+table.conditions tr td {
+	padding-top: 4px;
+}

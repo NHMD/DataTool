@@ -14,9 +14,15 @@
 
     <div class="col-md-4" ng-show="selectedCsv">
 		<form class="form-inline">
+			<button type="button" class="btn btn-default" ng-click="searchAndReplaceModal();">
+				<i class="fa fa-sort-alpha-desc"></i> Search and replace
+			</button>
+
+			<!--
 			<button type="button" class="btn btn-default" bs-dropdown="editDropdown">
 				Edit&nbsp;&nbsp;<span class="caret"></span>
 			</button>
+			-->
 			<select class="form-control" style="width:100px;clear:none;float:none;" ng-model="itemsByPage">
 				<option value="10">10 rows</option>
 				<option value="15">15 rows</option>
@@ -42,11 +48,16 @@
         <table class="table table-striped" st-pipe="callServer" st-table="data" st-dataset-name="{{selectedCsv}}">
             <thead>
                 <tr>
+					<th></th>
                     <th ng-repeat="(key, value) in data[0]" st-sort="{{ key }}" ng-hide="key === '_id'">
                         {{ key }}
                     </th>
                 </tr>
                 <tr>
+					<!--
+					<th class="text-center" st-pagination="" st-items-by-page="itemsByPage" ng-click="$event.stopPropagation()"></th>
+					-->
+					<th></th>
                     <th ng-repeat="(key, value) in data[0]" ng-hide="key === '_id'">
 						<input st-search="'{{ key }}'" class="form-control input-sm normal-text" type="search" id="search_{{ key }}"/>
                     </th>
@@ -54,6 +65,11 @@
             </thead>
             <tbody>
                 <tr ng-repeat="row in data">
+					<td class="buttons">
+						<button class="btn btn-primary" ng-click="editRowModal(row); $event.stopPropagation();" ><i class="fa fa-list-alt fa-lg"></i></button>
+						<button class="btn btn-primary" xng-click="rowform.$show(); $event.stopPropagation();"><i class="fa fa-edit fa-lg"></i></button>
+						<button class="btn btn-danger" ng-click="deleteRow(row); $event.stopPropagation();"><i class="fa fa-trash-o fa-lg"></i></button>
+					</td>  
                     <td ng-repeat="(key, value) in row" ng-hide="key === '_id'">
                         {{ row[key] }}
                     </td>
@@ -61,13 +77,12 @@
             </tbody>
             <tbody ng-show="isLoading">
                 <tr>
-                    <td colspan="4" class="text-center">Loading ... </td>
+                    <td colspan="100" class="text-center">Loading ... </td>
                 </tr>
             </tbody>
             <tfoot>
                 <tr>
-                    <td class="text-center" st-pagination="" st-items-by-page="itemsByPage" ng-click="$event.stopPropagation()">
-                    </td>
+                    <td class="text-center" st-pagination="" st-items-by-page="itemsByPage" ng-click="$event.stopPropagation()" colspan="100"></td>
                 </tr>
             </tfoot>
         </table>

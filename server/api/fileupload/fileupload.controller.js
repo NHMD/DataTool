@@ -129,19 +129,19 @@ function returnEmptyFieldList(collection, res) {
 }
 
 exports.indexObjects = function(req, res) {
-	var limit = parseInt(req.query.limit) || 100,
-		offset = parseInt(req.query.offset) || 0,
-		sort = parseInt(req.query.sort) || 1,
-		orderBy = req.query.orderBy || false,
-		filterParam = JSON.parse(req.query.filter),
-		filter = {};
+	var limit = parseInt(req.query.limit) || 100;
+	var offset = parseInt(req.query.offset) || 0;
+	var	sort = parseInt(req.query.sort) || 1;
+	var	orderBy = req.query.orderBy || false;
+	var	filterParam = req.query.filter ? JSON.parse(req.query.filter) : {};
+	var filter = {};
 
-		for (var key in filterParam) {
-			//the key can be "enriched"	with backslashes and quotes
-			//we need a clean {'x': /x/} object
-			var trimmedKey = key.replace(/\W/g, '');
-			filter[trimmedKey]=new RegExp(filterParam[key].toString());
-		}
+	for (var key in filterParam) {
+		//the key can be "enriched"	with backslashes and quotes
+		//we need a clean {'x': /x/} object
+		var trimmedKey = key.replace(/\W/g, '');
+		filter[trimmedKey]=new RegExp(filterParam[key].toString());
+	}
 
 	MongoDB.connect().then(function(db) {
 		db.collection(req.params.collname, function(err, collection) {
@@ -195,33 +195,113 @@ function searchReplace(collname, field, search, replace) {
 
 exports.updateObject = function(req, res) {
 	var action = req.body.action ? req.body.action : false,
-		collname = req.params.collname;
+		collname = req.params.collname,
+		object = req.body;
+
 	switch (action) {
+		case 'update' :
+			MongoDB.connect().then(function(db) {
+				db.collection(collname, function(err, collection) {
+					delete object.action;	
+					collection.save(object, function (err, affected) {
+						console.log(err, affected);
+						res.send(200, affected);
+					})
+				})
+			})
+			break;
+
+		case 'delete' :
+			MongoDB.connect().then(function(db) {
+				db.collection(collname, function(err, collection) {
+					delete object.action;	
+					collection.remove(object,  function (err, affected) {
+						//console.log(err, affected);
+						res.send(200, affected);
+					})
+				})
+			})
+			break;
+
 		case 'searchreplace' :
-			var field = req.body.field ? req.body.field : false,
-				search = req.body.search ? req.body.search : false,
-				replace = req.body.replace ? req.body.replace : false;
-			//an error should be raised if any of the above values are false
-			searchReplace(collname, field, search, replace);
+			var conditions = req.body.replaceConditions.conditions;
+			for (var i=0;i<conditions.length;i++) {
+				console.dir(conditions[i]);
+			}
+			MongoDB.connect().then(function(db) {
+				db.collection(collname, function(err, collection) {
+					collection.find( { } ).toArray(function(err, docs) {
+						var conditions = object.replaceConditions.conditions,
+							comparisonType,
+							compareField,
+							compareText;
+
+						for (var i=0;i<docs.length;i++) {
+							var ok = false,
+								document = docs[i];
+
+							if (document[object.field].indexOf(object.search)>-1) {
+								//search matches, there is something to replace
+								ok = true;
+								for (var c=0;c<conditions.length;c++) {
+									compareField = conditions[c].field != '' ? conditions[c].field : false;
+									compareText = conditions[c].text != '' ? conditions[c].text : false;
+									comparisonType = conditions[c].comparison != '' ? parseInt(conditions[c].comparison) : false;
+									console.log(compareField, compareText, comparisonType);
+									if (compareField && compareText && comparisonType) {
+										switch (comparisonType) {
+											case 0 : //equal to
+												ok = document[compareField].localeCompare(compareText) == 0;
+												break;
+
+											case 1 : //different from
+												ok = document[compareField].localeCompare(compareText) != 0;
+												break;
+
+											case 2 : //begins with
+												ok = document[compareField].indexOf(compareText) == 0;												
+												break;
+
+											case 3 : //ends with
+												var lastIndex = document[compareField].lastIndexOf(compareText);
+												ok = (lastIndex !== -1) && (lastIndex + compareText.length === document[compareField].length);
+												break;
+
+											case 4 : //contains
+												ok = document[compareField].indexOf(compareText) > -1;												
+												break;
+
+											case 5 : //not contains
+												ok = document[compareField].indexOf(compareText) == -1;												
+												break;
+
+											default :
+												break;
+										}
+										//break if a condition not was satisfied
+										if (!ok) c=conditions.length;
+									}
+								}
+								if (ok) {
+									//any criterias should be matched, perform the search replace
+									document[object.field] = document[object.field].replace(object.search, object.replace);
+									collection.save(document, function (err, affected) {
+										//res.send(200, affected);
+										//console.log(document, err, affected);
+									})
+								}
+							}
+						}
+					})
+
+				})
+			})
 			break;
 
 		default :
 			break;
 	}
 }
-/*
-  if(req.body._id) { delete req.body._id; }
-  History.findById(req.params.id, function (err, thing) {
-    if (err) { return handleError(res, err); }
-    if(!thing) { return res.send(404); }
-    var updated = _.extend(thing, req.body);
-    updated.save(function (err) {
-      if (err) { return handleError(res, err); }
-      return res.json(200, thing);
-    });
-  });
-*/
-
 
 //---------------------------------------------
 exports.process = function(req, res) {

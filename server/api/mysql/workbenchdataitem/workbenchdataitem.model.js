@@ -51,7 +51,10 @@ module.exports = function(sequelize, DataTypes) {
 		instanceMethods: {
 			authorize: function(models, user) {
 				return sequelize
-					.query('SELECT a.* FROM specifyuser a , workbenchtemplate b , workbenchtemplatemappingitem c where c.WorkbenchTemplateMappingItemID = :WorkbenchTemplateMappingItemID and a.SpecifyUserID = b.SpecifyUserID and b.WorkbenchTemplateID=c.WorkbenchTemplateID',
+					.query('SELECT a.* FROM '+
+						'specifyuser a, workbenchtemplate b, workbenchtemplatemappingitem c, workbench d where '+
+						'd.workbenchTemplateID = b.workbenchTemplateID and '+
+						'c.WorkbenchTemplateMappingItemID = :WorkbenchTemplateMappingItemID and a.SpecifyUserID = d.SpecifyUserID and b.WorkbenchTemplateID=c.WorkbenchTemplateID',
 						models.Specifyuser, {
 							raw: true
 						}, {

@@ -140,8 +140,8 @@ angular.module('specifyDataCleanerApp')
 				Csvdataset.getFields({ 
 					collectionname: collection
 				}).$promise.then(function(data) {
-					console.log(data);
-					$scope.collectionFields = data;
+					$scope.collectionFields = data.fields;
+					console.log($scope.collectionFields);
 				});
 
 				//get collection data
@@ -255,32 +255,70 @@ angular.module('specifyDataCleanerApp')
 			/* edit */
 			hotkeys.bindTo($scope)
 				.add({
-					combo: 'alt+r',
+					combo: 'Ctrl-R',
 					description: 'Search and Replace',
 					callback: $scope.searchAndReplaceModal
 				})
 
-			$scope.editDropdown = [
-				{ 
-					text : 'Search & Replace ..', 
-					click : function() {
-						 $scope.searchAndReplaceModal() 
-					} 
-				},
-				{ divider: true },
-				{ text : 'Hide / show columns', click : '#' }
+			$scope.editRowModal = function(row) {
+				$scope.editRow = row.toJSON();
+				$modal({
+					scope: $scope,
+					template: 'app/csv-tree-upload/editRow.modal.html',
+					show: true,
+					placement: 'center'
+				});
+			}				
+
+			$scope.editRowSave = function() {
+				$scope.editRow.action = 'update';
+				Csvdataset.updateObject({ collectionname: $scope.collection.collectionname }, $scope.editRow);
+			}
+
+			$scope.deleteRow = function(row) {
+				if (confirm('Really delete row?')) {
+					row = row.toJSON();
+					row.action = 'delete';
+					Csvdataset.updateObject({ collectionname: $scope.collection.collectionname }, row).$promise.then(function() {
+						$scope.callServer();
+					});						
+				}
+			}
+
+			$scope.comparisonList = [
+				'equal to',
+				'different from',
+				'begins with',
+				'ends with',
+				'contains',
+				'not contains'
 			];
 
+			$scope.initSearchReplace = function() {
+				$scope.searchReplace = { 
+					action: 'searchreplace',
+					field: '', 
+					search: '', 
+					replace: '',
+					replaceConditions: { conditions : [] }
+				}
+			}
+
+			$scope.addSearchReplaceCondition = function() {
+				$scope.searchReplace.replaceConditions.conditions.push({
+					field: '',
+					comparison: '',
+					text: ''
+				})
+			}
+
 			$scope.searchAndReplaceModal = function() {
+				$scope.initSearchReplace();					
+
 				$timeout(function() {
 					angular.element('#columnName').focus()
 				}, 100);
-				$scope.searchReplace = { 
-					action: 'searchreplace',
-					field: '', //$scope.collectionFields.fields[0];
-					search: '', 
-					replace: '' 
-				};
+
 				$modal({
 					scope: $scope,
 					template: 'app/csv-tree-upload/searchReplace.modal.html',
@@ -290,10 +328,8 @@ angular.module('specifyDataCleanerApp')
 			}
 
 			$scope.doSearchReplace = function() {
-				//$scope.searchReplace.action = 'searchreplace';
-				Csvdataset.updateObject(
-					{ collectionname: $scope.collection.collectionname }, $scope.searchReplace
-				);
+				Csvdataset.updateObject({ collectionname: $scope.collection.collectionname }, $scope.searchReplace);
+
 			}
 
 			/* table */
@@ -312,8 +348,6 @@ angular.module('specifyDataCleanerApp')
 				};
 
 				var focused_element = document.activeElement.id;
-				console.log(focused_element);
-
 				if ($scope.collection !== undefined) {
 					$scope.collection.$promise.then(function() {
 						tableState.pagination.numberOfPages = parseInt($scope.collection.count / limit);
@@ -329,8 +363,9 @@ angular.module('specifyDataCleanerApp')
 							$scope.isLoading = false;
 							//set focus back to element that invoked the reload, i.e searchbox
 							if (focused_element !== '') {
-								console.log(angular.element('#'+focused_element));
-								angular.element('#'+focused_element).focus();
+								setTimeout(function() {
+									angular.element('#'+focused_element).focus();
+								}, 1);
 							}
 						});
 					})
