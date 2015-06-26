@@ -190,40 +190,29 @@ exports.getFields = function(req, res) {
 	});
 }
 
-function searchReplace(collname, field, search, replace) {
+exports.updateObject = function(req, res) {
+	var	collname = req.params.collname,
+		object = req.body;
 	MongoDB.connect().then(function(db) {
 		db.collection(collname, function(err, collection) {
-			collection.find( { field : _id }).toArray(function(err, docs) {
-				console.log(docs);
+			collection.save(object, function (err, affected) {
+				return res.send(200, affected);
 			})
 		})
 	})
 }
 
-exports.updateObject = function(req, res) {
+exports.postAction = function(req, res) {
 	var action = req.body.action ? req.body.action : false,
 		collname = req.params.collname,
 		object = req.body;
 
 	switch (action) {
-		case 'update' :
-			MongoDB.connect().then(function(db) {
-				db.collection(collname, function(err, collection) {
-					delete object.action;	
-					collection.save(object, function (err, affected) {
-						console.log(err, affected);
-						res.send(200, affected);
-					})
-				})
-			})
-			break;
-
 		case 'delete' :
 			MongoDB.connect().then(function(db) {
 				db.collection(collname, function(err, collection) {
 					delete object.action;	
 					collection.remove(object,  function (err, affected) {
-						//console.log(err, affected);
 						res.send(200, affected);
 					})
 				})
@@ -290,7 +279,7 @@ exports.updateObject = function(req, res) {
 									//all criterias have been positively matched, perform the search replace
 									document[object.field] = document[object.field].replace(object.search, object.replace);
 									collection.save(document, function (err, affected) {
-										//res.send(200, affected);
+										res.send(200, affected);
 										//console.log(document, err, affected);
 									})
 								}
