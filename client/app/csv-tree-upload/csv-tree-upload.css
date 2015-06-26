@@ -31,7 +31,6 @@ select {
 	border-radius: 3px;
 }
 input.small {
-	xfont-size: 80%;
 	height: 20px;
 	padding-top: 5px;
 	padding-left: 3px;
@@ -40,7 +39,6 @@ input.small {
 }
 table.conditions tr td {
 	padding-right: 6px;
-}
-table.conditions tr td {
 	padding-top: 4px;
 }
+
