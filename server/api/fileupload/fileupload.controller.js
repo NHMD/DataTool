@@ -26,6 +26,13 @@ function parseCSVFile(sourceFilePath, columns, onNewRecord, handleError, done, d
 		var record;
 		while (record = parser.read()) {
 			linesRead++;
+			//prevent column names with whitespace, ex. "DK navn"
+			for (key in record) {
+			    if (key.indexOf(' ')>-1) {
+			        record[key.replace(/\s/g, "_")] = record[key];
+			        delete record[key];
+			    }
+			}    
 			onNewRecord(record);
 		}
 	});
@@ -225,9 +232,6 @@ exports.updateObject = function(req, res) {
 
 		case 'searchreplace' :
 			var conditions = req.body.replaceConditions.conditions;
-			for (var i=0;i<conditions.length;i++) {
-				console.dir(conditions[i]);
-			}
 			MongoDB.connect().then(function(db) {
 				db.collection(collname, function(err, collection) {
 					collection.find( { } ).toArray(function(err, docs) {
@@ -283,7 +287,7 @@ exports.updateObject = function(req, res) {
 									}
 								}
 								if (ok) {
-									//any criterias should be matched, perform the search replace
+									//all criterias have been positively matched, perform the search replace
 									document[object.field] = document[object.field].replace(object.search, object.replace);
 									collection.save(document, function (err, affected) {
 										//res.send(200, affected);
