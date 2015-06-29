@@ -22,8 +22,15 @@ angular.module('specifyDataCleanerApp')
 				},
 				url: '/api/fileupload/datasets/:collectionname/update/'
 			},
+			deleteObject : { 
+				method: 'POST', 
+				params: {
+					id: '@collectionname'
+				},
+				url: '/api/fileupload/datasets/:collectionname/delete/'
+			},
 			postAction: {
-				method: 'POST', // this method issues a PUT request
+				method: 'POST', 
 				params: {
 					id: '@collectionname'
 				},

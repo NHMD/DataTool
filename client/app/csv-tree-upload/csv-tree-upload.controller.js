@@ -271,18 +271,15 @@ angular.module('specifyDataCleanerApp')
 			}				
 
 			$scope.editRowSave = function() {
-				Csvdataset.updateObject({ collectionname: $scope.collection.collectionname }, $scope.editRow);
-				$timeout(function() {
+				Csvdataset.updateObject({ collectionname: $scope.collection.collectionname }, $scope.editRow).$promise.then(function() {
 					$scope.callServer($scope.currentTableState);
-				}, 100);						
+				});
 			}
 
 			$scope.deleteRow = function(row) {
 				if (confirm('Really delete row?')) {
-					row = row.toJSON();
-					row.action = 'delete';
-					Csvdataset.postAction({ collectionname: $scope.collection.collectionname }, row).$promise.then(function() {
-						$scope.callServer();
+					Csvdataset.deleteObject({ collectionname: $scope.collection.collectionname }, { _id : row._id} ).$promise.then(function() {
+						$scope.callServer($scope.currentTableState);
 					});						
 				}
 			}
@@ -328,10 +325,10 @@ angular.module('specifyDataCleanerApp')
 			}
 
 			$scope.doSearchReplace = function() {
-				Csvdataset.postAction({ collectionname: $scope.collection.collectionname }, $scope.searchReplace);
-				$timeout(function() {
+				Csvdataset.postAction({ collectionname: $scope.collection.collectionname }, $scope.searchReplace).$promise.then(function(res) {
+					console.log('affected rows: ', res.affected);
 					$scope.callServer($scope.currentTableState);
-				}, 100);						
+				});
 			}
 
 			/* table */
