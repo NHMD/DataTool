@@ -227,83 +227,74 @@ exports.postAction = function(req, res) {
 		case 'searchreplace' :
 			MongoDB.connect().then(function(db) {
 				db.collection(collname, function(err, collection) {
-					collection.find( { } ).toArray(function(err, docs) {
-						var conditions = object.replaceConditions.conditions,
-							comparisonType,
-							compareField,
-							compareText,
-							affectedTotal = 0,
-							processes = 0;
 
-						function process(document) {
-							var ok = false;
-							if (document[object.field].indexOf(object.search)>-1) {
-								//search matches, there is something to replace
-								ok = true;
-								for (var c=0;c<conditions.length;c++) {
-									compareField = conditions[c].field != '' ? conditions[c].field : false;
-									compareText = conditions[c].text != '' ? conditions[c].text : false;
-									comparisonType = conditions[c].comparison != '' ? parseInt(conditions[c].comparison) : false;
-									console.log(compareField, compareText, comparisonType);
-									if (compareField && compareText && comparisonType) {
-										switch (comparisonType) {
-											case 0 : //equal to
-												ok = document[compareField].localeCompare(compareText) == 0;
-												break;
+					//makes life much easier
+					function getLiteral(key, value) {
+						result = {};
+						result[key] = value;
+						return result;
+					}
 
-											case 1 : //different from
-												ok = document[compareField].localeCompare(compareText) != 0;
-												break;
+					var conditions = object.replaceConditions.conditions,
+						comparisonType,
+						compareField,
+						compareText,
+						caseSensitive = object.caseSensitive ? 'i' : '';
 
-											case 2 : //begins with
-												ok = document[compareField].indexOf(compareText) == 0;												
-												break;
+					var query = { $and : [] };
+					query['$and'].push( getLiteral(object.field, new RegExp(object.search, caseSensitive)));
 
-											case 3 : //ends with
-												var lastIndex = document[compareField].lastIndexOf(compareText);
-												ok = (lastIndex !== -1) && (lastIndex + compareText.length === document[compareField].length);
-												break;
+					for (var c=0;c<conditions.length;c++) {
+						compareField = conditions[c].field != '' ? conditions[c].field : false;
+						compareText = conditions[c].text != '' ? conditions[c].text : false;
+						comparisonType = conditions[c].comparison != '' ? parseInt(conditions[c].comparison) : false;
+					
+						if (compareField && compareText && comparisonType) {
+							switch (comparisonType) {
+								case 0 : //equal to
+									query['$and'].push( getLiteral(compareField, compareText) );
+									break;
 
-											case 4 : //contains
-												ok = document[compareField].indexOf(compareText) > -1;												
-												break;
+								case 1 : //different from
+									query['$and'].push( getLiteral(compareField, getLiteral('$ne', compareText) ) );
+									break;
 
-											case 5 : //not contains
-												ok = document[compareField].indexOf(compareText) == -1;												
-												break;
+								case 2 : //begins with
+									query['$and'].push( getLiteral(compareField, new RegExp(compareText+'.*', caseSensitive) ) ); 
+									break;
 
-											default :
-												break;
-										}
-										//break if a condition not was satisfied
-										if (!ok) c=conditions.length;
-									}
+								case 3 : //ends with
+									query['$and'].push( getLiteral(compareField, new RegExp('.*'+compareText, caseSensitive) ) );
+									break;
+
+								case 4 : //contains
+									query['$and'].push( getLiteral(compareField, new RegExp(compareText, caseSensitive) ) );
+									break;
+
+								case 5 : //not contains
+									query['$and'].push( getLiteral(compareField, getLiteral('$not', new RegExp(compareText, caseSensitive) ) ) );
+									break;
+
+								default :
+									break;
+							} 
+						} else {
+							console.log('searchReplace condition error :', compareField, compareText, comparisonType);
+						}
+					}
+					collection.find( query ).toArray(function(err, docs) {
+						var affected = docs.length;
+						docs.forEach(function(document) {
+							document[object.field] = document[object.field].replace(object.search, object.replace);
+							collection.save(document, function(err, affected) {
+								if (err) {
+									console.log('searchReplace updating error', err);
+									affected --
 								}
-
-								if (ok) {
-									processes ++;
-									//all criterias have been positively matched, perform the search replace
-									document[object.field] = document[object.field].replace(object.search, object.replace);
-									collection.save(document, function (err, affected) {
-										affectedTotal = affectedTotal + affected;
-										processes --;
-									})
-								} 
-							}
-						}
-
-						for (var i=0;i<docs.length;i++) {
-							process(docs[i]);
-							var wait = setInterval(
-								function() {
-									if (processes == 0) { 
-										clearInterval(wait);
-										return res.send(200, { affected: affectedTotal} );
-									}
-							}, 5);
-						}
-
-					})
+							})
+						})
+						return res.send(200, { affected: affected} );
+					});
 				})
 			})
 			break;

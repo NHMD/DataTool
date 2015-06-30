@@ -9,7 +9,6 @@ var uploaddir = config.tempuploaddir;
 
 var router = express.Router();
 
-
 router.post('/', [ multer({ dest: uploaddir }), auth.isAuthenticated() , controller.getFile]);
 //router.get('/collections/', controller.index);
 router.get('/datasetsxyz/:collname', auth.isAuthenticated(), controller.processToSp);
