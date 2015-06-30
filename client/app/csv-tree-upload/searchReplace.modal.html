@@ -9,10 +9,12 @@
 					<div class="form-group">
 						<label for="column" class="col-sm-3 control-label">Column</label>
 						<div class="col-sm-4">
-							<select class="form-control" ng-model="searchReplace.field">
+							<select class="form-control" ng-model="searchReplace.field" ng-options="field for field in collectionFields">
+								<!--
 								<option ng-repeat="field in collectionFields" ng-if="field != '_id' && field != ''" value="{{ field }}" >
 									{{ field }}
 								<option>
+								-->
 							</select>
 						</div>
 					</div>

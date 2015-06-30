@@ -239,7 +239,7 @@ exports.postAction = function(req, res) {
 						comparisonType,
 						compareField,
 						compareText,
-						caseSensitive = object.caseSensitive ? 'i' : '';
+						caseSensitive = object.caseSensitive ? '' : 'i';
 
 					var query = { $and : [] };
 					query['$and'].push( getLiteral(object.field, new RegExp(object.search, caseSensitive)));
