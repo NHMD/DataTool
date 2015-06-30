@@ -11,7 +11,7 @@ var uploaddir = config.tempuploaddir;
 var _ = require('lodash');
 var datamapper = require('../../components/datamapper');
 var specifyModel = require('../../api/mysql');
-
+var ObjectId = require('mongodb').ObjectID;
 
 function parseCSVFile(sourceFilePath, columns, onNewRecord, handleError, done, delimiter) {
 	var source = fs.createReadStream(sourceFilePath);
@@ -190,60 +190,53 @@ exports.getFields = function(req, res) {
 	});
 }
 
-function searchReplace(collname, field, search, replace) {
+exports.updateObject = function(req, res) {
+	var	collname = req.params.collname,
+		object = req.body;
 	MongoDB.connect().then(function(db) {
 		db.collection(collname, function(err, collection) {
-			collection.find( { field : _id }).toArray(function(err, docs) {
-				console.log(docs);
+			//convert 24 byte _id string to 12 byte ObjectId(_id)
+			object['_id'] = ObjectId(object['_id']);
+			collection.save(object, function (err, affected) {
+				return res.send(200, { affected: affected} );
 			})
 		})
 	})
 }
 
-exports.updateObject = function(req, res) {
+exports.deleteObject = function(req, res) {
+	var	collname = req.params.collname,
+		object = req.body;
+	MongoDB.connect().then(function(db) {
+		db.collection(collname, function(err, collection) {
+			//convert 24 byte _id string to 12 byte ObjectId(_id)
+			object['_id'] = ObjectId(object['_id']);
+			collection.remove(object, function (err, affected) {
+				return res.send(200, { affected: affected} );
+			})
+		})
+	})
+}
+
+exports.postAction = function(req, res) {
 	var action = req.body.action ? req.body.action : false,
 		collname = req.params.collname,
 		object = req.body;
 
 	switch (action) {
-		case 'update' :
-			MongoDB.connect().then(function(db) {
-				db.collection(collname, function(err, collection) {
-					delete object.action;	
-					collection.save(object, function (err, affected) {
-						console.log(err, affected);
-						res.send(200, affected);
-					})
-				})
-			})
-			break;
-
-		case 'delete' :
-			MongoDB.connect().then(function(db) {
-				db.collection(collname, function(err, collection) {
-					delete object.action;	
-					collection.remove(object,  function (err, affected) {
-						//console.log(err, affected);
-						res.send(200, affected);
-					})
-				})
-			})
-			break;
-
 		case 'searchreplace' :
-			var conditions = req.body.replaceConditions.conditions;
 			MongoDB.connect().then(function(db) {
 				db.collection(collname, function(err, collection) {
 					collection.find( { } ).toArray(function(err, docs) {
 						var conditions = object.replaceConditions.conditions,
 							comparisonType,
 							compareField,
-							compareText;
+							compareText,
+							affectedTotal = 0,
+							processes = 0;
 
-						for (var i=0;i<docs.length;i++) {
-							var ok = false,
-								document = docs[i];
-
+						function process(document) {
+							var ok = false;
 							if (document[object.field].indexOf(object.search)>-1) {
 								//search matches, there is something to replace
 								ok = true;
@@ -286,18 +279,31 @@ exports.updateObject = function(req, res) {
 										if (!ok) c=conditions.length;
 									}
 								}
+
 								if (ok) {
+									processes ++;
 									//all criterias have been positively matched, perform the search replace
 									document[object.field] = document[object.field].replace(object.search, object.replace);
 									collection.save(document, function (err, affected) {
-										//res.send(200, affected);
-										//console.log(document, err, affected);
+										affectedTotal = affectedTotal + affected;
+										processes --;
 									})
-								}
+								} 
 							}
 						}
-					})
 
+						for (var i=0;i<docs.length;i++) {
+							process(docs[i]);
+							var wait = setInterval(
+								function() {
+									if (processes == 0) { 
+										clearInterval(wait);
+										return res.send(200, { affected: affectedTotal} );
+									}
+							}, 5);
+						}
+
+					})
 				})
 			})
 			break;
