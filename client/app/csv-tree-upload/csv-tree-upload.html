@@ -59,7 +59,7 @@
 					-->
 					<th></th>
                     <th ng-repeat="(key, value) in data[0]" ng-hide="key === '_id'">
-						<input st-search="'{{ key }}'" class="form-control input-sm normal-text" type="search" id="search_{{ key }}"/>
+						<input st-search="key" class="form-control input-sm normal-text" type="search" id="search_{{ key }}"/>
                     </th>
                 </tr>
             </thead>
