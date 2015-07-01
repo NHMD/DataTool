@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-	.controller('CsvTreeUploadCtrl', ['Auth', 'User', '$rootScope', '$scope', '$filter', '$http', '$location','$timeout', '$compile', 'FileUploader', 'Csvdataset', 'DataModel', 'Icons', 'TaxonTreeDefItem', 'GeographyTreeDefItem','GeologicTimePeriodTreeDefItem', 'StorageTreeDefItem', 'LithostratTreeDefItem', '$modal', 'hotkeys',
+	.controller('CsvTreeUploadCtrl', ['Auth', 'User', '$rootScope', '$scope', '$filter', '$http', '$location','$timeout', '$compile', 'FileUploader', 'Csvdataset', 'DataModel', 'Icons', 'TaxonTreeDefItem', 'GeographyTreeDefItem','GeologicTimePeriodTreeDefItem', 'StorageTreeDefItem', 'LithostratTreeDefItem', '$modal', 'hotkeys', 
 		function(Auth, User, $rootScope, $scope, $filter, $http, $location, $timeout, $compile, FileUploader, Csvdataset, DataModel, Icons, TaxonTreeDefItem, GeographyTreeDefItem, GeologicTimePeriodTreeDefItem, StorageTreeDefItem, LithostratTreeDefItem, $modal, hotkeys) {
 
 			$scope.treeResources = {
@@ -299,11 +299,12 @@ angular.module('specifyDataCleanerApp')
 					field: '', 
 					search: '', 
 					replace: '',
+					caseSensitive: false,
 					replaceConditions: { conditions : [] }
 				}
 			}
 
-			$scope.addSearchReplaceCondition = function() {
+			$scope.searchReplaceAddCondition = function() {
 				$scope.searchReplace.replaceConditions.conditions.push({
 					field: '',
 					comparison: '',
@@ -311,8 +312,14 @@ angular.module('specifyDataCleanerApp')
 				})
 			}
 
+			$scope.searchReplaceRemoveCondition = function(index) {
+				if (index>-1) {
+					$scope.searchReplace.replaceConditions.conditions.splice(index, 1);
+				}
+			}
+
 			$scope.searchAndReplaceModal = function() {
-				$scope.initSearchReplace();					
+				if (!$scope.searchReplace) $scope.initSearchReplace();					
 				$timeout(function() {
 					angular.element('#columnName').focus()
 				}, 50);
