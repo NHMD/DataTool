@@ -285,7 +285,7 @@ exports.postAction = function(req, res) {
 					collection.find( query ).toArray(function(err, docs) {
 						var affected = docs.length;
 						docs.forEach(function(document) {
-							document[object.field] = document[object.field].replace(object.search, object.replace);
+							document[object.field] = document[object.field].replace(new RegExp(object.search, caseSensitive), object.replace);
 							collection.save(document, function(err, affected) {
 								if (err) {
 									console.log('searchReplace updating error', err);
