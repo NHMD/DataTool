@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('specifyDataCleanerApp')
-	.controller('CsvTreeUploadCtrl', ['Auth', 'User', '$rootScope', '$scope', '$filter', '$http', '$location','$timeout', '$compile', 'FileUploader', 'Csvdataset', 'DataModel', 'Icons', 'TaxonTreeDefItem', 'GeographyTreeDefItem','GeologicTimePeriodTreeDefItem', 'StorageTreeDefItem', 'LithostratTreeDefItem', '$modal', 'hotkeys', 
+	.controller('CsvTreeUploadCtrl', ['Auth', 'User', '$rootScope', '$scope', '$filter', '$http', '$location','$timeout', '$compile', 'FileUploader', 'Csvdataset', 'DataModel', 'Icons', 'TaxonTreeDefItem', 'GeographyTreeDefItem','GeologicTimePeriodTreeDefItem', 'StorageTreeDefItem', 'LithostratTreeDefItem', '$modal', 'hotkeys',
 		function(Auth, User, $rootScope, $scope, $filter, $http, $location, $timeout, $compile, FileUploader, Csvdataset, DataModel, Icons, TaxonTreeDefItem, GeographyTreeDefItem, GeologicTimePeriodTreeDefItem, StorageTreeDefItem, LithostratTreeDefItem, $modal, hotkeys) {
 
 			$scope.treeResources = {
@@ -17,7 +17,7 @@ angular.module('specifyDataCleanerApp')
 			$scope.$watch('mapToTable', function(newval, oldval){
 				if(newval !== undefined &&  newval.fields !== undefined){
 					angular.forEach($scope.datasetMapping, function(value, key) {
-							$scope.datasetMapping[key].table = newval;
+						$scope.datasetMapping[key].table = newval;
 					});
 				}
 			})
@@ -262,6 +262,7 @@ angular.module('specifyDataCleanerApp')
 
 			$scope.editRowModal = function(row) {
 				$scope.editRow = row.toJSON();
+				console.log($scope.editRow);
 				$modal({
 					scope: $scope,
 					template: 'app/csv-tree-upload/editRow.modal.html',
@@ -336,6 +337,20 @@ angular.module('specifyDataCleanerApp')
 					console.log('affected rows: ', res.affected);
 					$scope.callServer($scope.currentTableState);
 				});
+			}
+
+			/* inline editing */
+			$scope.saveRow = function(row) {
+				console.dir(row);
+				for (var key in row) {
+					var newKey = key.substring(1, key.length-1);
+					row[newKey] = row[key];
+					delete row[key];
+				}
+				//reuse the modal form method
+				$scope.editRow = row;
+				$scope.editRowSave();
+				return true;
 			}
 
 			/* table */

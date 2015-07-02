@@ -168,7 +168,6 @@ angular.module('specifyDataCleanerApp')
 					}
 				}
 
-
 				//hide remaining columns beyond #15
 				var visibleTotal = 0;
 				for (var index=0;index<$scope.workbenchtemplatemappingitems.length;index++) {

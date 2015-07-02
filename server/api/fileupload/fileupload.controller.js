@@ -147,7 +147,7 @@ exports.indexObjects = function(req, res) {
 		//the key can be "enriched"	with backslashes and quotes
 		//we need a clean {'x': /x/} object
 		var trimmedKey = key.replace(/\W/g, '');
-		filter[trimmedKey]=new RegExp(filterParam[key].toString());
+		filter[trimmedKey]=new RegExp(filterParam[key].toString(), 'i');
 	}
 
 	MongoDB.connect().then(function(db) {

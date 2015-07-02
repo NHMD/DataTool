@@ -54,24 +54,35 @@
                     </th>
                 </tr>
                 <tr>
-					<!--
-					<th class="text-center" st-pagination="" st-items-by-page="itemsByPage" ng-click="$event.stopPropagation()"></th>
-					-->
 					<th></th>
                     <th ng-repeat="(key, value) in data[0]" ng-hide="key === '_id'">
-						<input st-search="key" class="form-control input-sm normal-text" type="search" id="search_{{ key }}"/>
+						<input st-search="{{ key }}" class="form-control input-sm normal-text" type="search" id="search_{{ key }}"/>
                     </th>
                 </tr>
             </thead>
             <tbody>
                 <tr ng-repeat="row in data">
 					<td class="buttons">
-						<button class="btn btn-primary" ng-click="editRowModal(row); $event.stopPropagation();" ><i class="fa fa-list-alt fa-lg"></i></button>
-						<button class="btn btn-primary" xng-click="rowform.$show(); $event.stopPropagation();"><i class="fa fa-edit fa-lg"></i></button>
-						<button class="btn btn-danger" ng-click="deleteRow(row); $event.stopPropagation();"><i class="fa fa-trash-o fa-lg"></i></button>
+
+						<form editable-form name="rowform" onbeforesave="saveRow($data);rowform.$hide();" ng-show="rowform.$visible" class="form-buttons form-inline">
+							<button type="submit" ng-disabled="rowform.$waiting" ng-click="$event.stopPropagation();" class="btn btn-primary">
+					            save
+							</button>
+							<button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel();$event.stopPropagation();" class="btn btn-default">
+								cancel
+							</button>
+						</form>
+						<div class="buttons" ng-show="!rowform.$visible">
+							<button class="btn btn-primary" ng-click="editRowModal(row); $event.stopPropagation();" title="Edit / show row in form"><i class="fa fa-list-alt fa-lg"></i></button>
+							<button class="btn btn-primary" ng-click="rowform.$show(); $event.stopPropagation();" title="Turn inline editing on"><i class="fa fa-edit fa-lg"></i></button>
+							<button class="btn btn-danger" ng-click="deleteRow(row); $event.stopPropagation();" title="Delete row"><i class="fa fa-trash-o fa-lg"></i></button>
+						</div>
+
 					</td>  
                     <td ng-repeat="(key, value) in row" ng-hide="key === '_id'">
-                        {{ row[key] }}
+						<span editable-text="'{{ value }}'" e-name="'{{ key }}'" e-form="rowform">
+	                        {{ value }}
+						</span>
                     </td>
                 </tr>
             </tbody>
