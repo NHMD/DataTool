@@ -63,8 +63,7 @@
             <tbody>
                 <tr ng-repeat="row in data">
 					<td class="buttons">
-
-						<form editable-form name="rowform" onbeforesave="saveRow($data);rowform.$hide();" ng-show="rowform.$visible" class="form-buttons form-inline">
+						<form editable-form name="rowform" onbeforesave="saveRow($data)" ng-show="rowform.$visible" class="form-buttons form-inline">
 							<button type="submit" ng-disabled="rowform.$waiting" ng-click="$event.stopPropagation();" class="btn btn-primary">
 					            save
 							</button>
@@ -80,7 +79,7 @@
 
 					</td>  
                     <td ng-repeat="(key, value) in row" ng-hide="key === '_id'">
-						<span editable-text="'{{ value }}'" e-name="'{{ key }}'" e-form="rowform">
+						<span editable-text="row[key]" e-name="{{key}}" e-form="rowform">
 	                        {{ value }}
 						</span>
                     </td>

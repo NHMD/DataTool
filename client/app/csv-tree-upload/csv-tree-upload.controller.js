@@ -272,7 +272,7 @@ angular.module('specifyDataCleanerApp')
 			}				
 
 			$scope.editRowSave = function() {
-				Csvdataset.updateObject({ collectionname: $scope.collection.collectionname }, $scope.editRow).$promise.then(function() {
+				return Csvdataset.updateObject({ collectionname: $scope.collection.collectionname }, $scope.editRow).$promise.then(function() {
 					$scope.callServer($scope.currentTableState);
 				});
 			}
@@ -341,16 +341,9 @@ angular.module('specifyDataCleanerApp')
 
 			/* inline editing */
 			$scope.saveRow = function(row) {
-				console.dir(row);
-				for (var key in row) {
-					var newKey = key.substring(1, key.length-1);
-					row[newKey] = row[key];
-					delete row[key];
-				}
-				//reuse the modal form method
+				//reuse modal form save metod
 				$scope.editRow = row;
 				$scope.editRowSave();
-				return true;
 			}
 
 			/* table */
