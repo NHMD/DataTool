@@ -384,7 +384,8 @@ angular.module('specifyDataCleanerApp')
 				scope: $scope,
 				template: 'app/datasets/carryforward.modal.tpl.html',
 				show: false,
-				prefixEvent: "carryforwardmodal"
+				prefixEvent: "carryforwardmodal",
+				backdrop: true
 			});
 				
 			$scope.showcolumnsModal = $modal({
