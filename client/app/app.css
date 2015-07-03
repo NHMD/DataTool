@@ -54,21 +54,19 @@ img.specify-icon-16 {
 }
 
 .modal-backdrop.am-fade {
-	opacity: .5;
-	transition: opacity .15s linear;
-	&.ng-enter {
-		opacity: 0;
-		&.ng-enter-active {
-			opacity: .5;
-		}
+    opacity: .7;
+    transition: opacity .35s linear;
+}
+.modal-backdrop.am-fade.ng-enter {
+    opacity: 0;
+}
+.modal-backdrop.am-fade.ng-enter.ng-enter-active {
+    opacity: .5;
+}
 
-	}
-	&.ng-leave {
-		opacity: .5;
-		&.ng-leave-active {
-			opacity: 0;
-		}
-
-	}
-
+.modal-backdrop.am-fade.ng-leave {
+    opacity: .5;
+}
+.modal-backdrop.am-fade.ng-leave.ng-leave-active {
+    opacity: 0;
 }
