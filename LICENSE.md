@@ -1,8 +1,9 @@
-Dina DataTool
+DINA DataTool
+=============
 
-Copyright (c) 2014-2015 by NHMD
+Copyright (c) 2014-2015 by NHMD, Natural History Museum of Denmark.
 
-Available for use under the [MIT License](http://en.wikipedia.org/wiki/MIT_License)
+Available for use under the [MIT License](http://en.wikipedia.org/wiki/MIT_License).
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
