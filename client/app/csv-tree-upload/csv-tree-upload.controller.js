@@ -272,7 +272,7 @@ angular.module('specifyDataCleanerApp')
 			}				
 
 			$scope.editRowSave = function() {
-				return Csvdataset.updateObject({ collectionname: $scope.collection.collectionname }, $scope.editRow).$promise.then(function() {
+				Csvdataset.updateObject({ collectionname: $scope.collection.collectionname }, $scope.editRow).$promise.then(function() {
 					$scope.callServer($scope.currentTableState);
 				});
 			}
